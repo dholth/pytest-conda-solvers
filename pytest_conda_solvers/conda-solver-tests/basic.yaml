@@ -2396,3 +2396,487 @@ tests:
         - channel-1/${{ arch }}::python-3.3.2-0
         - channel-1/${{ arch }}::nose-1.3.0-py33_0
         - channel-1/${{ arch }}::zope.interface-4.1.1.1-py33_0
+
+  - name: test_fast_update_1
+    id: B069
+    provenance:
+      node_id: tests/core/test_solve.py::test_fast_update_with_update_modifier_not_set::1
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2235-L2352
+    kind: solve
+    description: |
+      Install python=2 + openssl==1.0.2l + sqlite=3.21 from channel-4.
+      Baseline for fast-update tests.
+    input:
+      channels: channel-4
+      specs_to_add:
+        - "python=2"
+        - "openssl==1.0.2l"
+        - "sqlite=3.21"
+    output:
+      final_state:
+        - channel-4/${{ arch }}::ca-certificates-2018.03.07-0
+        - channel-4/${{ arch }}::libgcc-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libstdcxx-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libffi-3.2.1-hd88cf55_4
+        - channel-4/${{ arch }}::ncurses-6.0-h9df7e31_2
+        - channel-4/${{ arch }}::openssl-1.0.2l-h077ae2c_5
+        - channel-4/${{ arch }}::tk-8.6.7-hc745277_3
+        - channel-4/${{ arch }}::zlib-1.2.11-ha838bed_2
+        - channel-4/${{ arch }}::libedit-3.1-heed3624_0
+        - channel-4/${{ arch }}::readline-7.0-ha6073c6_4
+        - channel-4/${{ arch }}::sqlite-3.21.0-h1bed415_2
+        - channel-4/${{ arch }}::python-2.7.14-h89e7a4a_22
+
+  - name: test_fast_update_2
+    id: B070
+    provenance:
+      node_id: tests/core/test_solve.py::test_fast_update_with_update_modifier_not_set::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2235-L2352
+    kind: solve_for_diff
+    description: |
+      Upgrade python (unpin from 2.7.14 to latest), so python jumps to 3.6.4.
+      The solver also upgrades ncurses, openssl and libedit to satisfy python 3.6 deps.
+    solvers: classic
+    input:
+      channels: channel-4
+      specs_to_add: python
+      prefix:
+        - channel-4/${{ arch }}::ca-certificates-2018.03.07-0
+        - channel-4/${{ arch }}::libgcc-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libstdcxx-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libffi-3.2.1-hd88cf55_4
+        - channel-4/${{ arch }}::ncurses-6.0-h9df7e31_2
+        - channel-4/${{ arch }}::openssl-1.0.2l-h077ae2c_5
+        - channel-4/${{ arch }}::tk-8.6.7-hc745277_3
+        - channel-4/${{ arch }}::zlib-1.2.11-ha838bed_2
+        - channel-4/${{ arch }}::libedit-3.1-heed3624_0
+        - channel-4/${{ arch }}::readline-7.0-ha6073c6_4
+        - channel-4/${{ arch }}::sqlite-3.21.0-h1bed415_2
+        - channel-4/${{ arch }}::python-2.7.14-h89e7a4a_22
+      history_specs:
+        - "python=2"
+        - "openssl==1.0.2l"
+        - "sqlite=3.21"
+    output:
+      unlink_precs:
+        - channel-4/${{ arch }}::python-2.7.14-h89e7a4a_22
+        - channel-4/${{ arch }}::libedit-3.1-heed3624_0
+        - channel-4/${{ arch }}::openssl-1.0.2l-h077ae2c_5
+        - channel-4/${{ arch }}::ncurses-6.0-h9df7e31_2
+      link_precs:
+        - channel-4/${{ arch }}::ncurses-6.1-hf484d3e_0
+        - channel-4/${{ arch }}::openssl-1.0.2p-h14c3975_0
+        - channel-4/${{ arch }}::xz-5.2.4-h14c3975_4
+        - channel-4/${{ arch }}::libedit-3.1.20170329-h6b74fdf_2
+        - channel-4/${{ arch }}::python-3.6.4-hc3d631a_1
+
+  - name: test_fast_update_3
+    id: B071
+    provenance:
+      node_id: tests/core/test_solve.py::test_fast_update_with_update_modifier_not_set::3
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2235-L2352
+    kind: solve_for_diff
+    description: |
+      Upgrade sqlite (unpin from 3.21) while keeping python=2.7. The solver
+      upgrades sqlite to 3.24 and updates python to 2.7.15, ncurses, openssl, libedit.
+    solvers: classic
+    input:
+      channels: channel-4
+      specs_to_add: sqlite
+      prefix:
+        - channel-4/${{ arch }}::ca-certificates-2018.03.07-0
+        - channel-4/${{ arch }}::libgcc-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libstdcxx-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libffi-3.2.1-hd88cf55_4
+        - channel-4/${{ arch }}::ncurses-6.0-h9df7e31_2
+        - channel-4/${{ arch }}::openssl-1.0.2l-h077ae2c_5
+        - channel-4/${{ arch }}::tk-8.6.7-hc745277_3
+        - channel-4/${{ arch }}::zlib-1.2.11-ha838bed_2
+        - channel-4/${{ arch }}::libedit-3.1-heed3624_0
+        - channel-4/${{ arch }}::readline-7.0-ha6073c6_4
+        - channel-4/${{ arch }}::sqlite-3.21.0-h1bed415_2
+        - channel-4/${{ arch }}::python-2.7.14-h89e7a4a_22
+      history_specs:
+        - "python=2"
+        - "openssl==1.0.2l"
+        - "sqlite=3.21"
+    output:
+      unlink_precs:
+        - channel-4/${{ arch }}::python-2.7.14-h89e7a4a_22
+        - channel-4/${{ arch }}::sqlite-3.21.0-h1bed415_2
+        - channel-4/${{ arch }}::libedit-3.1-heed3624_0
+        - channel-4/${{ arch }}::openssl-1.0.2l-h077ae2c_5
+        - channel-4/${{ arch }}::ncurses-6.0-h9df7e31_2
+      link_precs:
+        - channel-4/${{ arch }}::ncurses-6.1-hf484d3e_0
+        - channel-4/${{ arch }}::openssl-1.0.2p-h14c3975_0
+        - channel-4/${{ arch }}::libedit-3.1.20170329-h6b74fdf_2
+        - channel-4/${{ arch }}::sqlite-3.24.0-h84994c4_0
+        - channel-4/${{ arch }}::python-2.7.15-h1571d57_0
+
+  - name: test_fast_update_4
+    id: B072
+    provenance:
+      node_id: tests/core/test_solve.py::test_fast_update_with_update_modifier_not_set::4
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2235-L2352
+    kind: solve
+    description: |
+      Install sqlite + python with SPECS_SATISFIED_SKIP_SOLVE when both specs are already
+      satisfied by the current prefix. The solver skips re-solving and returns the existing
+      state unchanged.
+    input:
+      channels: channel-4
+      specs_to_add:
+        - sqlite
+        - python
+      prefix:
+        - channel-4/${{ arch }}::ca-certificates-2018.03.07-0
+        - channel-4/${{ arch }}::libgcc-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libstdcxx-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libffi-3.2.1-hd88cf55_4
+        - channel-4/${{ arch }}::ncurses-6.0-h9df7e31_2
+        - channel-4/${{ arch }}::openssl-1.0.2l-h077ae2c_5
+        - channel-4/${{ arch }}::tk-8.6.7-hc745277_3
+        - channel-4/${{ arch }}::zlib-1.2.11-ha838bed_2
+        - channel-4/${{ arch }}::libedit-3.1-heed3624_0
+        - channel-4/${{ arch }}::readline-7.0-ha6073c6_4
+        - channel-4/${{ arch }}::sqlite-3.21.0-h1bed415_2
+        - channel-4/${{ arch }}::python-2.7.14-h89e7a4a_22
+      history_specs:
+        - "python=2"
+        - "openssl==1.0.2l"
+        - "sqlite=3.21"
+      update_modifier: specs_satisfied_skip_solve
+    output:
+      final_state:
+        - channel-4/${{ arch }}::ca-certificates-2018.03.07-0
+        - channel-4/${{ arch }}::libgcc-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libstdcxx-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libffi-3.2.1-hd88cf55_4
+        - channel-4/${{ arch }}::ncurses-6.0-h9df7e31_2
+        - channel-4/${{ arch }}::openssl-1.0.2l-h077ae2c_5
+        - channel-4/${{ arch }}::tk-8.6.7-hc745277_3
+        - channel-4/${{ arch }}::zlib-1.2.11-ha838bed_2
+        - channel-4/${{ arch }}::libedit-3.1-heed3624_0
+        - channel-4/${{ arch }}::readline-7.0-ha6073c6_4
+        - channel-4/${{ arch }}::sqlite-3.21.0-h1bed415_2
+        - channel-4/${{ arch }}::python-2.7.14-h89e7a4a_22
+
+  - name: test_update_prune_1_1
+    id: B074
+    provenance:
+      node_id: tests/core/test_solve.py::test_update_prune_1::1
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L541-L593
+    kind: solve
+    description: |
+      Initial solve: numpy + python=2.7.3. Install both along with base deps.
+    input:
+      channels: channel-1
+      specs_to_add:
+        - numpy
+        - "python=2.7.3"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.3-7
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+
+  - name: test_update_prune_1_2
+    id: B075
+    provenance:
+      node_id: tests/core/test_solve.py::test_update_prune_1::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L541-L593
+    kind: solve
+    description: |
+      Update with prune: remove numpy from specs, keep only python=2.7.3.
+      With prune=True, numpy should be absent from the solution.
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "python=2.7.3"
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.3-7
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+      history_specs:
+        - numpy
+        - "python=2.7.3"
+      prune: true
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.3-7
+
+  - name: test_update_prune_4_1
+    id: B076
+    provenance:
+      node_id: tests/core/test_solve.py::test_update_prune_4::1
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L758-L813
+    kind: solve
+    description: |
+      Initial solve: numpy + python=2.7.3. Install both along with base deps.
+    input:
+      channels: channel-1
+      specs_to_add:
+        - numpy
+        - "python=2.7.3"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.3-7
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+
+  - name: test_update_prune_4_2
+    id: B077
+    provenance:
+      node_id: tests/core/test_solve.py::test_update_prune_4::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L758-L813
+    kind: solve
+    description: |
+      Update with prune + FREEZE_INSTALLED: remove numpy from specs, keep only
+      python=2.7.3. With prune=True and FREEZE_INSTALLED, numpy is absent.
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "python=2.7.3"
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.3-7
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+      history_specs:
+        - numpy
+        - "python=2.7.3"
+      prune: true
+      update_modifier: freeze_installed
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.3-7
+
+  - name: test_update_prune_2_1
+    id: B114
+    provenance:
+      node_id: tests/core/test_solve.py::test_update_prune_2::1
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L596-L671
+    kind: solve
+    description: |
+      Install python=2.7.3 and accelerate (MKL features). First part establishes the
+      initial environment with all MKL-featured dependencies.
+    solvers: classic
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "python=2.7.3"
+        - accelerate
+    output:
+      final_state:
+        - channel-1/${{ arch }}::libnvvm-1.0-p0
+        - channel-1/${{ arch }}::mkl-rt-11.0-p0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::llvm-3.2-0
+        - channel-1/${{ arch }}::python-2.7.3-7
+        - channel-1/${{ arch }}::bitarray-0.8.1-py27_0
+        - channel-1/${{ arch }}::llvmpy-0.11.2-py27_0
+        - channel-1/${{ arch }}::meta-0.4.2.dev-py27_0
+        - channel-1/${{ arch }}::mkl-service-1.0.0-py27_p0
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_p0
+        - channel-1/${{ arch }}::numba-0.8.1-np17py27_0
+        - channel-1/${{ arch }}::numexpr-2.1-np17py27_p0
+        - channel-1/${{ arch }}::scipy-0.12.0-np17py27_p0
+        - channel-1/${{ arch }}::numbapro-0.11.0-np17py27_p0
+        - channel-1/${{ arch }}::scikit-learn-0.13.1-np17py27_p0
+        - channel-1/${{ arch }}::mkl-11.0-np17py27_p0
+        - channel-1/${{ arch }}::accelerate-1.1.0-np17py27_p0
+
+  - name: test_update_prune_2_2
+    id: B115
+    provenance:
+      node_id: tests/core/test_solve.py::test_update_prune_2::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L596-L671
+    kind: solve
+    description: |
+      Remove accelerate from the environment specs and prune. Every dependency of accelerate
+      (MKL stack) is removed. Only python=2.7.3 and its minimal deps remain.
+    solvers: classic
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "python=2.7.3"
+      prefix:
+        - channel-1/${{ arch }}::libnvvm-1.0-p0
+        - channel-1/${{ arch }}::mkl-rt-11.0-p0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::llvm-3.2-0
+        - channel-1/${{ arch }}::python-2.7.3-7
+        - channel-1/${{ arch }}::bitarray-0.8.1-py27_0
+        - channel-1/${{ arch }}::llvmpy-0.11.2-py27_0
+        - channel-1/${{ arch }}::meta-0.4.2.dev-py27_0
+        - channel-1/${{ arch }}::mkl-service-1.0.0-py27_p0
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_p0
+        - channel-1/${{ arch }}::numba-0.8.1-np17py27_0
+        - channel-1/${{ arch }}::numexpr-2.1-np17py27_p0
+        - channel-1/${{ arch }}::scipy-0.12.0-np17py27_p0
+        - channel-1/${{ arch }}::numbapro-0.11.0-np17py27_p0
+        - channel-1/${{ arch }}::scikit-learn-0.13.1-np17py27_p0
+        - channel-1/${{ arch }}::mkl-11.0-np17py27_p0
+        - channel-1/${{ arch }}::accelerate-1.1.0-np17py27_p0
+      history_specs:
+        - "python=2.7.3"
+        - accelerate
+      prune: true
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.3-7
+
+  - name: test_update_prune_3_1
+    id: B116
+    provenance:
+      node_id: tests/core/test_solve.py::test_update_prune_3::1
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L674-L755
+    kind: solve
+    description: |
+      Install numpy, python=2.7.3, and accelerate. Same MKL-featured environment as B115.
+    solvers: classic
+    input:
+      channels: channel-1
+      specs_to_add:
+        - numpy
+        - "python=2.7.3"
+        - accelerate
+    output:
+      final_state:
+        - channel-1/${{ arch }}::libnvvm-1.0-p0
+        - channel-1/${{ arch }}::mkl-rt-11.0-p0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::llvm-3.2-0
+        - channel-1/${{ arch }}::python-2.7.3-7
+        - channel-1/${{ arch }}::bitarray-0.8.1-py27_0
+        - channel-1/${{ arch }}::llvmpy-0.11.2-py27_0
+        - channel-1/${{ arch }}::meta-0.4.2.dev-py27_0
+        - channel-1/${{ arch }}::mkl-service-1.0.0-py27_p0
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_p0
+        - channel-1/${{ arch }}::numba-0.8.1-np17py27_0
+        - channel-1/${{ arch }}::numexpr-2.1-np17py27_p0
+        - channel-1/${{ arch }}::scipy-0.12.0-np17py27_p0
+        - channel-1/${{ arch }}::numbapro-0.11.0-np17py27_p0
+        - channel-1/${{ arch }}::scikit-learn-0.13.1-np17py27_p0
+        - channel-1/${{ arch }}::mkl-11.0-np17py27_p0
+        - channel-1/${{ arch }}::accelerate-1.1.0-np17py27_p0
+
+  - name: test_update_prune_3_2
+    id: B117
+    provenance:
+      node_id: tests/core/test_solve.py::test_update_prune_3::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L674-L755
+    kind: solve
+    description: |
+      Remove accelerate from specs (keep numpy and python=2.7.3) and prune. All accelerate
+      MKL dependencies are removed, but numpy remains (still in specs). Numpy switches from
+      the MKL-featured build (py27_p0) to the plain build (py27_0).
+    solvers: classic
+    input:
+      channels: channel-1
+      specs_to_add:
+        - numpy
+        - "python=2.7.3"
+      prefix:
+        - channel-1/${{ arch }}::libnvvm-1.0-p0
+        - channel-1/${{ arch }}::mkl-rt-11.0-p0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::llvm-3.2-0
+        - channel-1/${{ arch }}::python-2.7.3-7
+        - channel-1/${{ arch }}::bitarray-0.8.1-py27_0
+        - channel-1/${{ arch }}::llvmpy-0.11.2-py27_0
+        - channel-1/${{ arch }}::meta-0.4.2.dev-py27_0
+        - channel-1/${{ arch }}::mkl-service-1.0.0-py27_p0
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_p0
+        - channel-1/${{ arch }}::numba-0.8.1-np17py27_0
+        - channel-1/${{ arch }}::numexpr-2.1-np17py27_p0
+        - channel-1/${{ arch }}::scipy-0.12.0-np17py27_p0
+        - channel-1/${{ arch }}::numbapro-0.11.0-np17py27_p0
+        - channel-1/${{ arch }}::scikit-learn-0.13.1-np17py27_p0
+        - channel-1/${{ arch }}::mkl-11.0-np17py27_p0
+        - channel-1/${{ arch }}::accelerate-1.1.0-np17py27_p0
+      history_specs:
+        - numpy
+        - "python=2.7.3"
+        - accelerate
+      prune: true
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.3-7
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
