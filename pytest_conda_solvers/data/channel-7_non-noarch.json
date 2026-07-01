@@ -1,0 +1,534 @@
+{
+  "us_a-1.0-0.tar.bz2": {
+    "name": "us_a",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["us_c >=1,<2"]
+  },
+  "us_b-1.0-0.tar.bz2": {
+    "name": "us_b",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["us_c >=2,<3"]
+  },
+  "us_c-1.0-0.tar.bz2": {
+    "name": "us_c",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "us_c-2.0-0.tar.bz2": {
+    "name": "us_c",
+    "version": "2.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "uc_a-1.0-0.tar.bz2": {
+    "name": "uc_a",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["uc_b"]
+  },
+  "uc_b-1.0-0.tar.bz2": {
+    "name": "uc_b",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["uc_c >=1,<2"]
+  },
+  "uc_c-1.0-0.tar.bz2": {
+    "name": "uc_c",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["uc_d >=1,<2"]
+  },
+  "uc_c-2.0-0.tar.bz2": {
+    "name": "uc_c",
+    "version": "2.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["uc_d >=2,<3"]
+  },
+  "uc_d-1.0-0.tar.bz2": {
+    "name": "uc_d",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "uc_d-2.0-0.tar.bz2": {
+    "name": "uc_d",
+    "version": "2.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "uc_e-1.0-0.tar.bz2": {
+    "name": "uc_e",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["uc_c >=2,<3"]
+  },
+  "ue_a-1.0-0.tar.bz2": {
+    "name": "ue_a",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["ue_b", "ue_c"]
+  },
+  "ue_b-1.0-0.tar.bz2": {
+    "name": "ue_b",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["ue_d >=1,<2"]
+  },
+  "ue_c-1.0-0.tar.bz2": {
+    "name": "ue_c",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["ue_d >=2,<3"]
+  },
+  "ue_d-1.0-0.tar.bz2": {
+    "name": "ue_d",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "ue_d-2.0-0.tar.bz2": {
+    "name": "ue_d",
+    "version": "2.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "um_a-1.0-0.tar.bz2": {
+    "name": "um_a",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["um_b", "um_c"]
+  },
+  "um_b-1.0-0.tar.bz2": {
+    "name": "um_b",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["um_c >=2,<3"]
+  },
+  "um_c-1.0-0.tar.bz2": {
+    "name": "um_c",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "sc1_a-1.0-0.tar.bz2": {
+    "name": "sc1_a",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["sc1_d", "sc1_c <1.3.0"]
+  },
+  "sc1_b-1.0-0.tar.bz2": {
+    "name": "sc1_b",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["sc1_c"]
+  },
+  "sc1_c-1.2.8-0.tar.bz2": {
+    "name": "sc1_c",
+    "version": "1.2.8",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "sc1_c-1.3.6-0.tar.bz2": {
+    "name": "sc1_c",
+    "version": "1.3.6",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "sc1_d-1.0-0.tar.bz2": {
+    "name": "sc1_d",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["sc1_c >=0.8.0"]
+  },
+  "sc2_a-1.0-0.tar.bz2": {
+    "name": "sc2_a",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["sc2_d", "sc2_c >=0.8.0"]
+  },
+  "sc2_b-1.0-0.tar.bz2": {
+    "name": "sc2_b",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["sc2_c"]
+  },
+  "sc2_c-1.2.8-0.tar.bz2": {
+    "name": "sc2_c",
+    "version": "1.2.8",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "sc2_c-1.3.6-0.tar.bz2": {
+    "name": "sc2_c",
+    "version": "1.3.6",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "sc2_d-1.0-0.tar.bz2": {
+    "name": "sc2_d",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["sc2_c <1.3.0"]
+  },
+  "sc3_a-1.0-0.tar.bz2": {
+    "name": "sc3_a",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["sc3_f", "sc3_e"]
+  },
+  "sc3_b-1.0-0.tar.bz2": {
+    "name": "sc3_b",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["sc3_c"]
+  },
+  "sc3_c-1.2.8-0.tar.bz2": {
+    "name": "sc3_c",
+    "version": "1.2.8",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "sc3_c-1.3.6-0.tar.bz2": {
+    "name": "sc3_c",
+    "version": "1.3.6",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "sc3_d-1.0-0.tar.bz2": {
+    "name": "sc3_d",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["sc3_c >=0.8.0"]
+  },
+  "sc3_e-1.0-0.tar.bz2": {
+    "name": "sc3_e",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["sc3_c <1.3.0"]
+  },
+  "sc3_f-1.0-0.tar.bz2": {
+    "name": "sc3_f",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["sc3_d"]
+  },
+  "sc4_a-1.0-0.tar.bz2": {
+    "name": "sc4_a",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["sc4_py =3.7.1"]
+  },
+  "sc4_py_req_1-1.0-0.tar.bz2": {
+    "name": "sc4_py_req_1",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "sc4_py_req_2-1.0-0.tar.bz2": {
+    "name": "sc4_py_req_2",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "sc4_py-3.7.1-0.tar.bz2": {
+    "name": "sc4_py",
+    "version": "3.7.1",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["sc4_py_req_1", "sc4_py_req_2"]
+  },
+  "sc4_py-3.6.1-0.tar.bz2": {
+    "name": "sc4_py",
+    "version": "3.6.1",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["sc4_py_req_1", "sc4_py_req_2"]
+  },
+  "package1-1.0-0.tar.bz2": {
+    "name": "package1",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["package2"]
+  },
+  "package2-1.0-0.tar.bz2": {
+    "name": "package2",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["package1"]
+  },
+  "atnt_a-1.0-0.tar.bz2": {
+    "name": "atnt_a",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["atnt_d >=1,<2"]
+  },
+  "atnt_a-2.0-0.tar.bz2": {
+    "name": "atnt_a",
+    "version": "2.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["atnt_d >=2,<3"]
+  },
+  "atnt_b-1.0-0.tar.bz2": {
+    "name": "atnt_b",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["atnt_d >=1,<2"]
+  },
+  "atnt_b-2.0-0.tar.bz2": {
+    "name": "atnt_b",
+    "version": "2.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["atnt_d >=3,<4"]
+  },
+  "atnt_c-1.0-0.tar.bz2": {
+    "name": "atnt_c",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["atnt_d >=2,<3"]
+  },
+  "atnt_c-2.0-0.tar.bz2": {
+    "name": "atnt_c",
+    "version": "2.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["atnt_d >=3,<4"]
+  },
+  "atnt_d-1.0-0.tar.bz2": {
+    "name": "atnt_d",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "atnt_d-2.0-0.tar.bz2": {
+    "name": "atnt_d",
+    "version": "2.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "atnt_d-3.0-0.tar.bz2": {
+    "name": "atnt_d",
+    "version": "3.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "arch_pkg-1.0-0.tar.bz2": {
+    "name": "arch_pkg",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "noarch_ver_pkg-1.0-0.tar.bz2": {
+    "name": "noarch_ver_pkg",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "noarch_ver_pkg_dep-1.0-0.tar.bz2": {
+    "name": "noarch_ver_pkg_dep",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["noarch_ver_pkg"]
+  },
+  "noarch_build_pkg-1.0-0.tar.bz2": {
+    "name": "noarch_build_pkg",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "noarch_build_pkg_dep-1.0-0.tar.bz2": {
+    "name": "noarch_build_pkg_dep",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["noarch_build_pkg"]
+  },
+  "nd_mypackage-1.0-0.tar.bz2": {
+    "name": "nd_mypackage",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["nose", "python 3.3*", "notarealpackage 2.0*"]
+  },
+  "nd_mypackage-1.1-0.tar.bz2": {
+    "name": "nd_mypackage",
+    "version": "1.1",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["nose", "python 3.3*"]
+  },
+  "nd_anotherpackage-1.0-0.tar.bz2": {
+    "name": "nd_anotherpackage",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["nose", "nd_mypackage 1.1"]
+  },
+  "nd_anotherpackage-2.0-0.tar.bz2": {
+    "name": "nd_anotherpackage",
+    "version": "2.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["nose", "nd_mypackage"]
+  },
+  "nd2_mypackage-1.0-0.tar.bz2": {
+    "name": "nd2_mypackage",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["nose", "python 3.3*"]
+  },
+  "nd2_mypackage-1.1-0.tar.bz2": {
+    "name": "nd2_mypackage",
+    "version": "1.1",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["nose", "python 3.3*", "notarealpackage 2.0*"]
+  },
+  "nd2_anotherpackage-1.0-0.tar.bz2": {
+    "name": "nd2_anotherpackage",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["nose", "nd2_mypackage 1.0"]
+  },
+  "nd2_anotherpackage-2.0-0.tar.bz2": {
+    "name": "nd2_anotherpackage",
+    "version": "2.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["nose", "nd2_mypackage"]
+  },
+  "ri1_a-1.0-0.tar.bz2": {
+    "name": "ri1_a",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["ri1_b", "ri1_c ==2"]
+  },
+  "ri1_a-2.0-0.tar.bz2": {
+    "name": "ri1_a",
+    "version": "2.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["ri1_b"]
+  },
+  "ri1_b-1.0-0.tar.bz2": {
+    "name": "ri1_b",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["ri1_c"]
+  },
+  "ri1_c-1.0-0.tar.bz2": {
+    "name": "ri1_c",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "ri2_top-1.0-0.tar.bz2": {
+    "name": "ri2_top",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["ri2_middle", "ri2_bottom ==1.5"]
+  },
+  "ri2_top-2.0-0.tar.bz2": {
+    "name": "ri2_top",
+    "version": "2.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["ri2_middle"]
+  },
+  "ri2_middle-1.0-0.tar.bz2": {
+    "name": "ri2_middle",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["ri2_bottom"]
+  },
+  "ri2_bottom-1.5-0.tar.bz2": {
+    "name": "ri2_bottom",
+    "version": "1.5",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "ri2_bottom-2.5-0.tar.bz2": {
+    "name": "ri2_bottom",
+    "version": "2.5",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "ts_mypackage-1.0-hash12_0.tar.bz2": {
+    "name": "ts_mypackage",
+    "version": "1.0",
+    "build": "hash12_0",
+    "build_number": 0,
+    "depends": ["libpng 1.2.*"]
+  },
+  "ts_mypackage-1.0-hash15_0.tar.bz2": {
+    "name": "ts_mypackage",
+    "version": "1.0",
+    "build": "hash15_0",
+    "build_number": 0,
+    "depends": ["libpng 1.5.*"]
+  }
+}
