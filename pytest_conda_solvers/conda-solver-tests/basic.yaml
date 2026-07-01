@@ -6147,3 +6147,66 @@ tests:
         - channel-7/${{ arch }}::nd2_mypackage-1.0-0
         - channel-7/${{ arch }}::nd2_anotherpackage-2.0-0
 
+  - name: test_timestamps_and_deps_1
+    id: B108
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_timestamps_and_deps::1
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L605-L643
+    kind: solve
+    description: |
+      ts_mypackage-1.0-hash12_0 depends on libpng 1.2.*, hash15_0 on 1.5.*.
+      Installing with libpng 1.2.* constraint picks hash12_0.
+    input:
+      channels:
+        - channel-7
+        - channel-1
+      specs_to_add:
+        - "libpng 1.2.*"
+        - ts_mypackage
+    output:
+      final_state:
+        - channel-1/${{ arch }}::libpng-1.2.50-0
+        - channel-7/${{ arch }}::ts_mypackage-1.0-hash12_0
+
+  - name: test_timestamps_and_deps_2
+    id: B109
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_timestamps_and_deps::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L605-L643
+    kind: solve
+    description: |
+      Installing with libpng 1.5.* constraint picks hash15_0 (higher libpng).
+    input:
+      channels:
+        - channel-7
+        - channel-1
+      specs_to_add:
+        - "libpng 1.5.*"
+        - ts_mypackage
+    output:
+      final_state:
+        - channel-1/${{ arch }}::libpng-1.5.13-1
+        - channel-7/${{ arch }}::ts_mypackage-1.0-hash15_0
+
+  - name: test_timestamps_and_deps_3
+    id: B110
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_timestamps_and_deps::3
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L605-L643
+    kind: solve
+    description: |
+      No explicit libpng constraint. Solver maximizes libpng version (1.5 > 1.2),
+      so picks hash15_0 even though hash12_0 has a higher timestamp.
+    input:
+      channels:
+        - channel-7
+        - channel-1
+      specs_to_add:
+        - ts_mypackage
+    output:
+      final_state:
+        - channel-1/${{ arch }}::libpng-1.5.13-1
+        - channel-7/${{ arch }}::ts_mypackage-1.0-hash15_0
