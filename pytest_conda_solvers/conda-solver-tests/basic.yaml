@@ -5415,7 +5415,7 @@ tests:
         - channel-1/${{ arch }}::mkl-11.0-np17py33_p1
         - channel-1/${{ arch }}::accelerate-1.1.0-np17py33_p0
 
- - name: test_unsat_from_r1_1
+  - name: test_unsat_from_r1_1
     id: B052
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_from_r1::1
@@ -5707,7 +5707,7 @@ tests:
         - channel-7/${{ arch }}::package1-1.0-0
         - channel-7/${{ arch }}::package2-1.0-0
 
- - name: test_unsat_any_two_not_three_1
+  - name: test_unsat_any_two_not_three_1
     id: B085
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests::test_unsat_any_two_not_three::1
@@ -5910,7 +5910,7 @@ tests:
         - channel-1/${{ arch }}::numpy-1.5.1-py27_4
         - channel-1/${{ arch }}::iopro-1.4.3-np15py27_p0
 
- - name: test_get_reduced_index_broadening_unsat_early_dep
+  - name: test_get_reduced_index_broadening_unsat_early_dep
     id: B099
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests::test_get_reduced_index_broadening_with_unsatisfiable_early_dep
@@ -6212,7 +6212,7 @@ tests:
         - channel-7/${{ arch }}::ts_mypackage-1.0-hash15_0
 
   - name: test_empty
-    id: B127
+    id: B159
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests::test_empty
       commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
