@@ -3941,3 +3941,74 @@ tests:
         - channel-1/${{ arch }}::tk-8.5.13-0
         - channel-1/${{ arch }}::zlib-1.2.7-0
         - channel-1/${{ arch }}::python-2.7.5-0
+
+  - name: test_unfreeze_when_required_1
+    id: B096
+    provenance:
+      node_id: tests/core/test_solve.py::test_unfreeze_when_required::1
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L1533-L1597
+    kind: solve
+    description: |
+      Install foobar + qux simultaneously. foobar-2.0 needs libfoo-2.0, but
+      qux-1.0 needs libfoo-1.0, so foobar must be downgraded to 1.0.
+    input:
+      channels: channel-freeze
+      specs_to_add:
+        - foobar
+        - qux
+    output:
+      final_state:
+        - channel-freeze/${{ arch }}::libbar-2.0-0
+        - channel-freeze/${{ arch }}::libfoo-1.0-0
+        - channel-freeze/${{ arch }}::foobar-1.0-0
+        - channel-freeze/${{ arch }}::qux-1.0-0
+
+  - name: test_unfreeze_when_required_2
+    id: B097
+    provenance:
+      node_id: tests/core/test_solve.py::test_unfreeze_when_required::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L1533-L1597
+    kind: solve
+    description: |
+      Install only foobar (no qux constraint). Solver picks foobar-2.0
+      with libfoo-2.0.
+    input:
+      channels: channel-freeze
+      specs_to_add:
+        - foobar
+    output:
+      final_state:
+        - channel-freeze/${{ arch }}::libbar-2.0-0
+        - channel-freeze/${{ arch }}::libfoo-2.0-0
+        - channel-freeze/${{ arch }}::foobar-2.0-0
+
+  - name: test_unfreeze_when_required_3
+    id: B098
+    provenance:
+      node_id: tests/core/test_solve.py::test_unfreeze_when_required::3
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L1533-L1597
+    kind: solve
+    description: |
+      With foobar-2.0 already installed (needing libfoo-2.0), adding qux
+      forces foobar downgrade to 1.0 (which needs libfoo-1.0 compatible
+      with qux-1.0). Uses UPDATE_SPECS modifier.
+    input:
+      channels: channel-freeze
+      specs_to_add:
+        - qux
+      prefix:
+        - channel-freeze/${{ arch }}::libbar-2.0-0
+        - channel-freeze/${{ arch }}::libfoo-2.0-0
+        - channel-freeze/${{ arch }}::foobar-2.0-0
+      history_specs:
+        - foobar
+      update_modifier: update_specs
+    output:
+      final_state:
+        - channel-freeze/${{ arch }}::libbar-2.0-0
+        - channel-freeze/${{ arch }}::libfoo-1.0-0
+        - channel-freeze/${{ arch }}::foobar-1.0-0
+        - channel-freeze/${{ arch }}::qux-1.0-0
