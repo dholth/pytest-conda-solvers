@@ -3182,3 +3182,76 @@ tests:
         - channel-4/${{ arch }}::openssl-1.0.2p-h14c3975_0
         - channel-4/${{ arch }}::xz-5.2.4-h14c3975_4
         - channel-4/${{ arch }}::python-3.6.4-hc3d631a_1
+
+  - name: test_downgrade_python_prevented_1
+    id: B066
+    provenance:
+      node_id: tests/core/test_solve.py::test_downgrade_python_prevented_with_sane_message::1
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3336-L3411
+    kind: solve
+    description: Install python=2.6 fresh, the baseline for the downgrade-prevention test series.
+    input:
+      channels: channel-1
+      specs_to_add: "python=2.6"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+
+  - name: test_downgrade_python_prevented_2
+    id: B067
+    provenance:
+      node_id: tests/core/test_solve.py::test_downgrade_python_prevented_with_sane_message::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3336-L3411
+    kind: unsatisfiable
+    description: |
+      With python=2.6 installed and pinned in history, try to install scikit-learn==0.13.
+      All scikit-learn 0.13 builds require python 2.7*, so this is unsatisfiable.
+    input:
+      channels: channel-1
+      specs_to_add: "scikit-learn==0.13"
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+      history_specs: "python=2.6"
+    error:
+      exception: UnsatisfiableError
+      entries: []
+
+  - name: test_downgrade_python_prevented_3
+    id: B068
+    provenance:
+      node_id: tests/core/test_solve.py::test_downgrade_python_prevented_with_sane_message::3
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3336-L3411
+    kind: unsatisfiable
+    description: |
+      With python=2.6 installed, try to install unsatisfiable-with-py26 which depends
+      on scikit-learn==0.13 (py27 only). The dependency chain is unsatisfiable.
+    input:
+      channels: channel-1
+      specs_to_add: unsatisfiable-with-py26
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+      history_specs: "python=2.6"
+    error:
+      exception: UnsatisfiableError
+      entries: []
