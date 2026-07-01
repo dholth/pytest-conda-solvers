@@ -5881,3 +5881,31 @@ tests:
         - channel-7/noarch::noarch_build_pkg-1.0-1
         - channel-7/${{ arch }}::noarch_build_pkg_dep-1.0-0
 
+  - name: test_pseudo_boolean_1
+    id: B095
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_pseudo_boolean::1
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L316-L349
+    kind: solve
+    description: |
+      Install iopro + python 2.7 + numpy 1.5. Since iopro 1.5.0 was not built
+      against numpy 1.5, we get iopro-1.4.3-np15py27_p0.
+    input:
+      channels: channel-1
+      specs_to_add:
+        - iopro
+        - "python 2.7*"
+        - "numpy 1.5*"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::unixodbc-2.3.1-0
+        - channel-1/${{ arch }}::numpy-1.5.1-py27_4
+        - channel-1/${{ arch }}::iopro-1.4.3-np15py27_p0
