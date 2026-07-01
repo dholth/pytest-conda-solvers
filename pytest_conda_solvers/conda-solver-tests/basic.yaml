@@ -4012,6 +4012,7 @@ tests:
         - channel-freeze/${{ arch }}::libfoo-1.0-0
         - channel-freeze/${{ arch }}::foobar-1.0-0
         - channel-freeze/${{ arch }}::qux-1.0-0
+
   - name: test_force_remove_1_1
     id: B126
     provenance:
@@ -4020,12 +4021,108 @@ tests:
       url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L856-L944
     kind: solve
     description: |
-      Install numpy with a glob build-string match (*py27*). Verifies that glob MatchSpecs
-      in build-string position resolve correctly. 
+      Install numpy with a glob build-string match (*py27*), the starting env for
+      the force-remove series.
     solvers: classic
     input:
       channels: channel-1
       specs_to_add: "numpy[version=*,build=*py27*]"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+
+  - name: test_force_remove_1_2
+    id: B127
+    provenance:
+      node_id: tests/core/test_solve.py::test_force_remove_1::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L856-L944
+    kind: solve
+    description: |
+      Remove python without force. Everything that depends on python is pruned too,
+      so numpy and python's deps all go. openssl stays only because it is in the
+      aggressive-update set.
+    solvers: classic
+    input:
+      channels: channel-1
+      specs_to_remove: python
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+      history_specs: "numpy[version=*,build=*py27*]"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+
+  - name: test_force_remove_1_3
+    id: B128
+    provenance:
+      node_id: tests/core/test_solve.py::test_force_remove_1::3
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L856-L944
+    kind: solve
+    description: |
+      Remove python with force_remove. Only the explicitly requested python is taken
+      out, leaving an inconsistent env where numpy and the other deps remain.
+    solvers: classic
+    input:
+      channels: channel-1
+      specs_to_remove: python
+      force_remove: true
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+      history_specs: "numpy[version=*,build=*py27*]"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+
+  - name: test_force_remove_1_4
+    id: B129
+    provenance:
+      node_id: tests/core/test_solve.py::test_force_remove_1::4
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L856-L944
+    kind: solve
+    description: |
+      Re-solving the inconsistent env (no specs requested) restores python and the
+      original consistent state.
+    solvers: classic
+    input:
+      channels: channel-1
+      prefix:
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
     output:
       final_state:
         - channel-1/${{ arch }}::openssl-1.0.1c-0
