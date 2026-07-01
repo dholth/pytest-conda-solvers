@@ -72,7 +72,13 @@ def get_solver(
         if add_pip:
             SubdirData._cache_.clear()
         try:
-            yield solver_backend(tmpdir, channels, subdirs, specs_to_add=specs_to_add)
+            yield solver_backend(
+                tmpdir,
+                channels,
+                subdirs,
+                specs_to_add=specs_to_add,
+                specs_to_remove=specs_to_remove,
+            )
         finally:
             if add_pip:
                 SubdirData._cache_.clear()
@@ -173,7 +179,7 @@ def prepare_solver_input(raw_solver_input: TestInput, channel_server, arch):
     solver_input["prefix_records"] = diststrs_to_records(
         raw_solver_input.prefix, channel_server, arch
     )
-    for spec_key in ("specs_to_add", "history_specs"):
+    for spec_key in ("specs_to_add", "specs_to_remove", "history_specs"):
         solver_input[spec_key] = tuple(
             MatchSpec(s) for s in ensure_str_tuple(getattr(raw_solver_input, spec_key))
         )
@@ -190,7 +196,7 @@ def prepare_solver_input(raw_solver_input: TestInput, channel_server, arch):
         )
         if val is not None
     }
-    bool_flags = ("ignore_pinned", "force_reinstall", "prune")
+    bool_flags = ("ignore_pinned", "force_reinstall", "prune", "force_remove")
     enum_flags = ("update_modifier", "deps_modifier")
     flags = {
         flag: v

@@ -73,6 +73,7 @@ class TestInput(
         default_factory=lambda: ["linux-64", "noarch"]
     )
     specs_to_add: str | list[str] | None = None
+    specs_to_remove: str | list[str] | None = None
     prefix: str | list[str] | None = None
     history_specs: str | list[str] | None = None
     solution_records: PrefixRecord | list[PrefixRecord] | None = None
@@ -80,6 +81,7 @@ class TestInput(
     ignore_pinned: bool | None = None
     force_reinstall: bool | None = None
     prune: bool | None = None
+    force_remove: bool | None = None
     pinned_packages: str | list[str] | None = None
     aggressive_update_packages: str | list[str] | None = None
     auto_update_conda: bool | None = None
