@@ -5127,3 +5127,42 @@ tests:
         - channel-1/${{ arch }}::system-5.8-1
         - channel-1/${{ arch }}::tk-8.5.13-0
         - channel-1/${{ arch }}::zlib-1.2.7-0
+
+  - name: test_globstr_matchspec_non_compatible_2
+    id: B083
+    provenance:
+      node_id: tests/core/test_solve.py::test_globstr_matchspec_non_compatible::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3833-L3858
+    kind: unsatisfiable
+    description: |
+      Two glob build string specs for accelerate that cannot be satisfied together:
+      np17* and *np16* cannot match the same package.
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "accelerate=*=np17*"
+        - "accelerate=*=*np16*"
+    error:
+      exception: ResolvePackageNotFound
+      entries: []
+
+  - name: test_globstr_matchspec_non_compatible_3
+    id: B084
+    provenance:
+      node_id: tests/core/test_solve.py::test_globstr_matchspec_non_compatible::3
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3833-L3858
+    kind: unsatisfiable
+    description: |
+      Two glob build string specs for accelerate that cannot be satisfied together:
+      *np15* and *py33* cannot match the same package (no such build exists).
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "accelerate=*=*np15*"
+        - "accelerate=*=*py33*"
+    error:
+      exception: ResolvePackageNotFound
+      entries: []
+
