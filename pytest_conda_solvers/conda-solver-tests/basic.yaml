@@ -3861,3 +3861,83 @@ tests:
         - channel-2/${{ arch }}::six-1.10.0-py27_0
         - channel-2/${{ arch }}::python-dateutil-2.6.1-py27_0
         - channel-2/${{ arch }}::pandas-0.20.3-py27_0
+
+  - name: test_force_reinstall_1_2
+    id: B048
+    provenance:
+      node_id: tests/core/test_solve.py::test_force_reinstall_1::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2681-L2714
+    kind: solve_for_diff
+    description: |
+      Re-install python=2 into an env that already has it. Without force_reinstall,
+      the solver detects no changes are needed and returns an empty diff.
+    input:
+      channels: channel-1
+      specs_to_add: "python=2"
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+      history_specs: "python=2"
+    output:
+      unlink_precs: []
+      link_precs: []
+
+  - name: test_force_reinstall_1_3
+    id: B049
+    provenance:
+      node_id: tests/core/test_solve.py::test_force_reinstall_1::3
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2681-L2714
+    kind: solve_for_diff
+    description: |
+      Re-install python=2 into an env that already has it, with force_reinstall=True.
+      The solver produces a reinstall: unlink and relink the same python-2.7.5-0 package.
+    input:
+      channels: channel-1
+      specs_to_add: "python=2"
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+      history_specs: "python=2"
+      force_reinstall: true
+    output:
+      unlink_precs:
+        - channel-1/${{ arch }}::python-2.7.5-0
+      link_precs:
+        - channel-1/${{ arch }}::python-2.7.5-0
+
+  - name: test_force_reinstall_2
+    id: B050
+    provenance:
+      node_id: tests/core/test_solve.py::test_force_reinstall_2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2717-L2735
+    kind: solve_for_diff
+    description: |
+      Fresh install of python=2 with force_reinstall=True. Since the prefix is empty,
+      there is nothing to unlink. The full python=2 env is linked.
+    input:
+      channels: channel-1
+      specs_to_add: "python=2"
+      force_reinstall: true
+    output:
+      unlink_precs: []
+      link_precs:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
