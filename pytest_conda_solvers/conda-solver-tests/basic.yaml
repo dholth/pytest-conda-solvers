@@ -5414,3 +5414,274 @@ tests:
         - channel-1/${{ arch }}::scipy-0.12.0-np17py33_p0
         - channel-1/${{ arch }}::mkl-11.0-np17py33_p1
         - channel-1/${{ arch }}::accelerate-1.1.0-np17py33_p0
+
+ - name: test_unsat_from_r1_1
+    id: B052
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_from_r1::1
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L351-L380
+    kind: unsatisfiable
+    description: |
+      Install numpy 1.5* + scipy 0.12.0b1 from channel-1. All scipy 0.12.0b1 builds
+      require numpy 1.6* or 1.7*, so they are incompatible with numpy 1.5*.
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "numpy 1.5*"
+        - "scipy 0.12.0b1"
+    error:
+      exception: UnsatisfiableError
+      entries: []
+
+  - name: test_unsat_from_r1_2
+    id: B053
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_from_r1::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L351-L380
+    kind: unsatisfiable
+    description: |
+      Install numpy 1.5* + python 3* from channel-1. numpy 1.5 builds only support
+      python 2.x, so they are incompatible with python 3*.
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "numpy 1.5*"
+        - "python 3*"
+    error:
+      exception: UnsatisfiableError
+      entries: []
+
+  - name: test_unsat_from_r1_3
+    id: B054
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_from_r1::3
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L351-L380
+    kind: unsatisfiable
+    description: |
+      Install numpy 1.5* + numpy 1.6* simultaneously from channel-1. The combined
+      version constraint (1.5.*,1.6.*) has no solution, raising ResolvePackageNotFound.
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "numpy 1.5*"
+        - "numpy 1.6*"
+    error:
+      exception: ResolvePackageNotFound
+      entries:
+        - numpy[version='1.5.*,1.6.*']
+
+  - name: test_irrational_version
+    id: B055
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests.test_irrational_version
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L847-L860
+    kind: solve
+    description: |
+      Install pytz 2012d + python 3* from channel-1. The version "2012d" is a
+      non-standard (irrational) version string that conda must handle correctly.
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "pytz 2012d"
+        - "python 3*"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-3.3.2-0
+        - channel-1/${{ arch }}::pytz-2012d-py33_0
+
+  - name: test_nonexistent_1
+    id: B056
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests.test_nonexistent::1
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L599-L603
+    kind: unsatisfiable
+    description: |
+      Install a completely nonexistent package from channel-1. Should raise
+      ResolvePackageNotFound (or PackagesNotFoundError for libmamba).
+    input:
+      channels: channel-1
+      specs_to_add: "notarealpackage 2.0*"
+    error:
+      exception: ResolvePackageNotFound
+      entries: []
+
+  - name: test_nonexistent_2
+    id: B057
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests.test_nonexistent::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L599-L603
+    kind: unsatisfiable
+    description: |
+      Install numpy==1.5 (exact, not a wildcard) from channel-1. numpy 1.5.0 does not
+      exist (only 1.5.1 does), so the solver raises ResolvePackageNotFound.
+    input:
+      channels: channel-1
+      specs_to_add: "numpy 1.5"
+    error:
+      exception: ResolvePackageNotFound
+      entries: []
+
+  - name: test_unsat_simple
+    id: B058
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_simple
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L382-L397
+    kind: unsatisfiable
+    description: |
+      Minimal unsatisfiable case: us_a requires us_c >=1,<2 and us_b requires us_c >=2,<3.
+      Installing both us_a and us_b is impossible because us_c cannot satisfy both constraints.
+    input:
+      channels: channel-7
+      specs_to_add:
+        - us_a
+        - us_b
+    error:
+      exception: UnsatisfiableError
+      entries: []
+
+  - name: test_unsat_chain
+    id: B059
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_chain
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L506-L526
+    kind: unsatisfiable
+    description: |
+      Dependency chain conflict: uc_a->uc_b->uc_c>=1,<2 and uc_e->uc_c>=2,<3.
+      uc_c cannot satisfy both >=1,<2 and >=2,<3 simultaneously.
+    input:
+      channels: channel-7
+      specs_to_add:
+        - uc_a
+        - uc_e
+    error:
+      exception: UnsatisfiableError
+      entries: []
+
+  - name: test_unsat_expand_single
+    id: B060
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_expand_single
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L565-L581
+    kind: unsatisfiable
+    description: |
+      ue_a depends on both ue_b and ue_c. ue_b requires ue_d >=1,<2 and
+      ue_c requires ue_d >=2,<3. ue_d cannot satisfy both constraints.
+    input:
+      channels: channel-7
+      specs_to_add: ue_a
+    error:
+      exception: UnsatisfiableError
+      entries: []
+
+  - name: test_unsat_missing_dep
+    id: B061
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_missing_dep
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L583-L597
+    kind: unsatisfiable
+    description: |
+      um_a depends on um_b and um_c. um_b requires um_c >=2,<3 but only um_c-1.0 exists.
+      The dependency chain for um_b is unsatisfiable.
+    input:
+      channels: channel-7
+      specs_to_add:
+        - um_a
+        - um_b
+    error:
+      exception: UnsatisfiableError
+      entries: []
+
+  - name: test_unsat_shortest_chain_1
+    id: B062
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_shortest_chain_1
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L405-L429
+    kind: unsatisfiable
+    description: |
+      sc1_a requires sc1_c<1.3.0 but sc1_d (also required by sc1_a) requires sc1_c>=0.8.0.
+      Pinning sc1_c=1.3.6 makes sc1_a's direct sc1_c constraint unsatisfiable.
+    input:
+      channels: channel-7
+      specs_to_add:
+        - "sc1_c=1.3.6"
+        - sc1_a
+        - sc1_b
+    error:
+      exception: UnsatisfiableError
+      entries: []
+
+  - name: test_unsat_shortest_chain_2
+    id: B063
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_shortest_chain_2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L431-L455
+    kind: unsatisfiable
+    description: |
+      sc2_a requires sc2_c>=0.8.0 and sc2_d (also required by sc2_a) requires sc2_c<1.3.0.
+      Pinning sc2_c=1.3.6 makes sc2_d's sc2_c constraint unsatisfiable.
+    input:
+      channels: channel-7
+      specs_to_add:
+        - "sc2_c=1.3.6"
+        - sc2_a
+        - sc2_b
+    error:
+      exception: UnsatisfiableError
+      entries: []
+
+  - name: test_unsat_shortest_chain_3
+    id: B064
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_shortest_chain_3
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L457-L482
+    kind: unsatisfiable
+    description: |
+      sc3_a requires sc3_e (which needs sc3_c<1.3.0) and sc3_f->sc3_d (which needs sc3_c>=0.8.0).
+      Pinning sc3_c=1.3.6 makes sc3_e's constraint unsatisfiable.
+    input:
+      channels: channel-7
+      specs_to_add:
+        - "sc3_c=1.3.6"
+        - sc3_a
+        - sc3_b
+    error:
+      exception: UnsatisfiableError
+      entries: []
+
+  - name: test_unsat_shortest_chain_4
+    id: B065
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_shortest_chain_4
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L484-L504
+    kind: unsatisfiable
+    description: |
+      sc4_a requires sc4_py=3.7.1 but we also request sc4_py=3.6.1 explicitly.
+      The two pinned versions of sc4_py conflict.
+    input:
+      channels: channel-7
+      specs_to_add:
+        - sc4_a
+        - "sc4_py=3.6.1"
+    error:
+      exception: UnsatisfiableError
+      entries: []
