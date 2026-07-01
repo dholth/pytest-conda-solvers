@@ -5787,3 +5787,97 @@ tests:
       exception: UnsatisfiableError
       entries: []
 
+  - name: test_arch_preferred_over_noarch_when_otherwise_equal
+    id: B089
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_arch_preferred_over_noarch_when_otherwise_equal
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L1240-L1252
+    kind: solve
+    description: |
+      When a package exists in both noarch and linux-64 at the same version/build,
+      the arch-specific (linux-64) version should be preferred.
+    input:
+      channels: channel-7
+      specs_to_add:
+        - arch_pkg
+    output:
+      final_state:
+        - channel-7/${{ arch }}::arch_pkg-1.0-0
+
+  - name: test_noarch_preferred_over_arch_when_version_greater
+    id: B090
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_noarch_preferred_over_arch_when_version_greater
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L1254-L1268
+    kind: solve
+    description: |
+      When noarch has a higher version (2.0) than the arch-specific build (1.0),
+      the noarch version should be preferred.
+    input:
+      channels: channel-7
+      specs_to_add:
+        - noarch_ver_pkg
+    output:
+      final_state:
+        - channel-7/noarch::noarch_ver_pkg-2.0-0
+
+  - name: test_noarch_preferred_over_arch_when_version_greater_dep
+    id: B091
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_noarch_preferred_over_arch_when_version_greater_dep
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L1270-L1288
+    kind: solve
+    description: |
+      When installing via a dependency, noarch version (2.0) is still preferred over
+      arch-specific (1.0) when the noarch version is greater. The dep package itself
+      exists equally in arch and noarch, so arch is preferred for it.
+    input:
+      channels: channel-7
+      specs_to_add:
+        - noarch_ver_pkg_dep
+    output:
+      final_state:
+        - channel-7/noarch::noarch_ver_pkg-2.0-0
+        - channel-7/${{ arch }}::noarch_ver_pkg_dep-1.0-0
+
+  - name: test_noarch_preferred_over_arch_when_build_greater
+    id: B092
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_noarch_preferred_over_arch_when_build_greater
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L1290-L1304
+    kind: solve
+    description: |
+      When noarch has a higher build number (1) than the arch-specific build (0),
+      at the same version, the noarch version should be preferred.
+    input:
+      channels: channel-7
+      specs_to_add:
+        - noarch_build_pkg
+    output:
+      final_state:
+        - channel-7/noarch::noarch_build_pkg-1.0-1
+
+  - name: test_noarch_preferred_over_arch_when_build_greater_dep
+    id: B093
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_noarch_preferred_over_arch_when_build_greater_dep
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L1306-L1324
+    kind: solve
+    description: |
+      When installing via a dependency, noarch version with higher build number (1)
+      is preferred over arch-specific with lower build number (0). The dep package
+      itself is arch-preferred (equal versions in both subdirs).
+    input:
+      channels: channel-7
+      specs_to_add:
+        - noarch_build_pkg_dep
+    output:
+      final_state:
+        - channel-7/noarch::noarch_build_pkg-1.0-1
+        - channel-7/${{ arch }}::noarch_build_pkg_dep-1.0-0
+
