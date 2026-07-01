@@ -6210,3 +6210,18 @@ tests:
       final_state:
         - channel-1/${{ arch }}::libpng-1.5.13-1
         - channel-7/${{ arch }}::ts_mypackage-1.0-hash15_0
+
+  - name: test_empty
+    id: B127
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_empty
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L240-L242
+    kind: solve
+    description: |
+      Empty install with no specs_to_add. Solving with no requested packages should produce an
+      empty final state.
+    input:
+      channels: channel-1
+    output:
+      final_state: []
