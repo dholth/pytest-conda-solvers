@@ -5166,3 +5166,30 @@ tests:
       exception: ResolvePackageNotFound
       entries: []
 
+  - name: test_no_features_1
+    id: B094
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_no_features::1
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L862-L953
+    kind: solve
+    description: |
+      Install python 2.6, numpy 1.6, scipy 0.11 without any track_features spec.
+      Should resolve to non-mkl builds.
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "python 2.6*"
+        - "numpy 1.6*"
+        - "scipy 0.11*"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+        - channel-1/${{ arch }}::numpy-1.6.2-py26_4
+        - channel-1/${{ arch }}::scipy-0.11.0-np16py26_3
