@@ -5706,3 +5706,84 @@ tests:
       final_state:
         - channel-7/${{ arch }}::package1-1.0-0
         - channel-7/${{ arch }}::package2-1.0-0
+
+ - name: test_unsat_any_two_not_three_1
+    id: B085
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_unsat_any_two_not_three::1
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L528-L563
+    kind: solve
+    description: |
+      atnt_a and atnt_b can be installed together: a=1.0 and b=1.0 both need d >=1,<2.
+    input:
+      channels: channel-7
+      specs_to_add:
+        - atnt_a
+        - atnt_b
+    output:
+      final_state:
+        - channel-7/${{ arch }}::atnt_d-1.0-0
+        - channel-7/${{ arch }}::atnt_a-1.0-0
+        - channel-7/${{ arch }}::atnt_b-1.0-0
+
+  - name: test_unsat_any_two_not_three_2
+    id: B086
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_unsat_any_two_not_three::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L528-L563
+    kind: solve
+    description: |
+      atnt_a and atnt_c can be installed together: a=2.0 needs d >=2,<3, c=1.0 also needs d >=2,<3.
+    input:
+      channels: channel-7
+      specs_to_add:
+        - atnt_a
+        - atnt_c
+    output:
+      final_state:
+        - channel-7/${{ arch }}::atnt_d-2.0-0
+        - channel-7/${{ arch }}::atnt_a-2.0-0
+        - channel-7/${{ arch }}::atnt_c-1.0-0
+
+  - name: test_unsat_any_two_not_three_3
+    id: B087
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_unsat_any_two_not_three::3
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L528-L563
+    kind: solve
+    description: |
+      atnt_b and atnt_c can be installed together: b=2.0 and c=2.0 both need d >=3,<4.
+    input:
+      channels: channel-7
+      specs_to_add:
+        - atnt_b
+        - atnt_c
+    output:
+      final_state:
+        - channel-7/${{ arch }}::atnt_d-3.0-0
+        - channel-7/${{ arch }}::atnt_b-2.0-0
+        - channel-7/${{ arch }}::atnt_c-2.0-0
+
+  - name: test_unsat_any_two_not_three_4
+    id: B088
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_unsat_any_two_not_three::4
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L528-L563
+    kind: unsatisfiable
+    description: |
+      All three (atnt_a, atnt_b, atnt_c) cannot be installed together: no single
+      version of atnt_d satisfies all their version ranges simultaneously.
+    input:
+      channels: channel-7
+      specs_to_add:
+        - atnt_a
+        - atnt_b
+        - atnt_c
+    error:
+      exception: UnsatisfiableError
+      entries: []
+
