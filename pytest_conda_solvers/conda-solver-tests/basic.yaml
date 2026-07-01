@@ -5909,3 +5909,49 @@ tests:
         - channel-1/${{ arch }}::unixodbc-2.3.1-0
         - channel-1/${{ arch }}::numpy-1.5.1-py27_4
         - channel-1/${{ arch }}::iopro-1.4.3-np15py27_p0
+
+ - name: test_get_reduced_index_broadening_unsat_early_dep
+    id: B099
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_get_reduced_index_broadening_with_unsatisfiable_early_dep
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L1166-L1198
+    kind: solve
+    description: |
+      ri1_a-1.0 has an unsatisfiable dep (ri1_c ==2 but only ri1_c-1.0 exists).
+      The solver should fall back to ri1_a-2.0 which only needs ri1_b, which
+      in turn needs ri1_c (any version). Verifies that the order of index
+      reduction does not eliminate a valid solution.
+    input:
+      channels: channel-7
+      specs_to_add:
+        - ri1_a
+    output:
+      final_state:
+        - channel-7/${{ arch }}::ri1_c-1.0-0
+        - channel-7/${{ arch }}::ri1_b-1.0-0
+        - channel-7/${{ arch }}::ri1_a-2.0-0
+
+  - name: test_get_reduced_index_broadening_preferred_solution
+    id: B100
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_get_reduced_index_broadening_preferred_solution
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L1200-L1238
+    kind: solve
+    description: |
+      ri2_top-1.0 has a dep on ri2_bottom ==1.5 (too-specific). ri2_top-2.0
+      only depends on ri2_middle. The solver should pick ri2_top-2.0 and the
+      highest ri2_bottom-2.5, not the artificially constrained 1.5. Verifies
+      that spec broadening during index reduction does not incorrectly limit
+      the preferred solution.
+    input:
+      channels: channel-7
+      specs_to_add:
+        - ri2_top
+    output:
+      final_state:
+        - channel-7/${{ arch }}::ri2_bottom-2.5-0
+        - channel-7/${{ arch }}::ri2_middle-1.0-0
+        - channel-7/${{ arch }}::ri2_top-2.0-0
+
