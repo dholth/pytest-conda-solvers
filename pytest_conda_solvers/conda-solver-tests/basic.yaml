@@ -5685,3 +5685,24 @@ tests:
     error:
       exception: UnsatisfiableError
       entries: []
+
+  - name: test_circular_dependencies
+    id: B073
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_circular_dependencies
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L830-L845
+    kind: solve
+    description: |
+      Solving for packages with circular dependencies (package1 depends on package2,
+      package2 depends on package1) should succeed. The solver resolves the cycle
+      and installs both packages.
+    input:
+      channels: channel-7
+      specs_to_add:
+        - package1
+        - package2
+    output:
+      final_state:
+        - channel-7/${{ arch }}::package1-1.0-0
+        - channel-7/${{ arch }}::package2-1.0-0
