@@ -1,0 +1,22 @@
+{
+  "feature-1.0-0.tar.bz2": {
+    "build": "0",
+    "build_number": 0,
+    "depends": [
+      "python 3.3*"
+    ],
+    "name": "feature",
+    "track_features": "feature",
+    "version": "1.0"
+  },
+  "mypackage-1.0-0.tar.bz2": {
+    "build": "0",
+    "build_number": 0,
+    "depends": [
+      "python 3.3*"
+    ],
+    "features": "feature",
+    "name": "mypackage",
+    "version": "1.0"
+  }
+}
