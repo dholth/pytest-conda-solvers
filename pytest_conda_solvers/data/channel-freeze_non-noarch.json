@@ -1,0 +1,58 @@
+{
+  "foobar-1.0-0.tar.bz2": {
+    "name": "foobar",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["libbar 2.0.*", "libfoo 1.0.*"]
+  },
+  "foobar-2.0-0.tar.bz2": {
+    "name": "foobar",
+    "version": "2.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["libbar 2.0.*", "libfoo 2.0.*"]
+  },
+  "libbar-1.0-0.tar.bz2": {
+    "name": "libbar",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "libbar-2.0-0.tar.bz2": {
+    "name": "libbar",
+    "version": "2.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "libfoo-1.0-0.tar.bz2": {
+    "name": "libfoo",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "libfoo-2.0-0.tar.bz2": {
+    "name": "libfoo",
+    "version": "2.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": []
+  },
+  "qux-1.0-0.tar.bz2": {
+    "name": "qux",
+    "version": "1.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["libbar 2.0.*", "libfoo 1.0.*"]
+  },
+  "qux-2.0-0.tar.bz2": {
+    "name": "qux",
+    "version": "2.0",
+    "build": "0",
+    "build_number": 0,
+    "depends": ["libbar 1.0.*", "libfoo 2.0.*"]
+  }
+}
