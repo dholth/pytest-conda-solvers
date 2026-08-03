@@ -127,10 +127,11 @@ def _load_channel_package_index(channel_name, subdir):
 
 def package_record_from_dist_str(dist_str):
     DIST_STR_RE = re.compile(
-        "(?P<channel>.*)/(?P<subdir>.*)::(?P<name>.*)-(?P<version>.*)-(?P<build>.*?_?(?P<build_number>[0-9]+))"
+        "(?P<channel>.*)/(?P<subdir>.*)::(?P<name>.*)-(?P<version>.*)-(?P<build>.*?_?(?P<build_number>[0-9]+)?)"
     )
     spec = DIST_STR_RE.fullmatch(dist_str).groupdict()
-    spec["build_number"] = int(spec["build_number"])
+    # builds without a numeric tail (like blas-1.0-mkl) have no build number
+    spec["build_number"] = int(spec["build_number"] or 0)
 
     # Extract channel name and subdir before modifying spec["channel"]
     channel_name = spec["channel"].rsplit("/", 1)[-1]

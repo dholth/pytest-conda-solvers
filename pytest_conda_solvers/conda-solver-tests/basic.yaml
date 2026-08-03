@@ -3598,3 +3598,132 @@ tests:
       entries:
         - [a, c]
         - ["b", "c[version='>=2,<3']"]
+
+  - name: test_priority_1_2
+    id: B163
+    provenance:
+      node_id: tests/core/test_solve.py::test_priority_1::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2887-L2989
+    kind: solve
+    description: |
+      With channel priority disabled, the explicit specs upgrade into channel-4
+      (python 2.7.15, pandas 0.23.4, and the mkl/blas stack). Upstream asserts
+      only that the channel-4 python and pandas records are present; the full
+      state here is pinned from solver behaviour.
+    solvers: classic
+    input:
+      channels:
+        - channel-2
+        - channel-4
+      channel_priority: disabled
+      specs_to_add:
+        - pandas
+        - "python=2.7"
+      prefix:
+        - channel-2/${{ arch }}::mkl-2017.0.3-0
+        - channel-2/${{ arch }}::openssl-1.0.2l-0
+        - channel-2/${{ arch }}::readline-6.2-2
+        - channel-2/${{ arch }}::sqlite-3.13.0-0
+        - channel-2/${{ arch }}::tk-8.5.18-0
+        - channel-2/${{ arch }}::zlib-1.2.11-0
+        - channel-2/${{ arch }}::python-2.7.13-0
+        - channel-2/${{ arch }}::numpy-1.13.1-py27_0
+        - channel-2/${{ arch }}::pytz-2017.2-py27_0
+        - channel-2/${{ arch }}::six-1.10.0-py27_0
+        - channel-2/${{ arch }}::python-dateutil-2.6.1-py27_0
+        - channel-2/${{ arch }}::pandas-0.20.3-py27_0
+      history_specs:
+        - pandas
+        - "python=2.7"
+    output:
+      final_state:
+        - channel-2/${{ arch }}::libffi-3.2.1-1
+        - channel-2/${{ arch }}::zlib-1.2.11-0
+        - channel-4/${{ arch }}::blas-1.0-mkl
+        - channel-4/${{ arch }}::ca-certificates-2018.03.07-0
+        - channel-4/${{ arch }}::intel-openmp-2018.0.3-0
+        - channel-4/${{ arch }}::libedit-3.1.20170329-h6b74fdf_2
+        - channel-4/${{ arch }}::libgcc-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libgfortran-ng-7.2.0-hdf63c60_3
+        - channel-4/${{ arch }}::libstdcxx-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::mkl-2018.0.3-1
+        - channel-4/${{ arch }}::mkl_fft-1.0.4-py27h4414c95_1
+        - channel-4/${{ arch }}::mkl_random-1.0.1-py27h4414c95_1
+        - channel-4/${{ arch }}::ncurses-6.1-hf484d3e_0
+        - channel-4/${{ arch }}::numpy-1.15.0-py27h1b885b7_0
+        - channel-4/${{ arch }}::numpy-base-1.15.0-py27h3dfced4_0
+        - channel-4/${{ arch }}::openssl-1.0.2p-h14c3975_0
+        - channel-4/${{ arch }}::pandas-0.23.4-py27h04863e7_0
+        - channel-4/${{ arch }}::python-2.7.15-h1571d57_0
+        - channel-4/${{ arch }}::python-dateutil-2.7.3-py27_0
+        - channel-4/${{ arch }}::pytz-2018.5-py27_0
+        - channel-4/${{ arch }}::readline-7.0-ha6073c6_4
+        - channel-4/${{ arch }}::six-1.11.0-py27_1
+        - channel-4/${{ arch }}::sqlite-3.24.0-h84994c4_0
+        - channel-4/${{ arch }}::tk-8.6.7-hc745277_3
+
+  - name: test_priority_1_3
+    id: B164
+    provenance:
+      node_id: tests/core/test_solve.py::test_priority_1::3
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2887-L2989
+    kind: solve
+    description: |
+      Channel priority restored (flexible), so the environment downgrades back
+      into channel-2 (python 2.7.13, pandas 0.20.3). Only ca-certificates
+      survives from the channel-4 excursion. Upstream asserts only the two
+      channel-2 records; the full state here is pinned from solver behaviour.
+    solvers: classic
+    input:
+      channels:
+        - channel-2
+        - channel-4
+      channel_priority: flexible
+      specs_to_add:
+        - pandas
+        - "python=2.7"
+      prefix:
+        - channel-2/${{ arch }}::libffi-3.2.1-1
+        - channel-2/${{ arch }}::zlib-1.2.11-0
+        - channel-4/${{ arch }}::blas-1.0-mkl
+        - channel-4/${{ arch }}::ca-certificates-2018.03.07-0
+        - channel-4/${{ arch }}::intel-openmp-2018.0.3-0
+        - channel-4/${{ arch }}::libedit-3.1.20170329-h6b74fdf_2
+        - channel-4/${{ arch }}::libgcc-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libgfortran-ng-7.2.0-hdf63c60_3
+        - channel-4/${{ arch }}::libstdcxx-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::mkl-2018.0.3-1
+        - channel-4/${{ arch }}::mkl_fft-1.0.4-py27h4414c95_1
+        - channel-4/${{ arch }}::mkl_random-1.0.1-py27h4414c95_1
+        - channel-4/${{ arch }}::ncurses-6.1-hf484d3e_0
+        - channel-4/${{ arch }}::numpy-1.15.0-py27h1b885b7_0
+        - channel-4/${{ arch }}::numpy-base-1.15.0-py27h3dfced4_0
+        - channel-4/${{ arch }}::openssl-1.0.2p-h14c3975_0
+        - channel-4/${{ arch }}::pandas-0.23.4-py27h04863e7_0
+        - channel-4/${{ arch }}::python-2.7.15-h1571d57_0
+        - channel-4/${{ arch }}::python-dateutil-2.7.3-py27_0
+        - channel-4/${{ arch }}::pytz-2018.5-py27_0
+        - channel-4/${{ arch }}::readline-7.0-ha6073c6_4
+        - channel-4/${{ arch }}::six-1.11.0-py27_1
+        - channel-4/${{ arch }}::sqlite-3.24.0-h84994c4_0
+        - channel-4/${{ arch }}::tk-8.6.7-hc745277_3
+      history_specs:
+        - pandas
+        - "python=2.7"
+    output:
+      final_state:
+        - channel-2/${{ arch }}::mkl-2017.0.3-0
+        - channel-2/${{ arch }}::numpy-1.13.1-py27_0
+        - channel-2/${{ arch }}::openssl-1.0.2l-0
+        - channel-2/${{ arch }}::pandas-0.20.3-py27_0
+        - channel-2/${{ arch }}::python-2.7.13-0
+        - channel-2/${{ arch }}::python-dateutil-2.6.1-py27_0
+        - channel-2/${{ arch }}::pytz-2017.2-py27_0
+        - channel-2/${{ arch }}::readline-6.2-2
+        - channel-2/${{ arch }}::six-1.10.0-py27_0
+        - channel-2/${{ arch }}::sqlite-3.13.0-0
+        - channel-2/${{ arch }}::tk-8.5.18-0
+        - channel-2/${{ arch }}::zlib-1.2.11-0
+        - channel-4/${{ arch }}::ca-certificates-2018.03.07-0
