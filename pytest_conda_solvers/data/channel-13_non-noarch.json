@@ -1,0 +1,21 @@
+{
+  "pandas-0.10.1-np17py27_0.tar.bz2": {
+    "build": "np17py27_0",
+    "build_number": 0,
+    "depends": [
+      "dateutil",
+      "numpy 1.7*",
+      "python 2.7*",
+      "scipy 0.11.0"
+    ],
+    "md5": "a695aa2b170ab27b9964175c73edab14",
+    "name": "pandas",
+    "requires": [
+      "dateutil 1.5",
+      "numpy 1.7",
+      "python 2.7",
+      "scipy 0.11.0"
+    ],
+    "version": "0.10.1"
+  }
+}

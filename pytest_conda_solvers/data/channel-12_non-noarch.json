@@ -1,0 +1,42 @@
+{
+  "a-2.0-0.tar.bz2": {
+    "build": "0",
+    "build_number": 0,
+    "depends": [
+      "c"
+    ],
+    "name": "a",
+    "subdir": "linux-64",
+    "timestamp": 0,
+    "version": "2.0"
+  },
+  "b-2.0-0.tar.bz2": {
+    "build": "0",
+    "build_number": 0,
+    "depends": [
+      "c >=2,<3"
+    ],
+    "name": "b",
+    "subdir": "linux-64",
+    "timestamp": 0,
+    "version": "2.0"
+  },
+  "c-1.0-0.tar.bz2": {
+    "build": "0",
+    "build_number": 0,
+    "depends": [],
+    "name": "c",
+    "subdir": "linux-64",
+    "timestamp": 0,
+    "version": "1.0"
+  },
+  "c-2.0-0.tar.bz2": {
+    "build": "0",
+    "build_number": 0,
+    "depends": [],
+    "name": "c",
+    "subdir": "linux-64",
+    "timestamp": 0,
+    "version": "2.0"
+  }
+}

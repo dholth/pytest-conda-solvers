@@ -3432,3 +3432,169 @@ tests:
         - channel-2/${{ arch }}::six-1.10.0-py27_0
         - channel-2/${{ arch }}::python-dateutil-2.6.1-py27_0
         - channel-2/${{ arch }}::pandas-0.20.3-py27_0
+
+  - name: test_channel_priority_1_1
+    id: B148
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_channel_priority_1::1
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L956-L989
+    kind: solve
+    description: |
+      channel-13 (higher priority) holds only pandas 0.10.1 np17py27_0, which
+      conflicts with the numpy 1.6* spec, so with flexible priority the solver
+      falls back to the channel-1 pandas. Upstream is xfail, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L955
+      and its stage-1 assertion names a package that does not exist in its
+      channel-A, so this expectation reflects actual solver behaviour instead.
+    input:
+      channels: [channel-13, channel-1]
+      specs_to_add:
+        - pandas
+        - "python 2.7*"
+        - "numpy 1.6*"
+      channel_priority: flexible
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::numpy-1.6.2-py27_4
+        - channel-1/${{ arch }}::pytz-2013b-py27_0
+        - channel-1/${{ arch }}::six-1.3.0-py27_0
+        - channel-1/${{ arch }}::dateutil-2.1-py27_1
+        - channel-1/${{ arch }}::scipy-0.12.0-np16py27_0
+        - channel-1/${{ arch }}::pandas-0.11.0-np16py27_1
+
+  - name: test_channel_priority_1_2
+    id: B149
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_channel_priority_1::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L956-L989
+    kind: solve
+    description: |
+      With priority disabled the highest pandas build wins, which is the
+      channel-1 np16py27_1 build.
+    input:
+      channels: [channel-13, channel-1]
+      specs_to_add:
+        - pandas
+        - "python 2.7*"
+        - "numpy 1.6*"
+      channel_priority: disabled
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::numpy-1.6.2-py27_4
+        - channel-1/${{ arch }}::pytz-2013b-py27_0
+        - channel-1/${{ arch }}::six-1.3.0-py27_0
+        - channel-1/${{ arch }}::dateutil-2.1-py27_1
+        - channel-1/${{ arch }}::scipy-0.12.0-np16py27_0
+        - channel-1/${{ arch }}::pandas-0.11.0-np16py27_1
+
+  - name: test_channel_priority_1_3
+    id: B150
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_channel_priority_1::3
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L956-L989
+    kind: solve
+    description: |
+      With the channel order reversed, channel-1 has priority and everything
+      comes from it.
+    input:
+      channels: [channel-1, channel-13]
+      specs_to_add:
+        - pandas
+        - "python 2.7*"
+        - "numpy 1.6*"
+      channel_priority: flexible
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::numpy-1.6.2-py27_4
+        - channel-1/${{ arch }}::pytz-2013b-py27_0
+        - channel-1/${{ arch }}::six-1.3.0-py27_0
+        - channel-1/${{ arch }}::dateutil-2.1-py27_1
+        - channel-1/${{ arch }}::scipy-0.12.0-np16py27_0
+        - channel-1/${{ arch }}::pandas-0.11.0-np16py27_1
+
+  - name: test_unsat_channel_priority_1
+    id: B151
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_unsat_channel_priority::1
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L992-L1051
+    kind: solve
+    description: |
+      With flexible priority, a and b come from the higher-priority channel-11
+      (version 1.0) and only b's dependency c >=2,<3 falls back to channel-12.
+      Upstream is xfail because the env var it sets has no effect, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L991
+    input:
+      channels: [channel-11, channel-12]
+      specs_to_add: [a, b]
+      channel_priority: flexible
+    output:
+      final_state:
+        - channel-11/${{ arch }}::a-1.0-0
+        - channel-11/${{ arch }}::b-1.0-0
+        - channel-12/${{ arch }}::c-2.0-0
+
+  - name: test_unsat_channel_priority_2
+    id: B152
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_unsat_channel_priority::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L992-L1051
+    kind: solve
+    description: |
+      With priority disabled the highest versions win, all from channel-12.
+    input:
+      channels: [channel-11, channel-12]
+      specs_to_add: [a, b]
+      channel_priority: disabled
+    output:
+      final_state:
+        - channel-12/${{ arch }}::a-2.0-0
+        - channel-12/${{ arch }}::b-2.0-0
+        - channel-12/${{ arch }}::c-2.0-0
+
+  - name: test_unsat_channel_priority_3
+    id: B153
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_unsat_channel_priority::3
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L992-L1051
+    kind: unsatisfiable
+    description: |
+      With strict priority, c must come from channel-11, which only has c 1.0,
+      so b cannot be satisfied. Classic reports the a-c chain alongside the b
+      conflict that upstream's (xfail) assertion names, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L1051
+    input:
+      channels: [channel-11, channel-12]
+      specs_to_add: [a, b]
+      channel_priority: strict
+    error:
+      exception: UnsatisfiableError
+      entries:
+        - [a, c]
+        - ["b", "c[version='>=2,<3']"]
