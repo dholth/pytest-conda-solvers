@@ -5178,18 +5178,199 @@ tests:
       Should resolve to non-mkl builds.
     input:
       channels: channel-1
+      add_pip: true
       specs_to_add:
         - "python 2.6*"
         - "numpy 1.6*"
         - "scipy 0.11*"
     output:
       final_state:
+        - channel-1/${{ arch }}::distribute-0.6.36-py26_1
+        - channel-1/${{ arch }}::numpy-1.6.2-py26_4
         - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::pip-1.3.1-py26_1
+        - channel-1/${{ arch }}::python-2.6.8-6
         - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::scipy-0.11.0-np16py26_3
         - channel-1/${{ arch }}::sqlite-3.7.13-0
         - channel-1/${{ arch }}::system-5.8-1
         - channel-1/${{ arch }}::tk-8.5.13-0
         - channel-1/${{ arch }}::zlib-1.2.7-0
+
+  - name: test_no_features_2
+    id: B166
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_no_features::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L862-L953
+    kind: solve
+    description: |
+      Same specs plus a track_features=mkl spec, so the mkl-featured builds of
+      numpy and scipy are selected along with mkl-rt.
+    solvers: classic
+    input:
+      channels: channel-1
+      add_pip: true
+      specs_to_add:
+        - "python 2.6*"
+        - "numpy 1.6*"
+        - "scipy 0.11*"
+        - "*[track_features=mkl]"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::distribute-0.6.36-py26_1
+        - channel-1/${{ arch }}::mkl-rt-11.0-p0
+        - channel-1/${{ arch }}::numpy-1.6.2-py26_p4
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::pip-1.3.1-py26_1
         - channel-1/${{ arch }}::python-2.6.8-6
-        - channel-1/${{ arch }}::numpy-1.6.2-py26_4
-        - channel-1/${{ arch }}::scipy-0.11.0-np16py26_3
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::scipy-0.11.0-np16py26_p3
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+
+  - name: test_no_features_3
+    id: B167
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_no_features::3
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L862-L953
+    kind: solve
+    description: |
+      Install the added pandas 0.12.0 np16py27_0 build without a features
+      spec. The plain numpy build is selected, not the added featured py27_p5
+      build. channel-14 is channel-1 plus the two records upstream appends to
+      its index for these stages.
+    solvers: classic
+    input:
+      channels: channel-14
+      add_pip: true
+      specs_to_add:
+        - "pandas 0.12.0 np16py27_0"
+        - "python 2.7*"
+    output:
+      final_state:
+        - channel-14/${{ arch }}::dateutil-2.1-py27_1
+        - channel-14/${{ arch }}::distribute-0.6.36-py27_1
+        - channel-14/${{ arch }}::numpy-1.6.2-py27_4
+        - channel-14/${{ arch }}::openssl-1.0.1c-0
+        - channel-14/${{ arch }}::pandas-0.12.0-np16py27_0
+        - channel-14/${{ arch }}::pip-1.3.1-py27_1
+        - channel-14/${{ arch }}::python-2.7.5-0
+        - channel-14/${{ arch }}::pytz-2013b-py27_0
+        - channel-14/${{ arch }}::readline-6.2-0
+        - channel-14/${{ arch }}::six-1.3.0-py27_0
+        - channel-14/${{ arch }}::sqlite-3.7.13-0
+        - channel-14/${{ arch }}::system-5.8-1
+        - channel-14/${{ arch }}::tk-8.5.13-0
+        - channel-14/${{ arch }}::zlib-1.2.7-0
+
+  - name: test_no_features_4
+    id: B168
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_no_features::4
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L862-L953
+    kind: solve
+    description: |
+      Same install with a track_features=mkl spec. The featured py27_p4 numpy
+      wins (not the added py27_p5 build, which has build_number 0), and mkl-rt
+      joins the environment.
+    solvers: classic
+    input:
+      channels: channel-14
+      add_pip: true
+      specs_to_add:
+        - "pandas 0.12.0 np16py27_0"
+        - "python 2.7*"
+        - "*[track_features=mkl]"
+    output:
+      final_state:
+        - channel-14/${{ arch }}::dateutil-2.1-py27_1
+        - channel-14/${{ arch }}::distribute-0.6.36-py27_1
+        - channel-14/${{ arch }}::mkl-rt-11.0-p0
+        - channel-14/${{ arch }}::numpy-1.6.2-py27_p4
+        - channel-14/${{ arch }}::openssl-1.0.1c-0
+        - channel-14/${{ arch }}::pandas-0.12.0-np16py27_0
+        - channel-14/${{ arch }}::pip-1.3.1-py27_1
+        - channel-14/${{ arch }}::python-2.7.5-0
+        - channel-14/${{ arch }}::pytz-2013b-py27_0
+        - channel-14/${{ arch }}::readline-6.2-0
+        - channel-14/${{ arch }}::six-1.3.0-py27_0
+        - channel-14/${{ arch }}::sqlite-3.7.13-0
+        - channel-14/${{ arch }}::system-5.8-1
+        - channel-14/${{ arch }}::tk-8.5.13-0
+        - channel-14/${{ arch }}::zlib-1.2.7-0
+
+  - name: test_mkl_2
+    id: B169
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_mkl::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L281-L285
+    kind: solve
+    description: |
+      Install mkl 11* with an explicit track_features=mkl spec. Upstream
+      asserts this solve equals the plain "mkl" install, so the state here is
+      identical to test_mkl's.
+    solvers: classic
+    input:
+      channels: channel-1
+      add_pip: true
+      specs_to_add:
+        - "mkl 11*"
+        - "*[track_features=mkl]"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::distribute-0.6.36-py33_1
+        - channel-1/${{ arch }}::mkl-11.0-np17py33_p1
+        - channel-1/${{ arch }}::mkl-rt-11.0-p0
+        - channel-1/${{ arch }}::mkl-service-1.0.0-py33_p0
+        - channel-1/${{ arch }}::numpy-1.7.1-py33_p0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::pip-1.3.1-py33_1
+        - channel-1/${{ arch }}::python-3.3.2-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::scipy-0.12.0-np17py33_p0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+
+  - name: test_accelerate_2
+    id: B170
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_accelerate::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L287-L291
+    kind: solve
+    description: |
+      Install accelerate with an explicit track_features=mkl spec. Upstream
+      asserts this solve equals the plain "accelerate" install, so the state
+      here is identical to test_accelerate's.
+    solvers: classic
+    input:
+      channels: channel-1
+      add_pip: true
+      specs_to_add:
+        - accelerate
+        - "*[track_features=mkl]"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::accelerate-1.1.0-np17py33_p0
+        - channel-1/${{ arch }}::distribute-0.6.36-py33_1
+        - channel-1/${{ arch }}::mkl-11.0-np17py33_p1
+        - channel-1/${{ arch }}::mkl-rt-11.0-p0
+        - channel-1/${{ arch }}::mkl-service-1.0.0-py33_p0
+        - channel-1/${{ arch }}::numpy-1.7.1-py33_p0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::pip-1.3.1-py33_1
+        - channel-1/${{ arch }}::python-3.3.2-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::scipy-0.12.0-np17py33_p0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
