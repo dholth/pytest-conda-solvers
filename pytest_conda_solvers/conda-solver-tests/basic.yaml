@@ -4133,3 +4133,130 @@ tests:
         - channel-1/${{ arch }}::zlib-1.2.7-0
         - channel-1/${{ arch }}::python-2.7.5-0
         - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+
+  - name: test_remove_1
+    id: B154
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_remove::1
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L1057-L1108
+    kind: solve
+    description: |
+      Install pandas with python 2.7. Sets up the environment the two remove
+      stages start from. Upstream skips libmamba for this test, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/test_solvers.py#L22-L40
+    solvers: classic
+    input:
+      channels: channel-1
+      specs_to_add: [pandas, "python 2.7*"]
+      add_pip: true
+    output:
+      final_state:
+        - channel-1/${{ arch }}::dateutil-2.1-py27_1
+        - channel-1/${{ arch }}::distribute-0.6.36-py27_1
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::pandas-0.11.0-np17py27_1
+        - channel-1/${{ arch }}::pip-1.3.1-py27_1
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::pytz-2013b-py27_0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::scipy-0.12.0-np17py27_0
+        - channel-1/${{ arch }}::six-1.3.0-py27_0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+
+  - name: test_remove_2
+    id: B155
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_remove::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L1057-L1108
+    kind: solve
+    description: |
+      Remove pandas. Only pandas is unlinked, its dependencies stay.
+    solvers: classic
+    input:
+      channels: channel-1
+      specs_to_remove: pandas
+      add_pip: true
+      prefix:
+        - channel-1/${{ arch }}::dateutil-2.1-py27_1
+        - channel-1/${{ arch }}::distribute-0.6.36-py27_1
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::pandas-0.11.0-np17py27_1
+        - channel-1/${{ arch }}::pip-1.3.1-py27_1
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::pytz-2013b-py27_0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::scipy-0.12.0-np17py27_0
+        - channel-1/${{ arch }}::six-1.3.0-py27_0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+    output:
+      final_state:
+        - channel-1/${{ arch }}::dateutil-2.1-py27_1
+        - channel-1/${{ arch }}::distribute-0.6.36-py27_1
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::pip-1.3.1-py27_1
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::pytz-2013b-py27_0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::scipy-0.12.0-np17py27_0
+        - channel-1/${{ arch }}::six-1.3.0-py27_0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+
+  - name: test_remove_3
+    id: B156
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_remove::3
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L1057-L1108
+    kind: solve
+    description: |
+      Remove numpy from the full environment. Its dependents pandas and scipy
+      are removed with it, while dateutil stays behind.
+    solvers: classic
+    input:
+      channels: channel-1
+      specs_to_remove: numpy
+      add_pip: true
+      prefix:
+        - channel-1/${{ arch }}::dateutil-2.1-py27_1
+        - channel-1/${{ arch }}::distribute-0.6.36-py27_1
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::pandas-0.11.0-np17py27_1
+        - channel-1/${{ arch }}::pip-1.3.1-py27_1
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::pytz-2013b-py27_0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::scipy-0.12.0-np17py27_0
+        - channel-1/${{ arch }}::six-1.3.0-py27_0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+    output:
+      final_state:
+        - channel-1/${{ arch }}::dateutil-2.1-py27_1
+        - channel-1/${{ arch }}::distribute-0.6.36-py27_1
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::pip-1.3.1-py27_1
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::pytz-2013b-py27_0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::six-1.3.0-py27_0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
