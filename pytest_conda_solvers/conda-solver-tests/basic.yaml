@@ -5893,22 +5893,25 @@ tests:
       against numpy 1.5, we get iopro-1.4.3-np15py27_p0.
     input:
       channels: channel-1
+      add_pip: true
       specs_to_add:
         - iopro
         - "python 2.7*"
         - "numpy 1.5*"
     output:
       final_state:
+        - channel-1/${{ arch }}::distribute-0.6.36-py27_1
+        - channel-1/${{ arch }}::iopro-1.4.3-np15py27_p0
+        - channel-1/${{ arch }}::numpy-1.5.1-py27_4
         - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::pip-1.3.1-py27_1
+        - channel-1/${{ arch }}::python-2.7.5-0
         - channel-1/${{ arch }}::readline-6.2-0
         - channel-1/${{ arch }}::sqlite-3.7.13-0
         - channel-1/${{ arch }}::system-5.8-1
         - channel-1/${{ arch }}::tk-8.5.13-0
-        - channel-1/${{ arch }}::zlib-1.2.7-0
-        - channel-1/${{ arch }}::python-2.7.5-0
         - channel-1/${{ arch }}::unixodbc-2.3.1-0
-        - channel-1/${{ arch }}::numpy-1.5.1-py27_4
-        - channel-1/${{ arch }}::iopro-1.4.3-np15py27_p0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
 
   - name: test_get_reduced_index_broadening_unsat_early_dep
     id: B099
@@ -6225,3 +6228,154 @@ tests:
       channels: channel-1
     output:
       final_state: []
+
+  - name: test_pseudo_boolean_2
+    id: B171
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_pseudo_boolean::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L316-L349
+    kind: solve
+    description: |
+      Same iopro install with a track_features=mkl spec, selecting the
+      mkl-featured numpy build and mkl-rt.
+    solvers: classic
+    input:
+      channels: channel-1
+      add_pip: true
+      specs_to_add:
+        - iopro
+        - "python 2.7*"
+        - "numpy 1.5*"
+        - "*[track_features=mkl]"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::distribute-0.6.36-py27_1
+        - channel-1/${{ arch }}::iopro-1.4.3-np15py27_p0
+        - channel-1/${{ arch }}::mkl-rt-11.0-p0
+        - channel-1/${{ arch }}::numpy-1.5.1-py27_p4
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::pip-1.3.1-py27_1
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::unixodbc-2.3.1-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+
+  - name: test_circular_dependencies_2
+    id: B172
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_circular_dependencies::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L830-L845
+    kind: solve
+    description: |
+      Installing package1 alone pulls in package2 through the circular
+      dependency. Upstream asserts this equals the combined install.
+    input:
+      channels: channel-7
+      specs_to_add: package1
+    output:
+      final_state:
+        - channel-7/${{ arch }}::package1-1.0-0
+        - channel-7/${{ arch }}::package2-1.0-0
+
+  - name: test_circular_dependencies_3
+    id: B173
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_circular_dependencies::3
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L830-L845
+    kind: solve
+    description: |
+      Installing package2 alone gives the same two-package state.
+    input:
+      channels: channel-7
+      specs_to_add: package2
+    output:
+      final_state:
+        - channel-7/${{ arch }}::package1-1.0-0
+        - channel-7/${{ arch }}::package2-1.0-0
+
+  - name: test_timestamps_and_deps_4
+    id: B174
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_timestamps_and_deps::3
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L605-L643
+    kind: solve
+    description: |
+      Inner solve of the not-disrupted regression pair: libpng 1.2.* alone.
+    input:
+      channels:
+        - channel-7
+        - channel-1
+      specs_to_add: "libpng 1.2.*"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::libpng-1.2.50-0
+
+  - name: test_timestamps_and_deps_5
+    id: B175
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_timestamps_and_deps::4
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L605-L643
+    kind: solve
+    description: |
+      Regression pair for conda#6271: reinstalling ts_mypackage alongside the
+      exact libpng 1.2 record must reproduce the hash12 solution, not be
+      disrupted by the newer-timestamped hash12 build preferences.
+    input:
+      channels:
+        - channel-7
+        - channel-1
+      specs_to_add:
+        - ts_mypackage
+        - "libpng==1.2.50=0"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::libpng-1.2.50-0
+        - channel-7/${{ arch }}::ts_mypackage-1.0-hash12_0
+
+  - name: test_timestamps_and_deps_6
+    id: B176
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_timestamps_and_deps::5
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L605-L643
+    kind: solve
+    description: |
+      Inner solve of the second pair: libpng 1.5.* alone.
+    input:
+      channels:
+        - channel-7
+        - channel-1
+      specs_to_add: "libpng 1.5.*"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::libpng-1.5.13-1
+
+  - name: test_timestamps_and_deps_7
+    id: B177
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_timestamps_and_deps::6
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L605-L643
+    kind: solve
+    description: |
+      Reinstalling ts_mypackage alongside the exact libpng 1.5 record
+      reproduces the hash15 solution despite hash12's newer timestamp.
+    input:
+      channels:
+        - channel-7
+        - channel-1
+      specs_to_add:
+        - ts_mypackage
+        - "libpng==1.5.13=1"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::libpng-1.5.13-1
+        - channel-7/${{ arch }}::ts_mypackage-1.0-hash15_0
