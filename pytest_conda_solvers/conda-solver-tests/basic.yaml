@@ -2880,3 +2880,211 @@ tests:
         - channel-1/${{ arch }}::zlib-1.2.7-0
         - channel-1/${{ arch }}::python-2.7.3-7
         - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+  - name: test_update_prune_5_1a
+    id: B145a
+    provenance:
+      node_id: tests/core/test_solve.py::test_update_prune_5::1
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L817-L853
+    kind: solve
+    description: |
+      Fresh install of python=2.7 with the numexpr==2.0.1=np17py27_p3 feature
+      build. Classic maximises the mkl track-feature, pulling in the featured
+      builds of numpy, scipy, scikit-learn, and the mkl stack.
+    solvers: classic
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "python=2.7"
+        - "numexpr==2.0.1=np17py27_p3"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::mkl-11.0-np17py27_p1
+        - channel-1/${{ arch }}::mkl-rt-11.0-p0
+        - channel-1/${{ arch }}::numexpr-2.0.1-np17py27_p3
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_p0
+        - channel-1/${{ arch }}::mkl-service-1.0.0-py27_p0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::scikit-learn-0.13.1-np17py27_p0
+        - channel-1/${{ arch }}::scipy-0.12.0-np17py27_p0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+
+  - name: test_update_prune_5_1b
+    id: B145b
+    provenance:
+      node_id: tests/core/test_solve.py::test_update_prune_5::1
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L817-L853
+    kind: solve
+    description: |
+      Same install under libmamba, which does not support features and keeps
+      only the direct dependencies of the requested numexpr build.
+    solvers: libmamba
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "python=2.7"
+        - "numexpr==2.0.1=np17py27_p3"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::mkl-rt-11.0-p0
+        - channel-1/${{ arch }}::numexpr-2.0.1-np17py27_p3
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+
+  - name: test_update_prune_5_2a_prune
+    id: B146a
+    provenance:
+      node_id: tests/core/test_solve.py::test_update_prune_5::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L817-L853
+    kind: solve
+    description: |
+      Solve the p2 specs against the classic stage-1 prefix with prune=true, so
+      prefix data is ignored and the featured extras are dropped. Upstream
+      asserts the absence of a constriction diagnostic on stdout, which is not
+      representable here.
+    solvers: classic
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "python=2.7"
+        - "numexpr==2.0.1=np17py27_p2"
+      prefix:
+        - channel-1/${{ arch }}::mkl-11.0-np17py27_p1
+        - channel-1/${{ arch }}::mkl-rt-11.0-p0
+        - channel-1/${{ arch }}::numexpr-2.0.1-np17py27_p3
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_p0
+        - channel-1/${{ arch }}::mkl-service-1.0.0-py27_p0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::scikit-learn-0.13.1-np17py27_p0
+        - channel-1/${{ arch }}::scipy-0.12.0-np17py27_p0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+      history_specs:
+        - "python=2.7"
+        - "numexpr==2.0.1=np17py27_p3"
+      prune: true
+    output:
+      final_state:
+        - channel-1/${{ arch }}::mkl-rt-11.0-p0
+        - channel-1/${{ arch }}::numexpr-2.0.1-np17py27_p2
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_p0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+
+  - name: test_update_prune_5_2b_prune
+    id: B146b
+    provenance:
+      node_id: tests/core/test_solve.py::test_update_prune_5::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L817-L853
+    kind: solve
+    description: |
+      Same pruned solve under libmamba, starting from its own stage-1 state.
+    solvers: libmamba
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "python=2.7"
+        - "numexpr==2.0.1=np17py27_p2"
+      prefix:
+        - channel-1/${{ arch }}::mkl-rt-11.0-p0
+        - channel-1/${{ arch }}::numexpr-2.0.1-np17py27_p3
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+      history_specs:
+        - "python=2.7"
+        - "numexpr==2.0.1=np17py27_p3"
+      prune: true
+    output:
+      final_state:
+        - channel-1/${{ arch }}::numexpr-2.0.1-np17py27_p2
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+
+  - name: test_update_prune_5_2_no_prune
+    id: B147
+    provenance:
+      node_id: tests/core/test_solve.py::test_update_prune_5::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L817-L853
+    kind: solve
+    description: |
+      Same solve without prune, so classic keeps the featured extras from the
+      prefix. Upstream asserts the presence of the constriction diagnostic on
+      stdout (not representable here) and strict-xfails libmamba on it, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L820-L826
+    solvers: classic
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "python=2.7"
+        - "numexpr==2.0.1=np17py27_p2"
+      prefix:
+        - channel-1/${{ arch }}::mkl-11.0-np17py27_p1
+        - channel-1/${{ arch }}::mkl-rt-11.0-p0
+        - channel-1/${{ arch }}::numexpr-2.0.1-np17py27_p3
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_p0
+        - channel-1/${{ arch }}::mkl-service-1.0.0-py27_p0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::scikit-learn-0.13.1-np17py27_p0
+        - channel-1/${{ arch }}::scipy-0.12.0-np17py27_p0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+      history_specs:
+        - "python=2.7"
+        - "numexpr==2.0.1=np17py27_p3"
+      prune: false
+    output:
+      final_state:
+        - channel-1/${{ arch }}::mkl-11.0-np17py27_p1
+        - channel-1/${{ arch }}::mkl-rt-11.0-p0
+        - channel-1/${{ arch }}::numexpr-2.0.1-np17py27_p2
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_p0
+        - channel-1/${{ arch }}::mkl-service-1.0.0-py27_p0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::scikit-learn-0.13.1-np17py27_p0
+        - channel-1/${{ arch }}::scipy-0.12.0-np17py27_p0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
