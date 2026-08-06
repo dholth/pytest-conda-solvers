@@ -4334,8 +4334,9 @@ tests:
       Remove pycosat from the conda-build environment. conda-build and conda
       are unlinked with it, since conda has a constrained dependency on
       pycosat. Upstream asserts that these three are contained in the unlink
-      set and that nothing is linked; the full unlink set here is pinned from
-      solver behaviour.
+      set and that nothing is linked (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2874-L2884),
+      and the full unlink set here is pinned from solver behaviour.
     input:
       channels: channel-4
       specs_to_remove: pycosat
@@ -4451,9 +4452,11 @@ tests:
     description: |
       Add six<1.10 while removing pytz from the restored channel-2 environment.
       six downgrades to 1.9.0 and pandas leaves with pytz, its dependency.
-      Upstream asserts the python and six records plus the absence of pandas;
-      the full state here is pinned from solver behaviour. Stages 1-3 live in
-      the downgrade-and-priority PR.
+      Upstream asserts the python and six records plus the absence of pandas
+      (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2981-L2989),
+      and the full state here is pinned from solver behaviour. Stages 1-3 live
+      in the downgrade-and-priority PR.
     solvers: classic
     input:
       channels:
