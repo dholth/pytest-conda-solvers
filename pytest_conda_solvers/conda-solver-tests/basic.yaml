@@ -2743,8 +2743,9 @@ tests:
       Remove accelerate from the environment specs and prune. Every dependency of accelerate
       (MKL stack) is removed. Only python=2.7.3 and its minimal deps remain.
       Upstream never reaches this stage under libmamba, because the
-      function-level strict xfail fails on stage 1 first, so there is no
-      libmamba expectation to port.
+      function-level strict xfail (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L600-L606)
+      fails on stage 1 first, so there is no libmamba expectation to port.
     solvers: classic
     input:
       channels: channel-1
