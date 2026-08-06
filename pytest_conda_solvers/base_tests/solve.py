@@ -182,3 +182,27 @@ class TestSolveRegressions:
             unlink_dists, link_dists = solver.solve_for_diff()
             assert not unlink_dists
             assert not link_dists
+
+    def test_globstr_matchspec_non_compatible_construction(
+        self, tmpdir, solver_backend, channel_server
+    ):
+        """Case 1 of test_globstr_matchspec_non_compatible: directly
+        incompatible build-string globs raise ValueError during solver
+        construction, before any solve starts.
+
+        Provenance: tests/core/test_solve.py::test_globstr_matchspec_non_compatible
+        (case 1) at conda commit 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438,
+        https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3833-L3842
+        Cases 2-3 are ported as B083/B084 in conda-solver-tests/basic.yaml.
+        """
+        specs = (MatchSpec("accelerate=*=np17*"), MatchSpec("accelerate=*=np16*"))
+        with pytest.raises(ValueError):
+            with get_solver(
+                solver_backend,
+                tmpdir,
+                channel_server,
+                ("channel-1",),
+                ("linux-64", "noarch"),
+                specs_to_add=specs,
+            ) as solver:
+                solver.solve_final_state()
