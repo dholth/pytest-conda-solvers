@@ -3204,8 +3204,8 @@ tests:
         - channel-1/${{ arch }}::zlib-1.2.7-0
         - channel-1/${{ arch }}::python-2.6.8-6
 
-  - name: test_downgrade_python_prevented_2
-    id: B067
+  - name: test_downgrade_python_prevented_2a
+    id: B067a
     provenance:
       node_id: tests/core/test_solve.py::test_downgrade_python_prevented_with_sane_message::2
       commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
@@ -3214,6 +3214,10 @@ tests:
     description: |
       With python=2.6 installed and pinned in history, try to install scikit-learn==0.13.
       All scikit-learn 0.13 builds require python 2.7*, so this is unsatisfiable.
+      Classic variant: upstream asserts solver-specific message snippets, carried
+      here as message_includes, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3368-L3373
+    solvers: classic
     input:
       channels: channel-1
       specs_to_add: "scikit-learn==0.13"
@@ -3229,9 +3233,49 @@ tests:
     error:
       exception: UnsatisfiableError
       entries: []
+      message_includes:
+        - "incompatible with the existing python installation in your environment:"
+        - "- scikit-learn==0.13 -> python=2.7"
+        - "Your python: python=2.6"
 
-  - name: test_downgrade_python_prevented_3
-    id: B068
+  - name: test_downgrade_python_prevented_2b
+    id: B067b
+    provenance:
+      node_id: tests/core/test_solve.py::test_downgrade_python_prevented_with_sane_message::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3336-L3411
+    kind: unsatisfiable
+    description: |
+      libmamba variant of the scikit-learn==0.13 downgrade-prevention stage.
+      Upstream asserts different snippets for this solver, carried here as
+      message_includes. Its two regex snippets (python.*2.6 and
+      scikit-learn.*0.13) are realised as the literal fragments python=2.6
+      and scikit-learn ==0.13 from the actual message, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3374-L3380
+    solvers: libmamba
+    input:
+      channels: channel-1
+      specs_to_add: "scikit-learn==0.13"
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+      history_specs: "python=2.6"
+    error:
+      exception: UnsatisfiableError
+      entries: []
+      message_includes:
+        - "Encountered problems while solving"
+        - "Pins seem to be involved in the conflict. Currently pinned specs"
+        - "python=2.6"
+        - "scikit-learn ==0.13"
+
+  - name: test_downgrade_python_prevented_3a
+    id: B068a
     provenance:
       node_id: tests/core/test_solve.py::test_downgrade_python_prevented_with_sane_message::3
       commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
@@ -3240,6 +3284,10 @@ tests:
     description: |
       With python=2.6 installed, try to install unsatisfiable-with-py26 which depends
       on scikit-learn==0.13 (py27 only). The dependency chain is unsatisfiable.
+      Classic variant: upstream asserts solver-specific message snippets, carried
+      here as message_includes, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3396-L3401
+    solvers: classic
     input:
       channels: channel-1
       specs_to_add: unsatisfiable-with-py26
@@ -3255,6 +3303,45 @@ tests:
     error:
       exception: UnsatisfiableError
       entries: []
+      message_includes:
+        - "incompatible with the existing python installation in your environment:"
+        - "- unsatisfiable-with-py26 -> python=2.7"
+        - "Your python: python=2.6"
+
+  - name: test_downgrade_python_prevented_3b
+    id: B068b
+    provenance:
+      node_id: tests/core/test_solve.py::test_downgrade_python_prevented_with_sane_message::3
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3336-L3411
+    kind: unsatisfiable
+    description: |
+      libmamba variant of the unsatisfiable-with-py26 downgrade-prevention
+      stage. Upstream asserts different snippets for this solver, carried here
+      as message_includes. Its regex snippet python.*2.6 is realised as the
+      literal fragment python=2.6 from the actual message, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3402-L3408
+    solvers: libmamba
+    input:
+      channels: channel-1
+      specs_to_add: unsatisfiable-with-py26
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+      history_specs: "python=2.6"
+    error:
+      exception: UnsatisfiableError
+      entries: []
+      message_includes:
+        - "Encountered problems while solving"
+        - "Pins seem to be involved in the conflict. Currently pinned specs"
+        - "python=2.6"
+        - "unsatisfiable-with-py26"
 
   - name: test_explicit_conda_downgrade_1
     id: B118
@@ -3479,7 +3566,9 @@ tests:
     kind: solve
     description: |
       With priority disabled the highest pandas build wins, which is the
-      channel-1 np16py27_1 build.
+      channel-1 np16py27_1 build. Upstream never enforces this assertion
+      because the whole method is a non-strict xfail, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L955
     input:
       channels: [channel-13, channel-1]
       specs_to_add:
@@ -3512,7 +3601,9 @@ tests:
     kind: solve
     description: |
       With the channel order reversed, channel-1 has priority and everything
-      comes from it.
+      comes from it. Upstream never enforces this assertion because the whole
+      method is a non-strict xfail, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L955
     input:
       channels: [channel-1, channel-13]
       specs_to_add:
@@ -3554,9 +3645,9 @@ tests:
       channel_priority: flexible
     output:
       final_state:
+        - channel-12/${{ arch }}::c-2.0-0
         - channel-11/${{ arch }}::a-1.0-0
         - channel-11/${{ arch }}::b-1.0-0
-        - channel-12/${{ arch }}::c-2.0-0
 
   - name: test_unsat_channel_priority_2
     id: B152
@@ -3567,15 +3658,19 @@ tests:
     kind: solve
     description: |
       With priority disabled the highest versions win, all from channel-12.
+      Upstream is xfail because the env var it sets has no effect, and under
+      classic this stage is where its first assertion fails, so the expected
+      outcome was never verified upstream, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L991
     input:
       channels: [channel-11, channel-12]
       specs_to_add: [a, b]
       channel_priority: disabled
     output:
       final_state:
+        - channel-12/${{ arch }}::c-2.0-0
         - channel-12/${{ arch }}::a-2.0-0
         - channel-12/${{ arch }}::b-2.0-0
-        - channel-12/${{ arch }}::c-2.0-0
 
   - name: test_unsat_channel_priority_3
     id: B153
@@ -3586,8 +3681,13 @@ tests:
     kind: unsatisfiable
     description: |
       With strict priority, c must come from channel-11, which only has c 1.0,
-      so b cannot be satisfied. Classic reports the a-c chain alongside the b
-      conflict that upstream's (xfail) assertion names, see
+      so b cannot be satisfied. Upstream literally sets CONDA_CHANNEL_PRIORITY
+      to True, which conda maps to flexible, the same setting under which its
+      stage 1 install succeeds, so strict is used here to realise the intended
+      unsatisfiability, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L1048
+      Classic reports the a-c chain alongside the b conflict that upstream's
+      (xfail) assertion names, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L1051
     input:
       channels: [channel-11, channel-12]
@@ -3639,30 +3739,30 @@ tests:
         - "python=2.7"
     output:
       final_state:
-        - channel-2/${{ arch }}::libffi-3.2.1-1
-        - channel-2/${{ arch }}::zlib-1.2.11-0
         - channel-4/${{ arch }}::blas-1.0-mkl
         - channel-4/${{ arch }}::ca-certificates-2018.03.07-0
         - channel-4/${{ arch }}::intel-openmp-2018.0.3-0
-        - channel-4/${{ arch }}::libedit-3.1.20170329-h6b74fdf_2
+        - channel-2/${{ arch }}::libffi-3.2.1-1
         - channel-4/${{ arch }}::libgcc-ng-8.2.0-hdf63c60_0
         - channel-4/${{ arch }}::libgfortran-ng-7.2.0-hdf63c60_3
         - channel-4/${{ arch }}::libstdcxx-ng-8.2.0-hdf63c60_0
+        - channel-2/${{ arch }}::zlib-1.2.11-0
         - channel-4/${{ arch }}::mkl-2018.0.3-1
+        - channel-4/${{ arch }}::ncurses-6.1-hf484d3e_0
+        - channel-4/${{ arch }}::openssl-1.0.2p-h14c3975_0
+        - channel-4/${{ arch }}::tk-8.6.7-hc745277_3
+        - channel-4/${{ arch }}::libedit-3.1.20170329-h6b74fdf_2
+        - channel-4/${{ arch }}::readline-7.0-ha6073c6_4
+        - channel-4/${{ arch }}::sqlite-3.24.0-h84994c4_0
+        - channel-4/${{ arch }}::python-2.7.15-h1571d57_0
+        - channel-4/${{ arch }}::numpy-base-1.15.0-py27h3dfced4_0
+        - channel-4/${{ arch }}::pytz-2018.5-py27_0
+        - channel-4/${{ arch }}::six-1.11.0-py27_1
+        - channel-4/${{ arch }}::python-dateutil-2.7.3-py27_0
         - channel-4/${{ arch }}::mkl_fft-1.0.4-py27h4414c95_1
         - channel-4/${{ arch }}::mkl_random-1.0.1-py27h4414c95_1
-        - channel-4/${{ arch }}::ncurses-6.1-hf484d3e_0
         - channel-4/${{ arch }}::numpy-1.15.0-py27h1b885b7_0
-        - channel-4/${{ arch }}::numpy-base-1.15.0-py27h3dfced4_0
-        - channel-4/${{ arch }}::openssl-1.0.2p-h14c3975_0
         - channel-4/${{ arch }}::pandas-0.23.4-py27h04863e7_0
-        - channel-4/${{ arch }}::python-2.7.15-h1571d57_0
-        - channel-4/${{ arch }}::python-dateutil-2.7.3-py27_0
-        - channel-4/${{ arch }}::pytz-2018.5-py27_0
-        - channel-4/${{ arch }}::readline-7.0-ha6073c6_4
-        - channel-4/${{ arch }}::six-1.11.0-py27_1
-        - channel-4/${{ arch }}::sqlite-3.24.0-h84994c4_0
-        - channel-4/${{ arch }}::tk-8.6.7-hc745277_3
 
   - name: test_priority_1_3
     id: B164
@@ -3717,16 +3817,16 @@ tests:
         - "python=2.7"
     output:
       final_state:
+        - channel-4/${{ arch }}::ca-certificates-2018.03.07-0
         - channel-2/${{ arch }}::mkl-2017.0.3-0
-        - channel-2/${{ arch }}::numpy-1.13.1-py27_0
         - channel-2/${{ arch }}::openssl-1.0.2l-0
-        - channel-2/${{ arch }}::pandas-0.20.3-py27_0
-        - channel-2/${{ arch }}::python-2.7.13-0
-        - channel-2/${{ arch }}::python-dateutil-2.6.1-py27_0
-        - channel-2/${{ arch }}::pytz-2017.2-py27_0
         - channel-2/${{ arch }}::readline-6.2-2
-        - channel-2/${{ arch }}::six-1.10.0-py27_0
         - channel-2/${{ arch }}::sqlite-3.13.0-0
         - channel-2/${{ arch }}::tk-8.5.18-0
         - channel-2/${{ arch }}::zlib-1.2.11-0
-        - channel-4/${{ arch }}::ca-certificates-2018.03.07-0
+        - channel-2/${{ arch }}::python-2.7.13-0
+        - channel-2/${{ arch }}::numpy-1.13.1-py27_0
+        - channel-2/${{ arch }}::pytz-2017.2-py27_0
+        - channel-2/${{ arch }}::six-1.10.0-py27_0
+        - channel-2/${{ arch }}::python-dateutil-2.6.1-py27_0
+        - channel-2/${{ arch }}::pandas-0.20.3-py27_0
