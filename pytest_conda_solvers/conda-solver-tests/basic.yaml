@@ -4634,13 +4634,17 @@ tests:
   - name: test_mkl
     id: B158
     provenance:
-      node_id: conda/testing/solver_helpers.py::SolverTests.test_mkl
+      node_id: conda/testing/solver_helpers.py::SolverTests.test_mkl::1
       commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
       url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L281-L285
     kind: solve
     description: |
       Installing mkl selects the mkl-featured builds, matching an explicit
-      track_features=mkl request. Features are classic-only.
+      track_features=mkl request. Upstream asserts only that this solve equals
+      the test_mkl_2 solve (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L281-L285),
+      and the concrete record list here is pinned from classic solver
+      behaviour. Features are classic-only.
     solvers: classic
     input:
       channels: channel-1
@@ -4648,31 +4652,34 @@ tests:
       add_pip: true
     output:
       final_state:
-        - channel-1/${{ arch }}::distribute-0.6.36-py33_1
-        - channel-1/${{ arch }}::mkl-11.0-np17py33_p1
         - channel-1/${{ arch }}::mkl-rt-11.0-p0
-        - channel-1/${{ arch }}::mkl-service-1.0.0-py33_p0
-        - channel-1/${{ arch }}::numpy-1.7.1-py33_p0
         - channel-1/${{ arch }}::openssl-1.0.1c-0
-        - channel-1/${{ arch }}::pip-1.3.1-py33_1
-        - channel-1/${{ arch }}::python-3.3.2-0
         - channel-1/${{ arch }}::readline-6.2-0
-        - channel-1/${{ arch }}::scipy-0.12.0-np17py33_p0
         - channel-1/${{ arch }}::sqlite-3.7.13-0
         - channel-1/${{ arch }}::system-5.8-1
         - channel-1/${{ arch }}::tk-8.5.13-0
         - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-3.3.2-0
+        - channel-1/${{ arch }}::distribute-0.6.36-py33_1
+        - channel-1/${{ arch }}::mkl-service-1.0.0-py33_p0
+        - channel-1/${{ arch }}::numpy-1.7.1-py33_p0
+        - channel-1/${{ arch }}::pip-1.3.1-py33_1
+        - channel-1/${{ arch }}::scipy-0.12.0-np17py33_p0
+        - channel-1/${{ arch }}::mkl-11.0-np17py33_p1
 
   - name: test_accelerate
     id: B130
     provenance:
-      node_id: conda/testing/solver_helpers.py::SolverTests.test_accelerate
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_accelerate::1
       commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
       url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L287-L291
     kind: solve
     description: |
       Installing accelerate selects the mkl-featured builds, matching an explicit
       track_features=mkl request. Features are classic-only.
+      Upstream only asserts this solve equals the track_features=mkl solve (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L287-L291),
+      so pinning the full state here is a deliberate strengthening.
     solvers: classic
     input:
       channels: channel-1
@@ -4680,21 +4687,21 @@ tests:
       add_pip: true
     output:
       final_state:
-        - channel-1/${{ arch }}::accelerate-1.1.0-np17py33_p0
-        - channel-1/${{ arch }}::distribute-0.6.36-py33_1
-        - channel-1/${{ arch }}::mkl-11.0-np17py33_p1
         - channel-1/${{ arch }}::mkl-rt-11.0-p0
-        - channel-1/${{ arch }}::mkl-service-1.0.0-py33_p0
-        - channel-1/${{ arch }}::numpy-1.7.1-py33_p0
         - channel-1/${{ arch }}::openssl-1.0.1c-0
-        - channel-1/${{ arch }}::pip-1.3.1-py33_1
-        - channel-1/${{ arch }}::python-3.3.2-0
         - channel-1/${{ arch }}::readline-6.2-0
-        - channel-1/${{ arch }}::scipy-0.12.0-np17py33_p0
         - channel-1/${{ arch }}::sqlite-3.7.13-0
         - channel-1/${{ arch }}::system-5.8-1
         - channel-1/${{ arch }}::tk-8.5.13-0
         - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-3.3.2-0
+        - channel-1/${{ arch }}::distribute-0.6.36-py33_1
+        - channel-1/${{ arch }}::mkl-service-1.0.0-py33_p0
+        - channel-1/${{ arch }}::numpy-1.7.1-py33_p0
+        - channel-1/${{ arch }}::pip-1.3.1-py33_1
+        - channel-1/${{ arch }}::scipy-0.12.0-np17py33_p0
+        - channel-1/${{ arch }}::mkl-11.0-np17py33_p1
+        - channel-1/${{ arch }}::accelerate-1.1.0-np17py33_p0
 
   - name: test_scipy_mkl
     id: B131
@@ -4721,18 +4728,18 @@ tests:
       add_pip: true
     output:
       final_state:
-        - channel-1/${{ arch }}::distribute-0.6.36-py27_1
         - channel-1/${{ arch }}::mkl-rt-11.0-p0
-        - channel-1/${{ arch }}::numpy-1.7.1-py27_p0
         - channel-1/${{ arch }}::openssl-1.0.1c-0
-        - channel-1/${{ arch }}::pip-1.3.1-py27_1
-        - channel-1/${{ arch }}::python-2.7.5-0
         - channel-1/${{ arch }}::readline-6.2-0
-        - channel-1/${{ arch }}::scipy-0.12.0-np17py27_p0
         - channel-1/${{ arch }}::sqlite-3.7.13-0
         - channel-1/${{ arch }}::system-5.8-1
         - channel-1/${{ arch }}::tk-8.5.13-0
         - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::distribute-0.6.36-py27_1
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_p0
+        - channel-1/${{ arch }}::pip-1.3.1-py27_1
+        - channel-1/${{ arch }}::scipy-0.12.0-np17py27_p0
 
   - name: test_get_dists
     id: B132
@@ -4744,63 +4751,67 @@ tests:
     description: |
       The anaconda 1.4.0 metapackage resolves to its full pinned environment,
       including transitive dependencies such as freetype.
+      Upstream asserts only that anaconda-1.4.0-np17py33_0 and freetype-2.4.10-0
+      appear in the solution (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L399-L403),
+      so pinning the full state here is a deliberate strengthening.
     input:
       channels: channel-1
       specs_to_add: anaconda 1.4.0
       add_pip: true
     output:
       final_state:
-        - channel-1/${{ arch }}::anaconda-1.4.0-np17py33_0
-        - channel-1/${{ arch }}::astropy-0.2-np17py33_0
+        - channel-1/${{ arch }}::freetype-2.4.10-0
+        - channel-1/${{ arch }}::libpng-1.5.13-1
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-0
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::util-linux-2.21-0
+        - channel-1/${{ arch }}::yaml-0.1.4-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::libxml2-2.9.0-0
+        - channel-1/${{ arch }}::llvm-3.2-0
+        - channel-1/${{ arch }}::python-3.3.0-4
+        - channel-1/${{ arch }}::zeromq-2.2.0-0
         - channel-1/${{ arch }}::bitarray-0.8.0-py33_0
         - channel-1/${{ arch }}::cython-0.18-py33_0
-        - channel-1/${{ arch }}::dateutil-2.1-py33_0
         - channel-1/${{ arch }}::distribute-0.6.34-py33_1
         - channel-1/${{ arch }}::docutils-0.10-py33_0
-        - channel-1/${{ arch }}::freetype-2.4.10-0
         - channel-1/${{ arch }}::greenlet-0.4.0-py33_0
         - channel-1/${{ arch }}::ipython-0.13.1-py33_1
         - channel-1/${{ arch }}::jinja2-2.6-py33_0
-        - channel-1/${{ arch }}::libpng-1.5.13-1
-        - channel-1/${{ arch }}::libxml2-2.9.0-0
         - channel-1/${{ arch }}::libxslt-1.1.28-0
-        - channel-1/${{ arch }}::llvm-3.2-0
         - channel-1/${{ arch }}::llvmpy-0.11.1-py33_0
-        - channel-1/${{ arch }}::lxml-3.0.2-py33_0
-        - channel-1/${{ arch }}::matplotlib-1.2.0-np17py33_1
-        - channel-1/${{ arch }}::mdp-3.3-np17py33_0
         - channel-1/${{ arch }}::networkx-1.7-py33_0
         - channel-1/${{ arch }}::nose-1.2.1-py33_0
-        - channel-1/${{ arch }}::numpy-1.7.0-py33_0
-        - channel-1/${{ arch }}::openssl-1.0.1c-0
-        - channel-1/${{ arch }}::pandas-0.10.1-np17py33_0
-        - channel-1/${{ arch }}::pip-1.2.1-py33_1
         - channel-1/${{ arch }}::ply-3.4-py33_0
         - channel-1/${{ arch }}::psutil-0.6.1-py33_0
         - channel-1/${{ arch }}::pycparser-2.9.1-py33_0
         - channel-1/${{ arch }}::pycrypto-2.6-py33_0
         - channel-1/${{ arch }}::pyflakes-0.6.1-py33_0
         - channel-1/${{ arch }}::pygments-1.6-py33_0
-        - channel-1/${{ arch }}::python-3.3.0-4
         - channel-1/${{ arch }}::pytz-2012j-py33_0
         - channel-1/${{ arch }}::pyyaml-3.10-py33_0
         - channel-1/${{ arch }}::pyzmq-2.2.0.1-py33_0
-        - channel-1/${{ arch }}::readline-6.2-0
         - channel-1/${{ arch }}::requests-0.13.9-py33_0
-        - channel-1/${{ arch }}::scikit-image-0.8.2-np17py33_0
-        - channel-1/${{ arch }}::scipy-0.11.0-np17py33_3
         - channel-1/${{ arch }}::six-1.2.0-py33_0
-        - channel-1/${{ arch }}::sphinx-1.1.3-py33_2
         - channel-1/${{ arch }}::sqlalchemy-0.7.8-py33_0
-        - channel-1/${{ arch }}::sqlite-3.7.13-0
-        - channel-1/${{ arch }}::system-5.8-0
-        - channel-1/${{ arch }}::tk-8.5.13-0
         - channel-1/${{ arch }}::tornado-2.4.1-py33_0
-        - channel-1/${{ arch }}::util-linux-2.21-0
         - channel-1/${{ arch }}::xlrd-0.9.0-py33_0
-        - channel-1/${{ arch }}::yaml-0.1.4-0
-        - channel-1/${{ arch }}::zeromq-2.2.0-0
-        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::dateutil-2.1-py33_0
+        - channel-1/${{ arch }}::lxml-3.0.2-py33_0
+        - channel-1/${{ arch }}::numpy-1.7.0-py33_0
+        - channel-1/${{ arch }}::pip-1.2.1-py33_1
+        - channel-1/${{ arch }}::sphinx-1.1.3-py33_2
+        - channel-1/${{ arch }}::astropy-0.2-np17py33_0
+        - channel-1/${{ arch }}::matplotlib-1.2.0-np17py33_1
+        - channel-1/${{ arch }}::mdp-3.3-np17py33_0
+        - channel-1/${{ arch }}::scipy-0.11.0-np17py33_3
+        - channel-1/${{ arch }}::pandas-0.10.1-np17py33_0
+        - channel-1/${{ arch }}::scikit-image-0.8.2-np17py33_0
+        - channel-1/${{ arch }}::anaconda-1.4.0-np17py33_0
 
   - name: test_features_solve_1_1
     id: B133
@@ -4811,8 +4822,12 @@ tests:
     kind: solve
     description: |
       With channel priority on, the nomkl solve stays within the higher-priority
-      channel-2. Features are classic-only.
-    solvers: classic
+      channel-2. Upstream runs this under libmamba as an active strict xfail
+      (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2993-L2999),
+      carried here as xfail_solvers.
+    xfail_solvers: libmamba
+    xfail_reason: "Features not supported in libmamba"
     input:
       channels:
         - channel-2
@@ -4824,16 +4839,16 @@ tests:
       channel_priority: flexible
     output:
       final_state:
-        - channel-2/${{ arch }}::libgfortran-3.0.0-1
         - channel-2/${{ arch }}::nomkl-1.0-0
-        - channel-2/${{ arch }}::numpy-1.13.1-py27_nomkl_0
-        - channel-2/${{ arch }}::openblas-0.2.19-0
+        - channel-2/${{ arch }}::libgfortran-3.0.0-1
         - channel-2/${{ arch }}::openssl-1.0.2l-0
-        - channel-2/${{ arch }}::python-2.7.13-0
         - channel-2/${{ arch }}::readline-6.2-2
         - channel-2/${{ arch }}::sqlite-3.13.0-0
         - channel-2/${{ arch }}::tk-8.5.18-0
         - channel-2/${{ arch }}::zlib-1.2.11-0
+        - channel-2/${{ arch }}::openblas-0.2.19-0
+        - channel-2/${{ arch }}::python-2.7.13-0
+        - channel-2/${{ arch }}::numpy-1.13.1-py27_nomkl_0
 
   - name: test_features_solve_1_2
     id: B134
@@ -4844,7 +4859,11 @@ tests:
     kind: solve
     description: |
       With channel priority off, the solver mixes channels and prefers the newer
-      channel-4 builds. Features are classic-only.
+      channel-4 builds. Upstream runs the whole function as a strict xfail under
+      libmamba and the failure happens at the first stage (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2993-L2999),
+      so this second stage is never reached under libmamba and is classic-only
+      here. On its own it would pass under libmamba in this port.
     solvers: classic
     input:
       channels:
@@ -4857,173 +4876,64 @@ tests:
       channel_priority: disabled
     output:
       final_state:
-        - channel-2/${{ arch }}::libffi-3.2.1-1
-        - channel-2/${{ arch }}::zlib-1.2.11-0
         - channel-4/${{ arch }}::blas-1.0-openblas
         - channel-4/${{ arch }}::ca-certificates-2018.03.07-0
-        - channel-4/${{ arch }}::libedit-3.1.20170329-h6b74fdf_2
+        - channel-2/${{ arch }}::libffi-3.2.1-1
         - channel-4/${{ arch }}::libgcc-ng-8.2.0-hdf63c60_0
         - channel-4/${{ arch }}::libgfortran-ng-7.2.0-hdf63c60_3
-        - channel-4/${{ arch }}::libopenblas-0.2.20-h9ac9557_7
         - channel-4/${{ arch }}::libstdcxx-ng-8.2.0-hdf63c60_0
+        - channel-2/${{ arch }}::zlib-1.2.11-0
+        - channel-4/${{ arch }}::libopenblas-0.2.20-h9ac9557_7
         - channel-4/${{ arch }}::ncurses-6.1-hf484d3e_0
         - channel-4/${{ arch }}::nomkl-3.0-0
-        - channel-4/${{ arch }}::numpy-1.15.0-py27h2aefc1b_0
-        - channel-4/${{ arch }}::numpy-base-1.15.0-py27h7cdd4dd_0
         - channel-4/${{ arch }}::openssl-1.0.2p-h14c3975_0
-        - channel-4/${{ arch }}::python-2.7.15-h1571d57_0
+        - channel-4/${{ arch }}::tk-8.6.7-hc745277_3
+        - channel-4/${{ arch }}::libedit-3.1.20170329-h6b74fdf_2
         - channel-4/${{ arch }}::readline-7.0-ha6073c6_4
         - channel-4/${{ arch }}::sqlite-3.24.0-h84994c4_0
-        - channel-4/${{ arch }}::tk-8.6.7-hc745277_3
+        - channel-4/${{ arch }}::python-2.7.15-h1571d57_0
+        - channel-4/${{ arch }}::numpy-base-1.15.0-py27h7cdd4dd_0
+        - channel-4/${{ arch }}::numpy-1.15.0-py27h2aefc1b_0
 
-  - name: test_globstr_matchspec_compatible_1a
-    id: B135a
+  - name: test_globstr_matchspec_compatible_1
+    id: B135
     provenance:
       node_id: tests/core/test_solve.py::test_globstr_matchspec_compatible::1
       commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
       url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3821-L3829
     kind: solve
     description: |
-      Two compatible build-string globs (both match np17 builds) solve to a
-      single accelerate build. On classic the mkl feature pulls the _p builds.
-    solvers: classic
+      Two compatible build-string globs (both match np17 builds) must solve
+      together. Upstream asserts success only, with no assertion on the
+      resulting state (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3821-L3829),
+      so this entry only requires that the solve succeeds.
     input:
       channels: channel-1
       specs_to_add:
         - accelerate=*=np17*
         - accelerate=*=*np17*
-    output:
-      final_state:
-        - channel-1/${{ arch }}::accelerate-1.1.0-np17py33_p0
-        - channel-1/${{ arch }}::mkl-11.0-np17py33_p1
-        - channel-1/${{ arch }}::mkl-rt-11.0-p0
-        - channel-1/${{ arch }}::mkl-service-1.0.0-py33_p0
-        - channel-1/${{ arch }}::numpy-1.7.1-py33_p0
-        - channel-1/${{ arch }}::openssl-1.0.1c-0
-        - channel-1/${{ arch }}::python-3.3.2-0
-        - channel-1/${{ arch }}::readline-6.2-0
-        - channel-1/${{ arch }}::scipy-0.12.0-np17py33_p0
-        - channel-1/${{ arch }}::sqlite-3.7.13-0
-        - channel-1/${{ arch }}::system-5.8-1
-        - channel-1/${{ arch }}::tk-8.5.13-0
-        - channel-1/${{ arch }}::zlib-1.2.7-0
+    output: {}
 
-  - name: test_globstr_matchspec_compatible_1b
-    id: B135b
-    provenance:
-      node_id: tests/core/test_solve.py::test_globstr_matchspec_compatible::1
-      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
-      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3821-L3829
-    kind: solve
-    description: |
-      Two compatible build-string globs (both match np17 builds) solve to a
-      single accelerate build. libmamba does not honour the mkl feature, so it
-      picks the plain builds.
-    solvers: libmamba
-    input:
-      channels: channel-1
-      specs_to_add:
-        - accelerate=*=np17*
-        - accelerate=*=*np17*
-    output:
-      final_state:
-        - channel-1/${{ arch }}::accelerate-1.1.0-np17py33_p0
-        - channel-1/${{ arch }}::mkl-11.0-np17py33_p1
-        - channel-1/${{ arch }}::mkl-rt-11.0-p0
-        - channel-1/${{ arch }}::mkl-service-1.0.0-py33_p0
-        - channel-1/${{ arch }}::numpy-1.7.1-py33_0
-        - channel-1/${{ arch }}::openssl-1.0.1c-0
-        - channel-1/${{ arch }}::python-3.3.2-0
-        - channel-1/${{ arch }}::readline-6.2-0
-        - channel-1/${{ arch }}::scipy-0.12.0-np17py33_0
-        - channel-1/${{ arch }}::sqlite-3.7.13-0
-        - channel-1/${{ arch }}::system-5.8-1
-        - channel-1/${{ arch }}::tk-8.5.13-0
-        - channel-1/${{ arch }}::zlib-1.2.7-0
-
-  - name: test_globstr_matchspec_compatible_2a
-    id: B136a
+  - name: test_globstr_matchspec_compatible_2
+    id: B136
     provenance:
       node_id: tests/core/test_solve.py::test_globstr_matchspec_compatible::2
       commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
       url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3821-L3829
     kind: solve
     description: |
-      A broad np17 glob and a narrower np17py27 glob are compatible and resolve
-      to the np17py27 accelerate build. On classic the mkl feature pulls the _p
-      builds.
-    solvers: classic
+      A broad np17 glob and a narrower np17py27 glob are compatible and must
+      solve together. Upstream asserts success only, with no assertion on the
+      resulting state (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3821-L3829),
+      so this entry only requires that the solve succeeds.
     input:
       channels: channel-1
       specs_to_add:
         - accelerate=*=np17*
         - accelerate=*=np17py27*
-    output:
-      final_state:
-        - channel-1/${{ arch }}::accelerate-1.1.0-np17py27_p0
-        - channel-1/${{ arch }}::bitarray-0.8.1-py27_0
-        - channel-1/${{ arch }}::libnvvm-1.0-p0
-        - channel-1/${{ arch }}::llvm-3.2-0
-        - channel-1/${{ arch }}::llvmpy-0.11.2-py27_0
-        - channel-1/${{ arch }}::meta-0.4.2.dev-py27_0
-        - channel-1/${{ arch }}::mkl-11.0-np17py27_p0
-        - channel-1/${{ arch }}::mkl-rt-11.0-p0
-        - channel-1/${{ arch }}::mkl-service-1.0.0-py27_p0
-        - channel-1/${{ arch }}::numba-0.8.1-np17py27_0
-        - channel-1/${{ arch }}::numbapro-0.11.0-np17py27_p0
-        - channel-1/${{ arch }}::numexpr-2.1-np17py27_p0
-        - channel-1/${{ arch }}::numpy-1.7.1-py27_p0
-        - channel-1/${{ arch }}::openssl-1.0.1c-0
-        - channel-1/${{ arch }}::python-2.7.5-0
-        - channel-1/${{ arch }}::readline-6.2-0
-        - channel-1/${{ arch }}::scikit-learn-0.13.1-np17py27_p0
-        - channel-1/${{ arch }}::scipy-0.12.0-np17py27_p0
-        - channel-1/${{ arch }}::sqlite-3.7.13-0
-        - channel-1/${{ arch }}::system-5.8-1
-        - channel-1/${{ arch }}::tk-8.5.13-0
-        - channel-1/${{ arch }}::zlib-1.2.7-0
-
-  - name: test_globstr_matchspec_compatible_2b
-    id: B136b
-    provenance:
-      node_id: tests/core/test_solve.py::test_globstr_matchspec_compatible::2
-      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
-      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3821-L3829
-    kind: solve
-    description: |
-      A broad np17 glob and a narrower np17py27 glob are compatible and resolve
-      to the np17py27 accelerate build. libmamba does not honour the mkl feature,
-      so it picks the plain builds.
-    solvers: libmamba
-    input:
-      channels: channel-1
-      specs_to_add:
-        - accelerate=*=np17*
-        - accelerate=*=np17py27*
-    output:
-      final_state:
-        - channel-1/${{ arch }}::accelerate-1.1.0-np17py27_p0
-        - channel-1/${{ arch }}::bitarray-0.8.1-py27_0
-        - channel-1/${{ arch }}::libnvvm-1.0-p0
-        - channel-1/${{ arch }}::llvm-3.2-0
-        - channel-1/${{ arch }}::llvmpy-0.11.2-py27_0
-        - channel-1/${{ arch }}::meta-0.4.2.dev-py27_0
-        - channel-1/${{ arch }}::mkl-11.0-np17py27_p1
-        - channel-1/${{ arch }}::mkl-rt-11.0-p0
-        - channel-1/${{ arch }}::mkl-service-1.0.0-py27_p0
-        - channel-1/${{ arch }}::numba-0.8.1-np17py27_0
-        - channel-1/${{ arch }}::numbapro-0.11.0-np17py27_p0
-        - channel-1/${{ arch }}::numexpr-2.0.1-np17py27_3
-        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
-        - channel-1/${{ arch }}::openssl-1.0.1c-0
-        - channel-1/${{ arch }}::python-2.7.5-0
-        - channel-1/${{ arch }}::readline-6.2-0
-        - channel-1/${{ arch }}::scikit-learn-0.13.1-np17py27_0
-        - channel-1/${{ arch }}::scipy-0.12.0-np17py27_0
-        - channel-1/${{ arch }}::sqlite-3.7.13-0
-        - channel-1/${{ arch }}::system-5.8-1
-        - channel-1/${{ arch }}::tk-8.5.13-0
-        - channel-1/${{ arch }}::zlib-1.2.7-0
+    output: {}
 
   - name: test_surplus_features_1
     id: B137
@@ -5033,8 +4943,11 @@ tests:
       url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L1110-L1135
     kind: solve
     description: |
-      A surplus feature provider is not installed when nothing needs it: the
-      higher package2 build wins and package1 stays out. Features are classic-only.
+      A surplus feature carrier is not installed when nothing needs it: the
+      higher package2 version wins (2.0 over 1.0, both build 0), so its
+      package1 dependency stays out. package1 merely carries the feature,
+      while the feature package provides it through track_features. Features
+      are classic-only.
     solvers: classic
     input:
       channels: channel-8
@@ -5055,8 +4968,13 @@ tests:
       url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L1137-L1164
     kind: solve
     description: |
-      Same as the previous case but the competing builds share a version: the
-      higher build number wins and package1 stays out. Features are classic-only.
+      Same install against channel-9. Upstream builds two package2 1.0 records
+      that share the default build string, so they collide on filename in the
+      written repodata and only the build_number 1 record without the package1
+      dependency survives (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L1137-L1164).
+      channel-9 mirrors that surviving record, so no build-number competition
+      is exercised and package1 stays out. Features are classic-only.
     solvers: classic
     input:
       channels: channel-9
@@ -5078,7 +4996,10 @@ tests:
     kind: solve
     description: |
       A package that requires a feature installs cleanly alongside the package
-      that provides it. Features are classic-only.
+      that provides it. Upstream asserts only that the install succeeds,
+      without checking the solution (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L802-L803),
+      so this entry asserts success only.
     input:
       channels:
         - channel-1
@@ -5087,19 +5008,7 @@ tests:
         - mypackage
         - feature 1.0
       add_pip: true
-    output:
-      final_state:
-        - channel-1/${{ arch }}::distribute-0.6.36-py33_1
-        - channel-1/${{ arch }}::openssl-1.0.1c-0
-        - channel-1/${{ arch }}::pip-1.3.1-py33_1
-        - channel-1/${{ arch }}::python-3.3.2-0
-        - channel-1/${{ arch }}::readline-6.2-0
-        - channel-1/${{ arch }}::sqlite-3.7.13-0
-        - channel-1/${{ arch }}::system-5.8-1
-        - channel-1/${{ arch }}::tk-8.5.13-0
-        - channel-1/${{ arch }}::zlib-1.2.7-0
-        - channel-10/${{ arch }}::feature-1.0-0
-        - channel-10/${{ arch }}::mypackage-1.0-0
+    output: {}
 
   - name: test_unintentional_feature_downgrade
     id: B140
@@ -5110,8 +5019,13 @@ tests:
     kind: solve
     description: |
       Regression test for gh-6765: a stripped-down scipy build with a lower
-      build number must not be preferred over the real build. Features are
-      classic-only.
+      build number must not be preferred over the real build. Upstream asserts
+      only that scipy-0.11.0-np17py33_x0 is absent and scipy-0.11.0-np17py33_3
+      is present (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L826-L827),
+      and the full record list here is pinned from classic solver behaviour.
+      Upstream serves the bad scipy record only within this test, while here
+      it is baked into the shared channel-1 data. Features are classic-only.
     solvers: classic
     input:
       channels: channel-1
@@ -5119,17 +5033,17 @@ tests:
       add_pip: true
     output:
       final_state:
-        - channel-1/${{ arch }}::distribute-0.6.36-py33_1
-        - channel-1/${{ arch }}::numpy-1.7.1-py33_0
         - channel-1/${{ arch }}::openssl-1.0.1c-0
-        - channel-1/${{ arch }}::pip-1.3.1-py33_1
-        - channel-1/${{ arch }}::python-3.3.2-0
         - channel-1/${{ arch }}::readline-6.2-0
-        - channel-1/${{ arch }}::scipy-0.11.0-np17py33_3
         - channel-1/${{ arch }}::sqlite-3.7.13-0
         - channel-1/${{ arch }}::system-5.8-1
         - channel-1/${{ arch }}::tk-8.5.13-0
         - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-3.3.2-0
+        - channel-1/${{ arch }}::distribute-0.6.36-py33_1
+        - channel-1/${{ arch }}::numpy-1.7.1-py33_0
+        - channel-1/${{ arch }}::pip-1.3.1-py33_1
+        - channel-1/${{ arch }}::scipy-0.11.0-np17py33_3
 
   - name: test_globstr_matchspec_non_compatible_2
     id: B083
@@ -5141,6 +5055,11 @@ tests:
     description: |
       Two glob build string specs for accelerate that cannot be satisfied together:
       np17* and *np16* cannot match the same package.
+      Upstream's first stage, where np17* and np16* fail with ValueError at
+      solver instantiation (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3833-L3842),
+      is not expressible in this YAML harness and is ported as the white-box
+      test test_globstr_matchspec_non_compatible_construction instead.
     solvers: classic
     input:
       channels: channel-1
@@ -5161,6 +5080,11 @@ tests:
     description: |
       Two glob build string specs for accelerate that cannot be satisfied together:
       np17* and *np16* cannot match the same package.
+      Upstream's first stage, where np17* and np16* fail with ValueError at
+      solver instantiation (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3833-L3842),
+      is not expressible in this YAML harness and is ported as the white-box
+      test test_globstr_matchspec_non_compatible_construction instead.
     solvers: libmamba
     input:
       channels: channel-1
@@ -5221,6 +5145,10 @@ tests:
     description: |
       Install python 2.6, numpy 1.6, scipy 0.11 without any track_features spec.
       Should resolve to non-mkl builds.
+      Upstream skips test_no_features entirely under conda-libmamba-solver (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/test_solvers.py#L23-L39),
+      so this entry is classic-only.
+    solvers: classic
     input:
       channels: channel-1
       add_pip: true
@@ -5230,17 +5158,17 @@ tests:
         - "scipy 0.11*"
     output:
       final_state:
-        - channel-1/${{ arch }}::distribute-0.6.36-py26_1
-        - channel-1/${{ arch }}::numpy-1.6.2-py26_4
         - channel-1/${{ arch }}::openssl-1.0.1c-0
-        - channel-1/${{ arch }}::pip-1.3.1-py26_1
-        - channel-1/${{ arch }}::python-2.6.8-6
         - channel-1/${{ arch }}::readline-6.2-0
-        - channel-1/${{ arch }}::scipy-0.11.0-np16py26_3
         - channel-1/${{ arch }}::sqlite-3.7.13-0
         - channel-1/${{ arch }}::system-5.8-1
         - channel-1/${{ arch }}::tk-8.5.13-0
         - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+        - channel-1/${{ arch }}::distribute-0.6.36-py26_1
+        - channel-1/${{ arch }}::numpy-1.6.2-py26_4
+        - channel-1/${{ arch }}::pip-1.3.1-py26_1
+        - channel-1/${{ arch }}::scipy-0.11.0-np16py26_3
 
   - name: test_no_features_2
     id: B166
@@ -5263,18 +5191,18 @@ tests:
         - "*[track_features=mkl]"
     output:
       final_state:
-        - channel-1/${{ arch }}::distribute-0.6.36-py26_1
         - channel-1/${{ arch }}::mkl-rt-11.0-p0
-        - channel-1/${{ arch }}::numpy-1.6.2-py26_p4
         - channel-1/${{ arch }}::openssl-1.0.1c-0
-        - channel-1/${{ arch }}::pip-1.3.1-py26_1
-        - channel-1/${{ arch }}::python-2.6.8-6
         - channel-1/${{ arch }}::readline-6.2-0
-        - channel-1/${{ arch }}::scipy-0.11.0-np16py26_p3
         - channel-1/${{ arch }}::sqlite-3.7.13-0
         - channel-1/${{ arch }}::system-5.8-1
         - channel-1/${{ arch }}::tk-8.5.13-0
         - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+        - channel-1/${{ arch }}::distribute-0.6.36-py26_1
+        - channel-1/${{ arch }}::numpy-1.6.2-py26_p4
+        - channel-1/${{ arch }}::pip-1.3.1-py26_1
+        - channel-1/${{ arch }}::scipy-0.11.0-np16py26_p3
 
   - name: test_no_features_3
     id: B167
@@ -5298,20 +5226,20 @@ tests:
         - "python 2.7*"
     output:
       final_state:
-        - channel-14/${{ arch }}::dateutil-2.1-py27_1
-        - channel-14/${{ arch }}::distribute-0.6.36-py27_1
-        - channel-14/${{ arch }}::numpy-1.6.2-py27_4
         - channel-14/${{ arch }}::openssl-1.0.1c-0
-        - channel-14/${{ arch }}::pandas-0.12.0-np16py27_0
-        - channel-14/${{ arch }}::pip-1.3.1-py27_1
-        - channel-14/${{ arch }}::python-2.7.5-0
-        - channel-14/${{ arch }}::pytz-2013b-py27_0
         - channel-14/${{ arch }}::readline-6.2-0
-        - channel-14/${{ arch }}::six-1.3.0-py27_0
         - channel-14/${{ arch }}::sqlite-3.7.13-0
         - channel-14/${{ arch }}::system-5.8-1
         - channel-14/${{ arch }}::tk-8.5.13-0
         - channel-14/${{ arch }}::zlib-1.2.7-0
+        - channel-14/${{ arch }}::python-2.7.5-0
+        - channel-14/${{ arch }}::distribute-0.6.36-py27_1
+        - channel-14/${{ arch }}::numpy-1.6.2-py27_4
+        - channel-14/${{ arch }}::pytz-2013b-py27_0
+        - channel-14/${{ arch }}::six-1.3.0-py27_0
+        - channel-14/${{ arch }}::dateutil-2.1-py27_1
+        - channel-14/${{ arch }}::pip-1.3.1-py27_1
+        - channel-14/${{ arch }}::pandas-0.12.0-np16py27_0
 
   - name: test_no_features_4
     id: B168
@@ -5334,21 +5262,21 @@ tests:
         - "*[track_features=mkl]"
     output:
       final_state:
-        - channel-14/${{ arch }}::dateutil-2.1-py27_1
-        - channel-14/${{ arch }}::distribute-0.6.36-py27_1
         - channel-14/${{ arch }}::mkl-rt-11.0-p0
-        - channel-14/${{ arch }}::numpy-1.6.2-py27_p4
         - channel-14/${{ arch }}::openssl-1.0.1c-0
-        - channel-14/${{ arch }}::pandas-0.12.0-np16py27_0
-        - channel-14/${{ arch }}::pip-1.3.1-py27_1
-        - channel-14/${{ arch }}::python-2.7.5-0
-        - channel-14/${{ arch }}::pytz-2013b-py27_0
         - channel-14/${{ arch }}::readline-6.2-0
-        - channel-14/${{ arch }}::six-1.3.0-py27_0
         - channel-14/${{ arch }}::sqlite-3.7.13-0
         - channel-14/${{ arch }}::system-5.8-1
         - channel-14/${{ arch }}::tk-8.5.13-0
         - channel-14/${{ arch }}::zlib-1.2.7-0
+        - channel-14/${{ arch }}::python-2.7.5-0
+        - channel-14/${{ arch }}::distribute-0.6.36-py27_1
+        - channel-14/${{ arch }}::numpy-1.6.2-py27_p4
+        - channel-14/${{ arch }}::pytz-2013b-py27_0
+        - channel-14/${{ arch }}::six-1.3.0-py27_0
+        - channel-14/${{ arch }}::dateutil-2.1-py27_1
+        - channel-14/${{ arch }}::pip-1.3.1-py27_1
+        - channel-14/${{ arch }}::pandas-0.12.0-np16py27_0
 
   - name: test_mkl_2
     id: B169
@@ -5361,7 +5289,8 @@ tests:
       Install mkl 11* with an explicit track_features=mkl spec. Upstream
       asserts this solve equals the plain "mkl" install (see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L281-L285),
-      so the state here is identical to test_mkl's.
+      so the state here is pinned from classic solver behaviour and is
+      identical to test_mkl's.
     solvers: classic
     input:
       channels: channel-1
@@ -5371,20 +5300,20 @@ tests:
         - "*[track_features=mkl]"
     output:
       final_state:
-        - channel-1/${{ arch }}::distribute-0.6.36-py33_1
-        - channel-1/${{ arch }}::mkl-11.0-np17py33_p1
         - channel-1/${{ arch }}::mkl-rt-11.0-p0
-        - channel-1/${{ arch }}::mkl-service-1.0.0-py33_p0
-        - channel-1/${{ arch }}::numpy-1.7.1-py33_p0
         - channel-1/${{ arch }}::openssl-1.0.1c-0
-        - channel-1/${{ arch }}::pip-1.3.1-py33_1
-        - channel-1/${{ arch }}::python-3.3.2-0
         - channel-1/${{ arch }}::readline-6.2-0
-        - channel-1/${{ arch }}::scipy-0.12.0-np17py33_p0
         - channel-1/${{ arch }}::sqlite-3.7.13-0
         - channel-1/${{ arch }}::system-5.8-1
         - channel-1/${{ arch }}::tk-8.5.13-0
         - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-3.3.2-0
+        - channel-1/${{ arch }}::distribute-0.6.36-py33_1
+        - channel-1/${{ arch }}::mkl-service-1.0.0-py33_p0
+        - channel-1/${{ arch }}::numpy-1.7.1-py33_p0
+        - channel-1/${{ arch }}::pip-1.3.1-py33_1
+        - channel-1/${{ arch }}::scipy-0.12.0-np17py33_p0
+        - channel-1/${{ arch }}::mkl-11.0-np17py33_p1
 
   - name: test_accelerate_2
     id: B170
@@ -5397,7 +5326,8 @@ tests:
       Install accelerate with an explicit track_features=mkl spec. Upstream
       asserts this solve equals the plain "accelerate" install (see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L287-L291),
-      so the state here is identical to test_accelerate's.
+      so the state here is pinned from classic solver behaviour and is
+      identical to test_accelerate's.
     solvers: classic
     input:
       channels: channel-1
@@ -5407,18 +5337,18 @@ tests:
         - "*[track_features=mkl]"
     output:
       final_state:
-        - channel-1/${{ arch }}::accelerate-1.1.0-np17py33_p0
-        - channel-1/${{ arch }}::distribute-0.6.36-py33_1
-        - channel-1/${{ arch }}::mkl-11.0-np17py33_p1
         - channel-1/${{ arch }}::mkl-rt-11.0-p0
-        - channel-1/${{ arch }}::mkl-service-1.0.0-py33_p0
-        - channel-1/${{ arch }}::numpy-1.7.1-py33_p0
         - channel-1/${{ arch }}::openssl-1.0.1c-0
-        - channel-1/${{ arch }}::pip-1.3.1-py33_1
-        - channel-1/${{ arch }}::python-3.3.2-0
         - channel-1/${{ arch }}::readline-6.2-0
-        - channel-1/${{ arch }}::scipy-0.12.0-np17py33_p0
         - channel-1/${{ arch }}::sqlite-3.7.13-0
         - channel-1/${{ arch }}::system-5.8-1
         - channel-1/${{ arch }}::tk-8.5.13-0
         - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-3.3.2-0
+        - channel-1/${{ arch }}::distribute-0.6.36-py33_1
+        - channel-1/${{ arch }}::mkl-service-1.0.0-py33_p0
+        - channel-1/${{ arch }}::numpy-1.7.1-py33_p0
+        - channel-1/${{ arch }}::pip-1.3.1-py33_1
+        - channel-1/${{ arch }}::scipy-0.12.0-np17py33_p0
+        - channel-1/${{ arch }}::mkl-11.0-np17py33_p1
+        - channel-1/${{ arch }}::accelerate-1.1.0-np17py33_p0

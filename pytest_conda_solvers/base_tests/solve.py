@@ -193,7 +193,10 @@ class TestSolveRegressions:
         Provenance: tests/core/test_solve.py::test_globstr_matchspec_non_compatible
         (case 1) at conda commit 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438,
         https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3833-L3842
-        Cases 2-3 are ported as B083/B084 in conda-solver-tests/basic.yaml.
+        Upstream marks the test @pytest.mark.integration, so it only runs in
+        integration runs there. Here it runs unconditionally.
+        Cases 2-3 are ported as B083/B084 (classic) and B083b/B084b (libmamba)
+        in conda-solver-tests/basic.yaml.
         """
         specs = (MatchSpec("accelerate=*=np17*"), MatchSpec("accelerate=*=np16*"))
         with pytest.raises(ValueError):
