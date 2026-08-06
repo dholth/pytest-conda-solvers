@@ -2482,7 +2482,6 @@ tests:
     description: |
       Upgrade sqlite (unpin from 3.21) while keeping python=2.7. The solver
       upgrades sqlite to 3.24 and updates python to 2.7.15, ncurses, openssl, libedit.
-    solvers: classic
     input:
       channels: channel-4
       specs_to_add: sqlite
@@ -3088,3 +3087,45 @@ tests:
         - channel-1/${{ arch }}::system-5.8-1
         - channel-1/${{ arch }}::tk-8.5.13-0
         - channel-1/${{ arch }}::zlib-1.2.7-0
+
+  - name: test_fast_update_2b
+    id: B178
+    provenance:
+      node_id: tests/core/test_solve.py::test_fast_update_with_update_modifier_not_set::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2235-L2352
+    kind: solve_for_diff
+    description: |
+      libmamba variant of the python unpin stage. libmamba upgrades python
+      without replacing ncurses and libedit, so the diff is smaller than
+      classic's. Upstream asserts only the python unlink and link records for
+      libmamba; the full diff here is pinned from solver behaviour.
+    solvers: libmamba
+    input:
+      channels: channel-4
+      specs_to_add: python
+      prefix:
+        - channel-4/${{ arch }}::ca-certificates-2018.03.07-0
+        - channel-4/${{ arch }}::libgcc-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libstdcxx-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libffi-3.2.1-hd88cf55_4
+        - channel-4/${{ arch }}::ncurses-6.0-h9df7e31_2
+        - channel-4/${{ arch }}::openssl-1.0.2l-h077ae2c_5
+        - channel-4/${{ arch }}::tk-8.6.7-hc745277_3
+        - channel-4/${{ arch }}::zlib-1.2.11-ha838bed_2
+        - channel-4/${{ arch }}::libedit-3.1-heed3624_0
+        - channel-4/${{ arch }}::readline-7.0-ha6073c6_4
+        - channel-4/${{ arch }}::sqlite-3.21.0-h1bed415_2
+        - channel-4/${{ arch }}::python-2.7.14-h89e7a4a_22
+      history_specs:
+        - "python=2"
+        - "openssl==1.0.2l"
+        - "sqlite=3.21"
+    output:
+      unlink_precs:
+        - channel-4/${{ arch }}::python-2.7.14-h89e7a4a_22
+        - channel-4/${{ arch }}::openssl-1.0.2l-h077ae2c_5
+      link_precs:
+        - channel-4/${{ arch }}::openssl-1.0.2p-h14c3975_0
+        - channel-4/${{ arch }}::python-3.6.4-hc3d631a_1
+        - channel-4/${{ arch }}::xz-5.2.4-h14c3975_4
