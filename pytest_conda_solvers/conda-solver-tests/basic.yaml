@@ -5141,6 +5141,7 @@ tests:
     description: |
       Two glob build string specs for accelerate that cannot be satisfied together:
       np17* and *np16* cannot match the same package.
+    solvers: classic
     input:
       channels: channel-1
       specs_to_add:
@@ -5148,6 +5149,26 @@ tests:
         - "accelerate=*=*np16*"
     error:
       exception: ResolvePackageNotFound
+      entries: []
+
+  - name: test_globstr_matchspec_non_compatible_2b
+    id: B083b
+    provenance:
+      node_id: tests/core/test_solve.py::test_globstr_matchspec_non_compatible::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3833-L3858
+    kind: unsatisfiable
+    description: |
+      Two glob build string specs for accelerate that cannot be satisfied together:
+      np17* and *np16* cannot match the same package.
+    solvers: libmamba
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "accelerate=*=np17*"
+        - "accelerate=*=*np16*"
+    error:
+      exception: PackagesNotFoundError
       entries: []
 
   - name: test_globstr_matchspec_non_compatible_3
@@ -5160,6 +5181,7 @@ tests:
     description: |
       Two glob build string specs for accelerate that cannot be satisfied together:
       *np15* and *py33* cannot match the same package (no such build exists).
+    solvers: classic
     input:
       channels: channel-1
       specs_to_add:
@@ -5167,6 +5189,26 @@ tests:
         - "accelerate=*=*py33*"
     error:
       exception: ResolvePackageNotFound
+      entries: []
+
+  - name: test_globstr_matchspec_non_compatible_3b
+    id: B084b
+    provenance:
+      node_id: tests/core/test_solve.py::test_globstr_matchspec_non_compatible::3
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3833-L3858
+    kind: unsatisfiable
+    description: |
+      Two glob build string specs for accelerate that cannot be satisfied together:
+      *np15* and *py33* cannot match the same package (no such build exists).
+    solvers: libmamba
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "accelerate=*=*np15*"
+        - "accelerate=*=*py33*"
+    error:
+      exception: PackagesNotFoundError
       entries: []
 
   - name: test_no_features_1
