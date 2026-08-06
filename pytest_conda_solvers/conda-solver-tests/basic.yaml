@@ -5463,6 +5463,7 @@ tests:
     description: |
       Install numpy 1.5* + numpy 1.6* simultaneously from channel-1. The combined
       version constraint (1.5.*,1.6.*) has no solution, raising ResolvePackageNotFound.
+    solvers: classic
     input:
       channels: channel-1
       specs_to_add:
@@ -5470,6 +5471,30 @@ tests:
         - "numpy 1.6*"
     error:
       exception: ResolvePackageNotFound
+      entries:
+        - numpy[version='1.5.*,1.6.*']
+
+  - name: test_unsat_from_r1_3b
+    id: B054b
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_from_r1::3
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L351-L380
+    kind: unsatisfiable
+    description: |
+      Install numpy 1.5* + numpy 1.6* simultaneously from channel-1. The combined
+      version constraint (1.5.*,1.6.*) has no solution, raising ResolvePackageNotFound.
+      libmamba variant: raises PackagesNotFoundError, matching upstream's
+      accepted exception pair, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L375-L380
+    solvers: libmamba
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "numpy 1.5*"
+        - "numpy 1.6*"
+    error:
+      exception: PackagesNotFoundError
       entries:
         - numpy[version='1.5.*,1.6.*']
 
@@ -5512,11 +5537,33 @@ tests:
     description: |
       Install a completely nonexistent package from channel-1. Should raise
       ResolvePackageNotFound (or PackagesNotFoundError for libmamba).
+    solvers: classic
     input:
       channels: channel-1
       specs_to_add: "notarealpackage 2.0*"
     error:
       exception: ResolvePackageNotFound
+      entries: []
+
+  - name: test_nonexistent_1b
+    id: B056b
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests.test_nonexistent::1
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L599-L603
+    kind: unsatisfiable
+    description: |
+      Install a completely nonexistent package from channel-1. Should raise
+      ResolvePackageNotFound (or PackagesNotFoundError for libmamba).
+      libmamba variant: raises PackagesNotFoundError, matching upstream's
+      accepted exception pair, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L599-L603
+    solvers: libmamba
+    input:
+      channels: channel-1
+      specs_to_add: "notarealpackage 2.0*"
+    error:
+      exception: PackagesNotFoundError
       entries: []
 
   - name: test_nonexistent_2
@@ -5529,11 +5576,33 @@ tests:
     description: |
       Install numpy==1.5 (exact, not a wildcard) from channel-1. numpy 1.5.0 does not
       exist (only 1.5.1 does), so the solver raises ResolvePackageNotFound.
+    solvers: classic
     input:
       channels: channel-1
       specs_to_add: "numpy 1.5"
     error:
       exception: ResolvePackageNotFound
+      entries: []
+
+  - name: test_nonexistent_2b
+    id: B057b
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests.test_nonexistent::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L599-L603
+    kind: unsatisfiable
+    description: |
+      Install numpy==1.5 (exact, not a wildcard) from channel-1. numpy 1.5.0 does not
+      exist (only 1.5.1 does), so the solver raises ResolvePackageNotFound.
+      libmamba variant: raises PackagesNotFoundError, matching upstream's
+      accepted exception pair, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L599-L603
+    solvers: libmamba
+    input:
+      channels: channel-1
+      specs_to_add: "numpy 1.5"
+    error:
+      exception: PackagesNotFoundError
       entries: []
 
   - name: test_unsat_simple
@@ -6098,6 +6167,7 @@ tests:
     description: |
       Explicitly asking for nd2_mypackage 1.1 which depends on notarealpackage 2.0*.
       Should raise an error.
+    solvers: classic
     input:
       channels:
         - channel-7
@@ -6106,6 +6176,30 @@ tests:
         - "nd2_mypackage 1.1"
     error:
       exception: ResolvePackageNotFound
+      entries: []
+
+  - name: test_nonexistent_deps_5b
+    id: B105b
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_nonexistent_deps::5
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L645-L785
+    kind: unsatisfiable
+    description: |
+      Explicitly asking for nd2_mypackage 1.1 which depends on notarealpackage 2.0*.
+      Should raise an error.
+      libmamba variant: raises UnsatisfiableError because mamba has no more
+      granular exception here, as upstream's TODO notes, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L752-L754
+    solvers: libmamba
+    input:
+      channels:
+        - channel-7
+        - channel-1
+      specs_to_add:
+        - "nd2_mypackage 1.1"
+    error:
+      exception: UnsatisfiableError
       entries: []
 
   - name: test_nonexistent_deps_6
