@@ -821,34 +821,34 @@ tests:
         - "python=2"
     output:
       final_state:
-        - channel-4/${{ arch }}::asn1crypto-0.24.0-py37_0
         - channel-4/${{ arch }}::ca-certificates-2018.03.07-0
-        - channel-4/${{ arch }}::certifi-2018.8.13-py37_0
-        - channel-4/${{ arch }}::cffi-1.11.5-py37h9745a5d_0
-        - channel-4/${{ arch }}::chardet-3.0.4-py37_1
-        - channel-4/${{ arch }}::conda-4.5.10-py37_0
         - channel-4/${{ arch }}::conda-env-2.6.0-1
-        - channel-4/${{ arch }}::cryptography-2.3-py37hb7f436b_0
-        - channel-4/${{ arch }}::cryptography-vectors-2.3-py37_0
-        - channel-4/${{ arch }}::idna-2.7-py37_0
-        - channel-4/${{ arch }}::libedit-3.1.20170329-h6b74fdf_2
-        - channel-4/${{ arch }}::libffi-3.2.1-hd88cf55_4
         - channel-4/${{ arch }}::libgcc-ng-8.2.0-hdf63c60_0
         - channel-4/${{ arch }}::libstdcxx-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libffi-3.2.1-hd88cf55_4
         - channel-4/${{ arch }}::ncurses-6.1-hf484d3e_0
         - channel-4/${{ arch }}::openssl-1.0.2p-h14c3975_0
-        - channel-4/${{ arch }}::pycosat-0.6.3-py37h14c3975_0
-        - channel-4/${{ arch }}::pycparser-2.18-py37_1
-        - channel-4/${{ arch }}::pyopenssl-18.0.0-py37_0
-        - channel-4/${{ arch }}::pysocks-1.6.8-py37_0
-        - channel-4/${{ arch }}::python-3.7.0-hc3d631a_0
-        - channel-4/${{ arch }}::readline-7.0-ha6073c6_4
-        - channel-4/${{ arch }}::requests-2.19.1-py37_0
-        - channel-4/${{ arch }}::ruamel_yaml-0.15.46-py37h14c3975_0
-        - channel-4/${{ arch }}::six-1.11.0-py37_1
-        - channel-4/${{ arch }}::sqlite-3.24.0-h84994c4_0
         - channel-4/${{ arch }}::tk-8.6.7-hc745277_3
-        - channel-4/${{ arch }}::urllib3-1.23-py37_0
         - channel-4/${{ arch }}::xz-5.2.4-h14c3975_4
         - channel-4/${{ arch }}::yaml-0.1.7-had09818_2
         - channel-4/${{ arch }}::zlib-1.2.11-ha838bed_2
+        - channel-4/${{ arch }}::libedit-3.1.20170329-h6b74fdf_2
+        - channel-4/${{ arch }}::readline-7.0-ha6073c6_4
+        - channel-4/${{ arch }}::sqlite-3.24.0-h84994c4_0
+        - channel-4/${{ arch }}::python-3.7.0-hc3d631a_0
+        - channel-4/${{ arch }}::asn1crypto-0.24.0-py37_0
+        - channel-4/${{ arch }}::certifi-2018.8.13-py37_0
+        - channel-4/${{ arch }}::chardet-3.0.4-py37_1
+        - channel-4/${{ arch }}::cryptography-vectors-2.3-py37_0
+        - channel-4/${{ arch }}::idna-2.7-py37_0
+        - channel-4/${{ arch }}::pycosat-0.6.3-py37h14c3975_0
+        - channel-4/${{ arch }}::pycparser-2.18-py37_1
+        - channel-4/${{ arch }}::pysocks-1.6.8-py37_0
+        - channel-4/${{ arch }}::ruamel_yaml-0.15.46-py37h14c3975_0
+        - channel-4/${{ arch }}::six-1.11.0-py37_1
+        - channel-4/${{ arch }}::cffi-1.11.5-py37h9745a5d_0
+        - channel-4/${{ arch }}::cryptography-2.3-py37hb7f436b_0
+        - channel-4/${{ arch }}::pyopenssl-18.0.0-py37_0
+        - channel-4/${{ arch }}::urllib3-1.23-py37_0
+        - channel-4/${{ arch }}::requests-2.19.1-py37_0
+        - channel-4/${{ arch }}::conda-4.5.10-py37_0
