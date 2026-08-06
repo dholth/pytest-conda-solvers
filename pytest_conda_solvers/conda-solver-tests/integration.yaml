@@ -775,8 +775,9 @@ tests:
       libmamba variant of the python 2 to 3.7 migration. The solution differs
       from classic in the cryptography stack (2.3 plus cryptography-vectors
       instead of 2.2.2). Upstream asserts only that python 3.7, conda, and
-      pycosat are present for libmamba; the full state here is pinned from
-      solver behaviour.
+      pycosat are present for libmamba (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2026-L2046),
+      and the full state here is pinned from solver behaviour.
     solvers: libmamba
     input:
       channels: channel-4
