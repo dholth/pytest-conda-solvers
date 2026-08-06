@@ -21,6 +21,7 @@ class TestChannel(Enum):
     CHANNEL_13 = "channel-13"
     CHANNEL_14 = "channel-14"
     CHANNEL_FREEZE = "channel-freeze"
+    CHANNEL_EMPTY = "channel-empty"
     CONDA_FORMAT_REPO = "conda_format_repo"
     TEST = "test"
 
