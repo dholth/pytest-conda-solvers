@@ -4109,7 +4109,9 @@ tests:
     description: |
       Re-solving the inconsistent env (no specs requested) restores python and the
       original consistent state.
-      This stage carries upstream's function-level strict libmamba xfail:
+      This stage carries upstream's function-level strict libmamba xfail
+      (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L857-L864):
       stages 1-3 pass under libmamba before the function fails here.
     xfail_solvers: libmamba
     xfail_reason: "Known limitation. VERIFY task needed to make this pass, but breaks other tests. See https://github.com/conda/conda-libmamba-solver/pull/302"
