@@ -5485,19 +5485,22 @@ tests:
       non-standard (irrational) version string that conda must handle correctly.
     input:
       channels: channel-1
+      add_pip: true
       specs_to_add:
         - "pytz 2012d"
         - "python 3*"
     output:
       final_state:
+        - channel-1/${{ arch }}::distribute-0.6.36-py33_1
         - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::pip-1.3.1-py33_1
+        - channel-1/${{ arch }}::python-3.3.2-0
+        - channel-1/${{ arch }}::pytz-2012d-py33_0
         - channel-1/${{ arch }}::readline-6.2-0
         - channel-1/${{ arch }}::sqlite-3.7.13-0
         - channel-1/${{ arch }}::system-5.8-1
         - channel-1/${{ arch }}::tk-8.5.13-0
         - channel-1/${{ arch }}::zlib-1.2.7-0
-        - channel-1/${{ arch }}::python-3.3.2-0
-        - channel-1/${{ arch }}::pytz-2012d-py33_0
 
   - name: test_nonexistent_1
     id: B056
@@ -5969,6 +5972,7 @@ tests:
       nd_mypackage-1.0 depends on notarealpackage 2.0* (doesn't exist).
       nd_mypackage-1.1 has no such dep. Solver should pick 1.1.
     input:
+      add_pip: true
       channels:
         - channel-7
         - channel-1
@@ -5976,15 +5980,17 @@ tests:
         - nd_mypackage
     output:
       final_state:
+        - channel-1/${{ arch }}::distribute-0.6.36-py33_1
+        - channel-7/${{ arch }}::nd_mypackage-1.1-0
+        - channel-1/${{ arch }}::nose-1.3.0-py33_0
         - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::pip-1.3.1-py33_1
+        - channel-1/${{ arch }}::python-3.3.2-0
         - channel-1/${{ arch }}::readline-6.2-0
         - channel-1/${{ arch }}::sqlite-3.7.13-0
         - channel-1/${{ arch }}::system-5.8-1
         - channel-1/${{ arch }}::tk-8.5.13-0
         - channel-1/${{ arch }}::zlib-1.2.7-0
-        - channel-1/${{ arch }}::python-3.3.2-0
-        - channel-1/${{ arch }}::nose-1.3.0-py33_0
-        - channel-7/${{ arch }}::nd_mypackage-1.1-0
 
   - name: test_nonexistent_deps_2
     id: B102
@@ -5997,6 +6003,7 @@ tests:
       Install nd_anotherpackage 1.0, which requires nd_mypackage 1.1.
       nd_mypackage 1.1 has satisfiable deps (vs 1.0 which needs notarealpackage).
     input:
+      add_pip: true
       channels:
         - channel-7
         - channel-1
@@ -6004,16 +6011,18 @@ tests:
         - "nd_anotherpackage 1.0"
     output:
       final_state:
+        - channel-1/${{ arch }}::distribute-0.6.36-py33_1
+        - channel-7/${{ arch }}::nd_anotherpackage-1.0-0
+        - channel-7/${{ arch }}::nd_mypackage-1.1-0
+        - channel-1/${{ arch }}::nose-1.3.0-py33_0
         - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::pip-1.3.1-py33_1
+        - channel-1/${{ arch }}::python-3.3.2-0
         - channel-1/${{ arch }}::readline-6.2-0
         - channel-1/${{ arch }}::sqlite-3.7.13-0
         - channel-1/${{ arch }}::system-5.8-1
         - channel-1/${{ arch }}::tk-8.5.13-0
         - channel-1/${{ arch }}::zlib-1.2.7-0
-        - channel-1/${{ arch }}::python-3.3.2-0
-        - channel-1/${{ arch }}::nose-1.3.0-py33_0
-        - channel-7/${{ arch }}::nd_mypackage-1.1-0
-        - channel-7/${{ arch }}::nd_anotherpackage-1.0-0
 
   - name: test_nonexistent_deps_3
     id: B103
@@ -6027,6 +6036,7 @@ tests:
       nd_mypackage. Solver picks 2.0 and nd_mypackage-1.1 (since 1.0 is
       unsatisfiable).
     input:
+      add_pip: true
       channels:
         - channel-7
         - channel-1
@@ -6034,16 +6044,18 @@ tests:
         - nd_anotherpackage
     output:
       final_state:
+        - channel-1/${{ arch }}::distribute-0.6.36-py33_1
+        - channel-7/${{ arch }}::nd_anotherpackage-2.0-0
+        - channel-7/${{ arch }}::nd_mypackage-1.1-0
+        - channel-1/${{ arch }}::nose-1.3.0-py33_0
         - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::pip-1.3.1-py33_1
+        - channel-1/${{ arch }}::python-3.3.2-0
         - channel-1/${{ arch }}::readline-6.2-0
         - channel-1/${{ arch }}::sqlite-3.7.13-0
         - channel-1/${{ arch }}::system-5.8-1
         - channel-1/${{ arch }}::tk-8.5.13-0
         - channel-1/${{ arch }}::zlib-1.2.7-0
-        - channel-1/${{ arch }}::python-3.3.2-0
-        - channel-1/${{ arch }}::nose-1.3.0-py33_0
-        - channel-7/${{ arch }}::nd_mypackage-1.1-0
-        - channel-7/${{ arch }}::nd_anotherpackage-2.0-0
 
   - name: test_nonexistent_deps_4
     id: B104
@@ -6056,6 +6068,7 @@ tests:
       nd2_mypackage-1.1 has an unsatisfiable dep. nd2_mypackage-1.0 is clean.
       Solver should prefer 1.0.
     input:
+      add_pip: true
       channels:
         - channel-7
         - channel-1
@@ -6063,15 +6076,17 @@ tests:
         - nd2_mypackage
     output:
       final_state:
+        - channel-1/${{ arch }}::distribute-0.6.36-py33_1
+        - channel-7/${{ arch }}::nd2_mypackage-1.0-0
+        - channel-1/${{ arch }}::nose-1.3.0-py33_0
         - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::pip-1.3.1-py33_1
+        - channel-1/${{ arch }}::python-3.3.2-0
         - channel-1/${{ arch }}::readline-6.2-0
         - channel-1/${{ arch }}::sqlite-3.7.13-0
         - channel-1/${{ arch }}::system-5.8-1
         - channel-1/${{ arch }}::tk-8.5.13-0
         - channel-1/${{ arch }}::zlib-1.2.7-0
-        - channel-1/${{ arch }}::python-3.3.2-0
-        - channel-1/${{ arch }}::nose-1.3.0-py33_0
-        - channel-7/${{ arch }}::nd2_mypackage-1.0-0
 
   - name: test_nonexistent_deps_5
     id: B105
@@ -6103,6 +6118,7 @@ tests:
     description: |
       nd2_anotherpackage 1.0 requires nd2_mypackage 1.0 (satisfiable version).
     input:
+      add_pip: true
       channels:
         - channel-7
         - channel-1
@@ -6110,16 +6126,18 @@ tests:
         - "nd2_anotherpackage 1.0"
     output:
       final_state:
+        - channel-1/${{ arch }}::distribute-0.6.36-py33_1
+        - channel-7/${{ arch }}::nd2_anotherpackage-1.0-0
+        - channel-7/${{ arch }}::nd2_mypackage-1.0-0
+        - channel-1/${{ arch }}::nose-1.3.0-py33_0
         - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::pip-1.3.1-py33_1
+        - channel-1/${{ arch }}::python-3.3.2-0
         - channel-1/${{ arch }}::readline-6.2-0
         - channel-1/${{ arch }}::sqlite-3.7.13-0
         - channel-1/${{ arch }}::system-5.8-1
         - channel-1/${{ arch }}::tk-8.5.13-0
         - channel-1/${{ arch }}::zlib-1.2.7-0
-        - channel-1/${{ arch }}::python-3.3.2-0
-        - channel-1/${{ arch }}::nose-1.3.0-py33_0
-        - channel-7/${{ arch }}::nd2_mypackage-1.0-0
-        - channel-7/${{ arch }}::nd2_anotherpackage-1.0-0
 
   - name: test_nonexistent_deps_7
     id: B107
@@ -6132,6 +6150,7 @@ tests:
       nd2_anotherpackage (any version) with nd2_mypackage-1.1 unsatisfiable.
       anotherpackage-2.0 depends on nd2_mypackage (any version), so picks 1.0.
     input:
+      add_pip: true
       channels:
         - channel-7
         - channel-1
@@ -6139,16 +6158,18 @@ tests:
         - nd2_anotherpackage
     output:
       final_state:
+        - channel-1/${{ arch }}::distribute-0.6.36-py33_1
+        - channel-7/${{ arch }}::nd2_anotherpackage-2.0-0
+        - channel-7/${{ arch }}::nd2_mypackage-1.0-0
+        - channel-1/${{ arch }}::nose-1.3.0-py33_0
         - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::pip-1.3.1-py33_1
+        - channel-1/${{ arch }}::python-3.3.2-0
         - channel-1/${{ arch }}::readline-6.2-0
         - channel-1/${{ arch }}::sqlite-3.7.13-0
         - channel-1/${{ arch }}::system-5.8-1
         - channel-1/${{ arch }}::tk-8.5.13-0
         - channel-1/${{ arch }}::zlib-1.2.7-0
-        - channel-1/${{ arch }}::python-3.3.2-0
-        - channel-1/${{ arch }}::nose-1.3.0-py33_0
-        - channel-7/${{ arch }}::nd2_mypackage-1.0-0
-        - channel-7/${{ arch }}::nd2_anotherpackage-2.0-0
 
   - name: test_timestamps_and_deps_1
     id: B108
