@@ -1,15 +1,6 @@
 # Copyright (C) 2012 Anaconda, Inc
 # SPDX-License-Identifier: BSD-3-Clause
-"""White-box solver tests that cannot be expressed as YAML specs.
-
-Provenance: tests/core/test_solve.py::test_solve_2 (stages 1-3)
-at conda commit 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438,
-https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L127-L203
-Stage 1 runs here as well, because stage 2 consumes its final_state
-as the prefix (the chained-handoff convention), and its order
-assertion re-runs what B112 in conda-solver-tests/basic.yaml already
-covers.
-"""
+"""White-box solver tests that cannot be expressed as YAML specs."""
 
 import copy
 from unittest.mock import Mock
@@ -20,13 +11,26 @@ from conda.models.channel import Channel
 from conda.models.match_spec import MatchSpec
 from conda.models.records import PrefixRecord
 
-from .install import add_base_url, get_solver
+from .install import (
+    add_base_url,
+    diststrs_to_records,
+    get_solver,
+)
 
 
 class TestSolveRegressions:
     def test_solve_2_ssc_add_back(self, request, tmpdir, solver_backend, channel_server):
         """Regression test: after _run_sat, orphaned duplicate records in the
-        SolverStateContainer's solution must be deduplicated by name."""
+        SolverStateContainer's solution must be deduplicated by name.
+
+        Provenance: tests/core/test_solve.py::test_solve_2 (stages 1-3)
+        at conda commit 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438,
+        https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L127-L203
+        Stage 1 runs here as well, because stage 2 consumes its final_state
+        as the prefix (the chained-handoff convention), and its order
+        assertion re-runs what B112 in conda-solver-tests/basic.yaml already
+        covers.
+        """
         if request.config.option.conda_solver != "classic":
             pytest.skip(
                 "conda-libmamba-solver does not use Solver.ssc (SolverStateContainer)"
@@ -128,3 +132,53 @@ class TestSolveRegressions:
             )
             prec_names = [_.name for _ in final_state]
             assert len(prec_names) == len(set(prec_names))
+
+    def test_force_reinstall_1_sequence(self, tmpdir, solver_backend, channel_server):
+        """Calls 2-4 of test_force_reinstall_1 on one solver instance: an
+        ordinary diff is empty, force_reinstall relinks exactly one record
+        (python), and the next ordinary call on the same instance is empty
+        again, proving the forced call leaves no state behind.
+
+        Provenance: tests/core/test_solve.py::test_force_reinstall_1 (calls 2-4)
+        at conda commit 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438,
+        https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2681-L2714
+        Stage 1 is ported as B162, and stages 2-3 as B048/B049, in
+        conda-solver-tests/basic.yaml.
+        """
+        channels = ("channel-1",)
+        subdirs = ("linux-64", "noarch")
+        specs = (MatchSpec("python=2"),)
+        prefix_records = diststrs_to_records(
+            (
+                "channel-1/${{ arch }}::openssl-1.0.1c-0",
+                "channel-1/${{ arch }}::readline-6.2-0",
+                "channel-1/${{ arch }}::sqlite-3.7.13-0",
+                "channel-1/${{ arch }}::system-5.8-1",
+                "channel-1/${{ arch }}::tk-8.5.13-0",
+                "channel-1/${{ arch }}::zlib-1.2.7-0",
+                "channel-1/${{ arch }}::python-2.7.5-0",
+            ),
+            channel_server,
+            "linux-64",
+        )
+        with get_solver(
+            solver_backend,
+            tmpdir,
+            channel_server,
+            channels,
+            subdirs,
+            specs_to_add=specs,
+            prefix_records=prefix_records,
+            history_specs=specs,
+        ) as solver:
+            unlink_dists, link_dists = solver.solve_for_diff()
+            assert not unlink_dists
+            assert not link_dists
+
+            unlink_dists, link_dists = solver.solve_for_diff(force_reinstall=True)
+            assert len(unlink_dists) == len(link_dists) == 1
+            assert unlink_dists[0] == link_dists[0]
+
+            unlink_dists, link_dists = solver.solve_for_diff()
+            assert not unlink_dists
+            assert not link_dists

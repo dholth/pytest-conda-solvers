@@ -93,7 +93,7 @@ def ensure_str_tuple(entry):
         return ()
     if isinstance(entry, str):
         return (entry,)
-    if isinstance(entry, list):
+    if isinstance(entry, (list, tuple)):
         return tuple(str(e) for e in entry)
     return (str(entry),)
 
