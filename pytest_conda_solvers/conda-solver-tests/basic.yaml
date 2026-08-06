@@ -4706,6 +4706,8 @@ tests:
     description: |
       Requesting the mkl track_feature pulls the mkl builds of numpy and scipy.
       Features are classic-only.
+      Upstream also asserts the numpy and scipy records carry the mkl
+      feature; here that is pinned through the featured _p build strings.
     solvers: classic
     input:
       channels: channel-1
@@ -5075,7 +5077,6 @@ tests:
     description: |
       A package that requires a feature installs cleanly alongside the package
       that provides it. Features are classic-only.
-    solvers: classic
     input:
       channels:
         - channel-1
