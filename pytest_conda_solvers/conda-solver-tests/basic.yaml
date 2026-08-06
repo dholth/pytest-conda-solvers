@@ -2952,8 +2952,9 @@ tests:
     description: |
       Solve the p2 specs against the classic stage-1 prefix with prune=true, so
       prefix data is ignored and the featured extras are dropped. Upstream
-      asserts the absence of a constriction diagnostic on stdout, which is not
-      representable here.
+      asserts the absence of a constriction diagnostic on stdout (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L851-L853),
+      which is not representable here.
     solvers: classic
     input:
       channels: channel-1
@@ -3099,7 +3100,9 @@ tests:
       libmamba variant of the python unpin stage. libmamba upgrades python
       without replacing ncurses and libedit, so the diff is smaller than
       classic's. Upstream asserts only the python unlink and link records for
-      libmamba; the full diff here is pinned from solver behaviour.
+      libmamba, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2286-L2294
+      and the full diff here is pinned from solver behaviour.
     solvers: libmamba
     input:
       channels: channel-4
