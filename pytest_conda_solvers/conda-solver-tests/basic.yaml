@@ -4707,7 +4707,9 @@ tests:
       Requesting the mkl track_feature pulls the mkl builds of numpy and scipy.
       Features are classic-only.
       Upstream also asserts the numpy and scipy records carry the mkl
-      feature; here that is pinned through the featured _p build strings.
+      feature (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L293-L308),
+      and here that is pinned through the featured _p build strings.
     solvers: classic
     input:
       channels: channel-1
@@ -5243,7 +5245,8 @@ tests:
       Install the added pandas 0.12.0 np16py27_0 build without a features
       spec. The plain numpy build is selected, not the added featured py27_p5
       build. channel-14 is channel-1 plus the two records upstream appends to
-      its index for these stages.
+      its index for these stages, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L895-L917
     solvers: classic
     input:
       channels: channel-14
@@ -5314,8 +5317,9 @@ tests:
     kind: solve
     description: |
       Install mkl 11* with an explicit track_features=mkl spec. Upstream
-      asserts this solve equals the plain "mkl" install, so the state here is
-      identical to test_mkl's.
+      asserts this solve equals the plain "mkl" install (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L281-L285),
+      so the state here is identical to test_mkl's.
     solvers: classic
     input:
       channels: channel-1
@@ -5349,8 +5353,9 @@ tests:
     kind: solve
     description: |
       Install accelerate with an explicit track_features=mkl spec. Upstream
-      asserts this solve equals the plain "accelerate" install, so the state
-      here is identical to test_accelerate's.
+      asserts this solve equals the plain "accelerate" install (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L287-L291),
+      so the state here is identical to test_accelerate's.
     solvers: classic
     input:
       channels: channel-1
