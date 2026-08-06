@@ -2700,7 +2700,8 @@ tests:
     description: |
       Install python=2.7.3 and accelerate (MKL features). First part establishes the
       initial environment with all MKL-featured dependencies.
-    solvers: classic
+    xfail_solvers: libmamba
+    xfail_reason: "Features not supported in libmamba"
     input:
       channels: channel-1
       specs_to_add:
@@ -2741,6 +2742,9 @@ tests:
     description: |
       Remove accelerate from the environment specs and prune. Every dependency of accelerate
       (MKL stack) is removed. Only python=2.7.3 and its minimal deps remain.
+      Upstream never reaches this stage under libmamba, because the
+      function-level strict xfail fails on stage 1 first, so there is no
+      libmamba expectation to port.
     solvers: classic
     input:
       channels: channel-1
@@ -2792,7 +2796,8 @@ tests:
     kind: solve
     description: |
       Install numpy, python=2.7.3, and accelerate. Same MKL-featured environment as B115.
-    solvers: classic
+    xfail_solvers: libmamba
+    xfail_reason: "Features not supported in libmamba"
     input:
       channels: channel-1
       specs_to_add:
@@ -2835,7 +2840,8 @@ tests:
       Remove accelerate from specs (keep numpy and python=2.7.3) and prune. All accelerate
       MKL dependencies are removed, but numpy remains (still in specs). Numpy switches from
       the MKL-featured build (py27_p0) to the plain build (py27_0).
-    solvers: classic
+    xfail_solvers: libmamba
+    xfail_reason: "Features not supported in libmamba"
     input:
       channels: channel-1
       specs_to_add:
