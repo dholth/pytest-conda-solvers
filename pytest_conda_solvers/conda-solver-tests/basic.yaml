@@ -3609,8 +3609,9 @@ tests:
     description: |
       With channel priority disabled, the explicit specs upgrade into channel-4
       (python 2.7.15, pandas 0.23.4, and the mkl/blas stack). Upstream asserts
-      only that the channel-4 python and pandas records are present; the full
-      state here is pinned from solver behaviour.
+      only that the channel-4 python and pandas records are present (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2941-L2948),
+      and the full state here is pinned from solver behaviour.
     solvers: classic
     input:
       channels:
@@ -3674,7 +3675,9 @@ tests:
       Channel priority restored (flexible), so the environment downgrades back
       into channel-2 (python 2.7.13, pandas 0.20.3). Only ca-certificates
       survives from the channel-4 excursion. Upstream asserts only the two
-      channel-2 records; the full state here is pinned from solver behaviour.
+      channel-2 records (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2961-L2968),
+      and the full state here is pinned from solver behaviour.
     solvers: classic
     input:
       channels:
