@@ -6294,7 +6294,8 @@ tests:
     kind: solve
     description: |
       Installing package1 alone pulls in package2 through the circular
-      dependency. Upstream asserts this equals the combined install.
+      dependency. Upstream asserts this equals the combined install, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L841-L845
     input:
       channels: channel-7
       specs_to_add: package1
@@ -6346,9 +6347,11 @@ tests:
       url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L605-L643
     kind: solve
     description: |
-      Regression pair for conda#6271: reinstalling ts_mypackage alongside the
-      exact libpng 1.2 record must reproduce the hash12 solution, not be
-      disrupted by the newer-timestamped hash12 build preferences.
+      Regression pair for https://github.com/conda/conda/issues/6271:
+      reinstalling ts_mypackage alongside the exact libpng 1.2 record must
+      reproduce the hash12 solution, not be disrupted by the newer-timestamped
+      hash12 build preferences, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L629-L643
     input:
       channels:
         - channel-7
@@ -6388,7 +6391,8 @@ tests:
     kind: solve
     description: |
       Reinstalling ts_mypackage alongside the exact libpng 1.5 record
-      reproduces the hash15 solution despite hash12's newer timestamp.
+      reproduces the hash15 solution despite hash12's newer timestamp, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L629-L643
     input:
       channels:
         - channel-7
