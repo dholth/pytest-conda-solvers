@@ -4605,7 +4605,11 @@ tests:
     kind: solve
     description: |
       Requesting the mkl track_feature pulls in the mkl builds of numpy and
-      iopro along with the mkl runtime. Features are classic-only.
+      iopro along with the mkl runtime. Features are classic-only. Upstream
+      compares against an unordered set only, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L261-L279
+      so the exact record order pinned here is a deliberate strengthening
+      taken from solver behaviour.
     solvers: classic
     input:
       channels: channel-1
@@ -5022,7 +5026,7 @@ tests:
       build number must not be preferred over the real build. Upstream asserts
       only that scipy-0.11.0-np17py33_x0 is absent and scipy-0.11.0-np17py33_3
       is present (see
-      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L826-L827),
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L827-L828),
       and the full record list here is pinned from classic solver behaviour.
       Upstream serves the bad scipy record only within this test, while here
       it is baked into the shared channel-1 data. Features are classic-only.
@@ -5216,7 +5220,7 @@ tests:
       spec. The plain numpy build is selected, not the added featured py27_p5
       build. channel-14 is channel-1 plus the two records upstream appends to
       its index for these stages, see
-      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L895-L917
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L895-L918
     solvers: classic
     input:
       channels: channel-14
