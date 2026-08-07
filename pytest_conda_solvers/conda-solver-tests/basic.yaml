@@ -3026,13 +3026,15 @@ tests:
     kind: solve
     description: |
       Same solve without prune, so classic keeps the featured extras from the
-      prefix. Upstream asserts the presence of the constriction diagnostic on
-      stdout (not representable here) and never the solution, so the final
-      state is pinned from classic solver behaviour. Upstream strict-xfails
-      libmamba on that stdout assertion alone, see
+      prefix, which is classic's own stage-1 state. Upstream asserts the
+      presence of the constriction diagnostic on stdout (not representable
+      here) and never the solution, so the final state is pinned from classic
+      solver behaviour. Upstream strict-xfails libmamba on that stdout
+      assertion alone, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L820-L826
-      but the solve itself succeeds under libmamba and reproduces the same
-      final state here, so the entry stays unrestricted.
+      and libmamba's no-prune case starts from its own stage-1 state, so it
+      is ported separately as B147b.
+    solvers: classic
     input:
       channels: channel-1
       specs_to_add:
@@ -3073,6 +3075,54 @@ tests:
         - channel-1/${{ arch }}::scipy-0.12.0-np17py27_p0
         - channel-1/${{ arch }}::scikit-learn-0.13.1-np17py27_p0
         - channel-1/${{ arch }}::mkl-11.0-np17py27_p1
+
+  - name: test_update_prune_5_2b_no_prune
+    id: B147b
+    provenance:
+      node_id: tests/core/test_solve.py::test_update_prune_5::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L817-L853
+    kind: solve
+    description: |
+      Same solve without prune under libmamba, starting from its own stage-1
+      state (the classic no-prune case is B147). Upstream asserts only the
+      constriction diagnostic on stdout and never the solution, and
+      strict-xfails libmamba on that stdout assertion alone, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L820-L826
+      so the final state is pinned from solver behaviour. Without prune there
+      is nothing orphaned to keep, so the outcome matches B146b's.
+    solvers: libmamba
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "python=2.7"
+        - "numexpr==2.0.1=np17py27_p2"
+      prefix:
+        - channel-1/${{ arch }}::mkl-rt-11.0-p0
+        - channel-1/${{ arch }}::numexpr-2.0.1-np17py27_p3
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+      history_specs:
+        - "python=2.7"
+        - "numexpr==2.0.1=np17py27_p3"
+      prune: false
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+        - channel-1/${{ arch }}::numexpr-2.0.1-np17py27_p2
 
   - name: test_fast_update_2b
     id: B178
