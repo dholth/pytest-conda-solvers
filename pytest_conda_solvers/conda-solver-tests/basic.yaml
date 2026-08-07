@@ -2438,6 +2438,11 @@ tests:
     description: |
       Upgrade python (unpin from 2.7.14 to latest), so python jumps to 3.6.4.
       The solver also upgrades ncurses, openssl and libedit to satisfy python 3.6 deps.
+      Upstream asserts this full ordered diff for classic only. For libmamba it
+      checks only that python 2.7.14 is unlinked and python 3.6.4 is linked, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2286-L2297
+      so this entry is classic-only and the libmamba side lives in
+      test_fast_update_2b.
     solvers: classic
     input:
       channels: channel-4
@@ -2486,8 +2491,12 @@ tests:
       checks only that sqlite is unlinked and upgraded past 3.21 and that any
       linked python stays at 2.7, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2324-L2339
-      so the full diff is a strengthening there. Both solvers produce this
-      exact diff here.
+      so the full diff is a strengthening there. Upstream's comment records
+      that mamba has picked sqlite 3.23 rather than 3.24 here, which is why
+      it asserts only an inequality on the sqlite version, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2330-L2332.
+      In this repository's own suite runs, both solvers produce this exact
+      diff.
     input:
       channels: channel-4
       specs_to_add: sqlite
@@ -2802,7 +2811,9 @@ tests:
       url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L674-L755
     kind: solve
     description: |
-      Install numpy, python=2.7.3, and accelerate. Same MKL-featured environment as B115.
+      Install numpy, python=2.7.3, and accelerate. The solve lands in the same
+      MKL-featured environment that B114 (stage 1 of test_update_prune_2)
+      asserts.
     xfail_solvers: libmamba
     xfail_reason: "Features not supported in libmamba"
     input:
@@ -3089,8 +3100,12 @@ tests:
       constriction diagnostic on stdout and never the solution, and
       strict-xfails libmamba on that stdout assertion alone, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L820-L826
-      so the final state is pinned from solver behaviour. Without prune there
-      is nothing orphaned to keep, so the outcome matches B146b's.
+      so the final state is pinned from solver behaviour. The requested
+      numexpr-2.0.1-np17py27_p2 build does not depend on mkl-rt, so the
+      stage-1 mkl-rt becomes orphaned, and libmamba drops it even without
+      prune. That is where it diverges from classic, whose no-prune state
+      (B147) keeps mkl-rt. The outcome therefore matches B146b's pruned
+      state.
     solvers: libmamba
     input:
       channels: channel-1
