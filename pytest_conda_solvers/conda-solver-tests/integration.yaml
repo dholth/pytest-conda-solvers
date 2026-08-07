@@ -152,6 +152,35 @@ tests:
         - "package scikit-learn-0.13"
         - "requires python 2.7*"
 
+  - name: pinned_1_4c
+    id: I004c
+    provenance:
+      node_id: tests/core/test_solve.py::test_pinned_1::5
+      commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L2489-L2495
+    kind: unsatisfiable
+    description: |
+      rattler variant: raises UnsatisfiableError like libmamba, but the error
+      message is worded differently with the same meaning, so upstream checks
+      different fragments, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L2489-L2495
+    solvers: rattler
+    input:
+      channels: channel-1
+      specs_to_add: scikit-learn==0.13
+      prefix: channel-1/${{ arch }}::system-5.8-0
+      history_specs: system=5.8=0
+      ignore_pinned: false
+      pinned_packages:
+        - python=2.6
+        - iopro<=1.4.2
+    error:
+      exception: UnsatisfiableError
+      entries: []
+      message_includes:
+        - "scikit-learn ==0.13 can be installed"
+        - "constraint python 2.6.* cannot be fulfilled"
+
   - name: pinned_1_5
     id: I005
     provenance:
@@ -339,12 +368,14 @@ tests:
       commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
       url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2356-L2603
     kind: solve
-    solvers: libmamba
+    solvers: [libmamba, rattler]
     description: |
       Libmamba stays in python=2.6 unless an explicit python=3 spec is given,
       so this variant uses python=3 to match the adjustment in conda's own
       test suite, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2566-L2571.
+      At conda 26.7.0 the same guard and expectation cover rattler too, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L2609-L2612.
     input:
       channels: channel-1
       specs_to_add: "python=3"
@@ -550,10 +581,11 @@ tests:
       in the history. It should only neuter that spec if there's no way to solve it with that spec.
       Upstream drops xz-5.2.3-0 from the expected unlink order when running libmamba with libmambapy
       older than 2.0a0. That branch is obsolete for the versions tested here, so xz is expected
-      unconditionally for both solvers, see
+      unconditionally for classic and libmamba, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3164-L3176
-    xfail_solvers: rattler
-    xfail_reason: "conda-rattler-solver does not unlink xz in this freeze-installed diff, divergence pending upstream investigation"
+      Rattler keeps xz installed in this solve, so its variant lives in
+      test_freeze_deps_1_5b.
+    solvers: [classic, libmamba]
     input:
       channels: channel-2
       specs_to_add:
@@ -576,6 +608,61 @@ tests:
         - channel-2/${{ arch }}::six-1.7.3-py34_0
         - channel-2/${{ arch }}::python-3.4.5-0
         - channel-2/${{ arch }}::xz-5.2.3-0
+      link_precs:
+        - channel-2/${{ arch }}::mkl-2017.0.3-0
+        - channel-2/${{ arch }}::yaml-0.1.6-0
+        - channel-2/${{ arch }}::python-2.7.13-0
+        - channel-2/${{ arch }}::backports-1.0-py27_0
+        - channel-2/${{ arch }}::backports_abc-0.5-py27_0
+        - channel-2/${{ arch }}::certifi-2016.2.28-py27_0
+        - channel-2/${{ arch }}::futures-3.1.1-py27_0
+        - channel-2/${{ arch }}::markupsafe-1.0-py27_0
+        - channel-2/${{ arch }}::numpy-1.13.1-py27_0
+        - channel-2/${{ arch }}::pyyaml-3.12-py27_0
+        - channel-2/${{ arch }}::requests-2.14.2-py27_0
+        - channel-2/${{ arch }}::six-1.7.3-py27_0
+        - channel-2/${{ arch }}::python-dateutil-2.6.1-py27_0
+        - channel-2/${{ arch }}::setuptools-36.4.0-py27_1
+        - channel-2/${{ arch }}::singledispatch-3.4.0.3-py27_0
+        - channel-2/${{ arch }}::ssl_match_hostname-3.5.0.1-py27_0
+        - channel-2/${{ arch }}::jinja2-2.9.6-py27_0
+        - channel-2/${{ arch }}::tornado-4.5.2-py27_0
+        - channel-2/${{ arch }}::bokeh-0.12.5-py27_1
+
+  - name: test_freeze_deps_1_5b
+    id: I014b
+    provenance:
+      node_id: tests/core/test_solve.py::test_freeze_deps_1::5
+      commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L3230-L3284
+    kind: solve_for_diff
+    description: |
+      rattler variant of test_freeze_deps_1_5. Upstream encodes that rattler
+      does not remove xz in this solve, so the unlink order omits xz-5.2.3-0
+      while the link order is unchanged, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L3244-L3257
+    solvers: rattler
+    input:
+      channels: channel-2
+      specs_to_add:
+        - "bokeh=0.12.5"
+        - python
+      prefix:
+        - channel-2/${{ arch }}::openssl-1.0.2l-0
+        - channel-2/${{ arch }}::readline-6.2-2
+        - channel-2/${{ arch }}::sqlite-3.13.0-0
+        - channel-2/${{ arch }}::tk-8.5.18-0
+        - channel-2/${{ arch }}::xz-5.2.3-0
+        - channel-2/${{ arch }}::zlib-1.2.11-0
+        - channel-2/${{ arch }}::python-3.4.5-0
+        - channel-2/${{ arch }}::six-1.7.3-py34_0
+      history_specs:
+        - "six=1.7"
+        - "python=3.4"
+    output:
+      unlink_precs:
+        - channel-2/${{ arch }}::six-1.7.3-py34_0
+        - channel-2/${{ arch }}::python-3.4.5-0
       link_precs:
         - channel-2/${{ arch }}::mkl-2017.0.3-0
         - channel-2/${{ arch }}::yaml-0.1.6-0
@@ -779,8 +866,10 @@ tests:
       instead of 2.2.2). Upstream asserts only that python 3.7, conda, and
       pycosat are present for libmamba (see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2026-L2046),
-      and the full state here is pinned from solver behaviour.
-    solvers: libmamba
+      and the full state here is pinned from solver behaviour. At conda 26.7.0
+      the same guard covers rattler, which produces this exact state too, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L2062-L2080.
+    solvers: [libmamba, rattler]
     input:
       channels: channel-4
       specs_to_add: "python=3.7"

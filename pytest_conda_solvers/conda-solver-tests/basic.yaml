@@ -292,7 +292,7 @@ tests:
       entries:
         - numpy[version='1.5.*,1.6.*']
 
-  - name: test_unsatisfiable_from_channel_1_3_libmamba
+  - name: test_unsatisfiable_from_channel_1_3b
     id: B007b
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_from_r1::3
@@ -317,6 +317,31 @@ tests:
       exception: PackagesNotFoundError
       entries:
         - numpy[version='1.5.*,1.6.*']
+
+  - name: test_unsatisfiable_from_channel_1_3c
+    id: B007c
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_from_r1::3
+      commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/conda/testing/solver_helpers.py#L375-L382
+    kind: unsatisfiable
+    description: |
+      rattler variant: raises UnsatisfiableError for the same conflicting
+      numpy globs. conda 26.7.0 widened the accepted exception tuple to
+      include UnsatisfiableError and checks bad_deps only on the
+      ResolvePackageNotFound branch, so the exception type is the whole
+      expectation here, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/conda/testing/solver_helpers.py#L375-L382
+    solvers: rattler
+    input:
+      channels: channel-1
+      specs_to_add:
+        - numpy 1.5*
+        - numpy 1.6*
+      add_pip: true
+    error:
+      exception: UnsatisfiableError
+      entries: []
 
   - name: test_aggressive_update_packages_1
     id: B008
@@ -607,14 +632,18 @@ tests:
       commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
       url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L1314-L1530
     kind: solve
+    solvers: [classic, libmamba]
     description: |
       Upstream applies a non-strict known-flaky xfail to test_conda_downgrade on
       libmamba, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L1318-L1324.
       In this port the libmamba result was observed to be deterministic, so the
-      entry runs unrestricted and strict on both solvers.
-    xfail_solvers: rattler
-    xfail_reason: "conda's flexible channel priority maps to rattler's Disabled (rattler has no flexible mode), so higher builds from lower-priority channels win, see https://github.com/conda-incubator/conda-rattler-solver/blob/5237b2359ed3df0b2f1c0fa34f80cf448a235a7e/conda_rattler_solver/solver.py#L350-L354"
+      entry runs strict on both solvers. At conda 26.7.0 upstream skips the
+      exact-order assertion under rattler because the result is slightly
+      different, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L1405-L1408,
+      so this entry is restricted to classic and libmamba and the observed
+      rattler state is pinned in test_conda_downgrade_1c (B019c).
     input:
       channels:
         - channel-2
@@ -666,6 +695,73 @@ tests:
         - channel-4/${{ arch }}::conda-4.5.10-py37_0
         - channel-4/${{ arch }}::conda-build-3.12.1-py37_0
 
+  - name: test_conda_downgrade_1c
+    id: B019c
+    provenance:
+      node_id: tests/core/test_solve.py::test_conda_downgrade::1
+      commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L1340-L1566
+    kind: solve
+    solvers: rattler
+    description: |
+      Rattler variant of test_conda_downgrade stage 1. At conda 26.7.0
+      upstream skips the exact-order assertion under rattler because the
+      result is slightly different, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L1405-L1408.
+      This entry strengthens that by pinning the observed rattler state: with
+      channel priority disabled rattler picks the higher channel-4 builds of
+      conda-env, libffi, and zlib where classic keeps the channel-2 ones.
+    input:
+      channels:
+        - channel-2
+        - channel-4
+      specs_to_add: conda-build
+      channel_priority: disabled
+    output:
+      final_state:
+        - channel-4/${{ arch }}::ca-certificates-2018.03.07-0
+        - channel-4/${{ arch }}::conda-env-2.6.0-1
+        - channel-4/${{ arch }}::libgcc-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libstdcxx-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libffi-3.2.1-hd88cf55_4
+        - channel-4/${{ arch }}::ncurses-6.1-hf484d3e_0
+        - channel-4/${{ arch }}::openssl-1.0.2p-h14c3975_0
+        - channel-4/${{ arch }}::patchelf-0.9-hf484d3e_2
+        - channel-4/${{ arch }}::tk-8.6.7-hc745277_3
+        - channel-4/${{ arch }}::xz-5.2.4-h14c3975_4
+        - channel-4/${{ arch }}::yaml-0.1.7-had09818_2
+        - channel-4/${{ arch }}::zlib-1.2.11-ha838bed_2
+        - channel-4/${{ arch }}::libedit-3.1.20170329-h6b74fdf_2
+        - channel-4/${{ arch }}::readline-7.0-ha6073c6_4
+        - channel-4/${{ arch }}::sqlite-3.24.0-h84994c4_0
+        - channel-4/${{ arch }}::python-3.7.0-hc3d631a_0
+        - channel-4/${{ arch }}::asn1crypto-0.24.0-py37_0
+        - channel-4/${{ arch }}::beautifulsoup4-4.6.3-py37_0
+        - channel-4/${{ arch }}::certifi-2018.8.13-py37_0
+        - channel-4/${{ arch }}::chardet-3.0.4-py37_1
+        - channel-4/${{ arch }}::cryptography-vectors-2.3-py37_0
+        - channel-4/${{ arch }}::filelock-3.0.4-py37_0
+        - channel-4/${{ arch }}::glob2-0.6-py37_0
+        - channel-4/${{ arch }}::idna-2.7-py37_0
+        - channel-4/${{ arch }}::markupsafe-1.0-py37h14c3975_1
+        - channel-4/${{ arch }}::pkginfo-1.4.2-py37_1
+        - channel-4/${{ arch }}::psutil-5.4.6-py37h14c3975_0
+        - channel-4/${{ arch }}::pycosat-0.6.3-py37h14c3975_0
+        - channel-4/${{ arch }}::pycparser-2.18-py37_1
+        - channel-4/${{ arch }}::pysocks-1.6.8-py37_0
+        - channel-4/${{ arch }}::pyyaml-3.13-py37h14c3975_0
+        - channel-4/${{ arch }}::ruamel_yaml-0.15.46-py37h14c3975_0
+        - channel-4/${{ arch }}::six-1.11.0-py37_1
+        - channel-4/${{ arch }}::cffi-1.11.5-py37h9745a5d_0
+        - channel-4/${{ arch }}::setuptools-40.0.0-py37_0
+        - channel-4/${{ arch }}::cryptography-2.3-py37hb7f436b_0
+        - channel-4/${{ arch }}::jinja2-2.10-py37_0
+        - channel-4/${{ arch }}::pyopenssl-18.0.0-py37_0
+        - channel-4/${{ arch }}::urllib3-1.23-py37_0
+        - channel-4/${{ arch }}::requests-2.19.1-py37_0
+        - channel-4/${{ arch }}::conda-4.5.10-py37_0
+        - channel-4/${{ arch }}::conda-build-3.12.1-py37_0
+
   - name: test_conda_downgrade_2
     id: B020
     provenance:
@@ -673,14 +769,17 @@ tests:
       commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
       url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L1314-L1530
     kind: solve_for_diff
+    solvers: [classic, libmamba]
     description: |
       Upstream applies a non-strict known-flaky xfail to test_conda_downgrade on
       libmamba, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L1318-L1324.
       In this port the libmamba result was observed to be deterministic, so the
-      entry runs unrestricted and strict on both solvers.
-    xfail_solvers: rattler
-    xfail_reason: "conda's flexible channel priority maps to rattler's Disabled (rattler has no flexible mode), so higher builds from lower-priority channels win, see https://github.com/conda-incubator/conda-rattler-solver/blob/5237b2359ed3df0b2f1c0fa34f80cf448a235a7e/conda_rattler_solver/solver.py#L350-L354"
+      entry runs strict on both solvers. At conda 26.7.0 upstream asserts a
+      different link order under rattler, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L1429-L1436,
+      ported as test_conda_downgrade_2c (B020c), so this entry is restricted
+      to classic and libmamba.
     input:
       channels:
         - channel-2
@@ -737,6 +836,77 @@ tests:
       link_precs:
         - channel-2/noarch::itsdangerous-0.24-py_0
 
+  - name: test_conda_downgrade_2c
+    id: B020c
+    provenance:
+      node_id: tests/core/test_solve.py::test_conda_downgrade::2
+      commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L1340-L1566
+    kind: solve_for_diff
+    solvers: rattler
+    description: |
+      Rattler variant of test_conda_downgrade stage 2, taking the rattler
+      stage 1 state pinned in test_conda_downgrade_1c (B019c) as its prefix,
+      as upstream hands the solver's own stage 1 result forward. At conda
+      26.7.0 upstream asserts rattler links the py37 build of itsdangerous
+      from channel-4 rather than the noarch build from channel-2, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L1429-L1436.
+    input:
+      channels:
+        - channel-2
+        - channel-4
+      specs_to_add: itsdangerous
+      prefix:
+        - channel-4/${{ arch }}::ca-certificates-2018.03.07-0
+        - channel-4/${{ arch }}::conda-env-2.6.0-1
+        - channel-4/${{ arch }}::libgcc-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libstdcxx-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libffi-3.2.1-hd88cf55_4
+        - channel-4/${{ arch }}::ncurses-6.1-hf484d3e_0
+        - channel-4/${{ arch }}::openssl-1.0.2p-h14c3975_0
+        - channel-4/${{ arch }}::patchelf-0.9-hf484d3e_2
+        - channel-4/${{ arch }}::tk-8.6.7-hc745277_3
+        - channel-4/${{ arch }}::xz-5.2.4-h14c3975_4
+        - channel-4/${{ arch }}::yaml-0.1.7-had09818_2
+        - channel-4/${{ arch }}::zlib-1.2.11-ha838bed_2
+        - channel-4/${{ arch }}::libedit-3.1.20170329-h6b74fdf_2
+        - channel-4/${{ arch }}::readline-7.0-ha6073c6_4
+        - channel-4/${{ arch }}::sqlite-3.24.0-h84994c4_0
+        - channel-4/${{ arch }}::python-3.7.0-hc3d631a_0
+        - channel-4/${{ arch }}::asn1crypto-0.24.0-py37_0
+        - channel-4/${{ arch }}::beautifulsoup4-4.6.3-py37_0
+        - channel-4/${{ arch }}::certifi-2018.8.13-py37_0
+        - channel-4/${{ arch }}::chardet-3.0.4-py37_1
+        - channel-4/${{ arch }}::cryptography-vectors-2.3-py37_0
+        - channel-4/${{ arch }}::filelock-3.0.4-py37_0
+        - channel-4/${{ arch }}::glob2-0.6-py37_0
+        - channel-4/${{ arch }}::idna-2.7-py37_0
+        - channel-4/${{ arch }}::markupsafe-1.0-py37h14c3975_1
+        - channel-4/${{ arch }}::pkginfo-1.4.2-py37_1
+        - channel-4/${{ arch }}::psutil-5.4.6-py37h14c3975_0
+        - channel-4/${{ arch }}::pycosat-0.6.3-py37h14c3975_0
+        - channel-4/${{ arch }}::pycparser-2.18-py37_1
+        - channel-4/${{ arch }}::pysocks-1.6.8-py37_0
+        - channel-4/${{ arch }}::pyyaml-3.13-py37h14c3975_0
+        - channel-4/${{ arch }}::ruamel_yaml-0.15.46-py37h14c3975_0
+        - channel-4/${{ arch }}::six-1.11.0-py37_1
+        - channel-4/${{ arch }}::cffi-1.11.5-py37h9745a5d_0
+        - channel-4/${{ arch }}::setuptools-40.0.0-py37_0
+        - channel-4/${{ arch }}::cryptography-2.3-py37hb7f436b_0
+        - channel-4/${{ arch }}::jinja2-2.10-py37_0
+        - channel-4/${{ arch }}::pyopenssl-18.0.0-py37_0
+        - channel-4/${{ arch }}::urllib3-1.23-py37_0
+        - channel-4/${{ arch }}::requests-2.19.1-py37_0
+        - channel-4/${{ arch }}::conda-4.5.10-py37_0
+        - channel-4/${{ arch }}::conda-build-3.12.1-py37_0
+      history_specs:
+        - conda-build
+      set_sys_prefix: true
+    output:
+      unlink_precs: []
+      link_precs:
+        - channel-4/${{ arch }}::itsdangerous-0.24-py37_1
+
   - name: test_conda_downgrade_3
     id: B021
     provenance:
@@ -744,14 +914,17 @@ tests:
       commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
       url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L1314-L1530
     kind: solve_for_diff
+    solvers: [classic, libmamba]
     description: |
       Upstream applies a non-strict known-flaky xfail to test_conda_downgrade on
       libmamba, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L1318-L1324.
       In this port the libmamba result was observed to be deterministic, so the
-      entry runs unrestricted and strict on both solvers.
-    xfail_solvers: rattler
-    xfail_reason: "conda's flexible channel priority maps to rattler's Disabled (rattler has no flexible mode), so higher builds from lower-priority channels win, see https://github.com/conda-incubator/conda-rattler-solver/blob/5237b2359ed3df0b2f1c0fa34f80cf448a235a7e/conda_rattler_solver/solver.py#L350-L354"
+      entry runs strict on both solvers. At conda 26.7.0 upstream asserts a
+      different link order under rattler, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L1442-L1452,
+      ported as test_conda_downgrade_3c (B021c), so this entry is restricted
+      to classic and libmamba.
     input:
       channels:
         - channel-2
@@ -810,6 +983,79 @@ tests:
       link_precs:
         - channel-2/noarch::itsdangerous-0.24-py_0
 
+  - name: test_conda_downgrade_3c
+    id: B021c
+    provenance:
+      node_id: tests/core/test_solve.py::test_conda_downgrade::3
+      commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L1340-L1566
+    kind: solve_for_diff
+    solvers: rattler
+    description: |
+      Rattler variant of test_conda_downgrade stage 3, taking the rattler
+      stage 1 state pinned in test_conda_downgrade_1c (B019c) as its prefix,
+      as upstream hands the solver's own stage 1 result forward. At conda
+      26.7.0 upstream asserts the same rattler diff as in stage 2, linking
+      the py37 build of itsdangerous from channel-4, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L1442-L1452.
+    input:
+      channels:
+        - channel-2
+        - channel-4
+      specs_to_add:
+        - itsdangerous
+        - conda
+      prefix:
+        - channel-4/${{ arch }}::ca-certificates-2018.03.07-0
+        - channel-4/${{ arch }}::conda-env-2.6.0-1
+        - channel-4/${{ arch }}::libgcc-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libstdcxx-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libffi-3.2.1-hd88cf55_4
+        - channel-4/${{ arch }}::ncurses-6.1-hf484d3e_0
+        - channel-4/${{ arch }}::openssl-1.0.2p-h14c3975_0
+        - channel-4/${{ arch }}::patchelf-0.9-hf484d3e_2
+        - channel-4/${{ arch }}::tk-8.6.7-hc745277_3
+        - channel-4/${{ arch }}::xz-5.2.4-h14c3975_4
+        - channel-4/${{ arch }}::yaml-0.1.7-had09818_2
+        - channel-4/${{ arch }}::zlib-1.2.11-ha838bed_2
+        - channel-4/${{ arch }}::libedit-3.1.20170329-h6b74fdf_2
+        - channel-4/${{ arch }}::readline-7.0-ha6073c6_4
+        - channel-4/${{ arch }}::sqlite-3.24.0-h84994c4_0
+        - channel-4/${{ arch }}::python-3.7.0-hc3d631a_0
+        - channel-4/${{ arch }}::asn1crypto-0.24.0-py37_0
+        - channel-4/${{ arch }}::beautifulsoup4-4.6.3-py37_0
+        - channel-4/${{ arch }}::certifi-2018.8.13-py37_0
+        - channel-4/${{ arch }}::chardet-3.0.4-py37_1
+        - channel-4/${{ arch }}::cryptography-vectors-2.3-py37_0
+        - channel-4/${{ arch }}::filelock-3.0.4-py37_0
+        - channel-4/${{ arch }}::glob2-0.6-py37_0
+        - channel-4/${{ arch }}::idna-2.7-py37_0
+        - channel-4/${{ arch }}::markupsafe-1.0-py37h14c3975_1
+        - channel-4/${{ arch }}::pkginfo-1.4.2-py37_1
+        - channel-4/${{ arch }}::psutil-5.4.6-py37h14c3975_0
+        - channel-4/${{ arch }}::pycosat-0.6.3-py37h14c3975_0
+        - channel-4/${{ arch }}::pycparser-2.18-py37_1
+        - channel-4/${{ arch }}::pysocks-1.6.8-py37_0
+        - channel-4/${{ arch }}::pyyaml-3.13-py37h14c3975_0
+        - channel-4/${{ arch }}::ruamel_yaml-0.15.46-py37h14c3975_0
+        - channel-4/${{ arch }}::six-1.11.0-py37_1
+        - channel-4/${{ arch }}::cffi-1.11.5-py37h9745a5d_0
+        - channel-4/${{ arch }}::setuptools-40.0.0-py37_0
+        - channel-4/${{ arch }}::cryptography-2.3-py37hb7f436b_0
+        - channel-4/${{ arch }}::jinja2-2.10-py37_0
+        - channel-4/${{ arch }}::pyopenssl-18.0.0-py37_0
+        - channel-4/${{ arch }}::urllib3-1.23-py37_0
+        - channel-4/${{ arch }}::requests-2.19.1-py37_0
+        - channel-4/${{ arch }}::conda-4.5.10-py37_0
+        - channel-4/${{ arch }}::conda-build-3.12.1-py37_0
+      history_specs:
+        - conda-build
+      set_sys_prefix: true
+    output:
+      unlink_precs: []
+      link_precs:
+        - channel-4/${{ arch }}::itsdangerous-0.24-py37_1
+
   - name: test_conda_downgrade_4
     id: B022
     provenance:
@@ -822,7 +1068,7 @@ tests:
       This entry carries the classic branch of test_conda_downgrade stage 4,
       with upstream's exact unlink and link order. Upstream runs the same solve
       on libmamba but asserts only a few version properties, and that branch is
-      ported as test_conda_downgrade_4_libmamba (B179), see
+      ported as test_conda_downgrade_4b (B179), see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L1511-L1525.
     input:
       channels:
@@ -950,7 +1196,7 @@ tests:
         - channel-2/${{ arch }}::conda-4.3.30-py36h5d9f9f4_0
         - channel-4/${{ arch }}::conda-build-3.12.1-py36_0
 
-  - name: test_conda_downgrade_4_libmamba
+  - name: test_conda_downgrade_4b
     id: B179
     provenance:
       node_id: tests/core/test_solve.py::test_conda_downgrade::4
@@ -968,7 +1214,13 @@ tests:
       come from the observed libmamba solution. Upstream also applies a
       non-strict known-flaky xfail to this test on libmamba, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L1318-L1324,
-      but the result was observed to be deterministic in this port.
+      but the result was observed to be deterministic in this port. At conda
+      26.7.0 the same guard also covers rattler but expects python 3.6.6
+      there, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L1545-L1561,
+      and the observed rattler solution also differs from the lists pinned
+      here, so the rattler branch is ported as test_conda_downgrade_4c
+      (B022c) and this entry stays libmamba only.
     input:
       channels:
         - channel-2
@@ -1092,6 +1344,139 @@ tests:
         - channel-4/${{ arch }}::urllib3-1.23-py36_0
         - channel-4/${{ arch }}::conda-build-3.12.1-py36_0
 
+  - name: test_conda_downgrade_4c
+    id: B022c
+    provenance:
+      node_id: tests/core/test_solve.py::test_conda_downgrade::4
+      commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L1340-L1566
+    kind: solve_for_diff
+    solvers: rattler
+    description: |
+      Rattler variant of test_conda_downgrade stage 4, taking the rattler
+      stage 1 state pinned in test_conda_downgrade_1c (B019c) as its prefix,
+      as upstream hands the solver's own stage 1 result forward. At conda
+      26.7.0 upstream asserts only that the linked conda is below 4.4.10,
+      python is 3.6.6 under rattler, conda-build is 3.12.1, and itsdangerous
+      is 0.24, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L1545-L1561.
+      The full unlink and link lists pinned here strengthen those checks and
+      come from the observed rattler solution, which downgrades conda to
+      4.4.9 and stays on channel-4 py36 builds throughout instead of moving
+      to channel-2 like classic and libmamba.
+    input:
+      channels:
+        - channel-2
+        - channel-4
+      specs_to_add:
+        - itsdangerous
+        - conda<4.4.10
+        - python
+      prefix:
+        - channel-4/${{ arch }}::ca-certificates-2018.03.07-0
+        - channel-4/${{ arch }}::conda-env-2.6.0-1
+        - channel-4/${{ arch }}::libgcc-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libstdcxx-ng-8.2.0-hdf63c60_0
+        - channel-4/${{ arch }}::libffi-3.2.1-hd88cf55_4
+        - channel-4/${{ arch }}::ncurses-6.1-hf484d3e_0
+        - channel-4/${{ arch }}::openssl-1.0.2p-h14c3975_0
+        - channel-4/${{ arch }}::patchelf-0.9-hf484d3e_2
+        - channel-4/${{ arch }}::tk-8.6.7-hc745277_3
+        - channel-4/${{ arch }}::xz-5.2.4-h14c3975_4
+        - channel-4/${{ arch }}::yaml-0.1.7-had09818_2
+        - channel-4/${{ arch }}::zlib-1.2.11-ha838bed_2
+        - channel-4/${{ arch }}::libedit-3.1.20170329-h6b74fdf_2
+        - channel-4/${{ arch }}::readline-7.0-ha6073c6_4
+        - channel-4/${{ arch }}::sqlite-3.24.0-h84994c4_0
+        - channel-4/${{ arch }}::python-3.7.0-hc3d631a_0
+        - channel-4/${{ arch }}::asn1crypto-0.24.0-py37_0
+        - channel-4/${{ arch }}::beautifulsoup4-4.6.3-py37_0
+        - channel-4/${{ arch }}::certifi-2018.8.13-py37_0
+        - channel-4/${{ arch }}::chardet-3.0.4-py37_1
+        - channel-4/${{ arch }}::cryptography-vectors-2.3-py37_0
+        - channel-4/${{ arch }}::filelock-3.0.4-py37_0
+        - channel-4/${{ arch }}::glob2-0.6-py37_0
+        - channel-4/${{ arch }}::idna-2.7-py37_0
+        - channel-4/${{ arch }}::markupsafe-1.0-py37h14c3975_1
+        - channel-4/${{ arch }}::pkginfo-1.4.2-py37_1
+        - channel-4/${{ arch }}::psutil-5.4.6-py37h14c3975_0
+        - channel-4/${{ arch }}::pycosat-0.6.3-py37h14c3975_0
+        - channel-4/${{ arch }}::pycparser-2.18-py37_1
+        - channel-4/${{ arch }}::pysocks-1.6.8-py37_0
+        - channel-4/${{ arch }}::pyyaml-3.13-py37h14c3975_0
+        - channel-4/${{ arch }}::ruamel_yaml-0.15.46-py37h14c3975_0
+        - channel-4/${{ arch }}::six-1.11.0-py37_1
+        - channel-4/${{ arch }}::cffi-1.11.5-py37h9745a5d_0
+        - channel-4/${{ arch }}::setuptools-40.0.0-py37_0
+        - channel-4/${{ arch }}::cryptography-2.3-py37hb7f436b_0
+        - channel-4/${{ arch }}::jinja2-2.10-py37_0
+        - channel-4/${{ arch }}::pyopenssl-18.0.0-py37_0
+        - channel-4/${{ arch }}::urllib3-1.23-py37_0
+        - channel-4/${{ arch }}::requests-2.19.1-py37_0
+        - channel-4/${{ arch }}::conda-4.5.10-py37_0
+        - channel-4/${{ arch }}::conda-build-3.12.1-py37_0
+      history_specs:
+        - conda-build
+      set_sys_prefix: true
+    output:
+      unlink_precs:
+        - channel-4/${{ arch }}::conda-build-3.12.1-py37_0
+        - channel-4/${{ arch }}::conda-4.5.10-py37_0
+        - channel-4/${{ arch }}::requests-2.19.1-py37_0
+        - channel-4/${{ arch }}::urllib3-1.23-py37_0
+        - channel-4/${{ arch }}::pyopenssl-18.0.0-py37_0
+        - channel-4/${{ arch }}::jinja2-2.10-py37_0
+        - channel-4/${{ arch }}::cryptography-2.3-py37hb7f436b_0
+        - channel-4/${{ arch }}::setuptools-40.0.0-py37_0
+        - channel-4/${{ arch }}::cffi-1.11.5-py37h9745a5d_0
+        - channel-4/${{ arch }}::six-1.11.0-py37_1
+        - channel-4/${{ arch }}::ruamel_yaml-0.15.46-py37h14c3975_0
+        - channel-4/${{ arch }}::pyyaml-3.13-py37h14c3975_0
+        - channel-4/${{ arch }}::pysocks-1.6.8-py37_0
+        - channel-4/${{ arch }}::pycparser-2.18-py37_1
+        - channel-4/${{ arch }}::pycosat-0.6.3-py37h14c3975_0
+        - channel-4/${{ arch }}::psutil-5.4.6-py37h14c3975_0
+        - channel-4/${{ arch }}::pkginfo-1.4.2-py37_1
+        - channel-4/${{ arch }}::markupsafe-1.0-py37h14c3975_1
+        - channel-4/${{ arch }}::idna-2.7-py37_0
+        - channel-4/${{ arch }}::glob2-0.6-py37_0
+        - channel-4/${{ arch }}::filelock-3.0.4-py37_0
+        - channel-4/${{ arch }}::cryptography-vectors-2.3-py37_0
+        - channel-4/${{ arch }}::chardet-3.0.4-py37_1
+        - channel-4/${{ arch }}::certifi-2018.8.13-py37_0
+        - channel-4/${{ arch }}::beautifulsoup4-4.6.3-py37_0
+        - channel-4/${{ arch }}::asn1crypto-0.24.0-py37_0
+        - channel-4/${{ arch }}::python-3.7.0-hc3d631a_0
+      link_precs:
+        - channel-4/${{ arch }}::python-3.6.6-hc3d631a_0
+        - channel-4/${{ arch }}::asn1crypto-0.24.0-py36_0
+        - channel-4/${{ arch }}::beautifulsoup4-4.6.3-py36_0
+        - channel-4/${{ arch }}::certifi-2018.8.13-py36_0
+        - channel-4/${{ arch }}::chardet-3.0.4-py36_1
+        - channel-4/${{ arch }}::cryptography-vectors-2.3-py36_0
+        - channel-4/${{ arch }}::filelock-3.0.4-py36_0
+        - channel-4/${{ arch }}::glob2-0.6-py36_0
+        - channel-4/${{ arch }}::idna-2.7-py36_0
+        - channel-4/${{ arch }}::itsdangerous-0.24-py36_1
+        - channel-4/${{ arch }}::markupsafe-1.0-py36h14c3975_1
+        - channel-4/${{ arch }}::pkginfo-1.4.2-py36_1
+        - channel-4/${{ arch }}::psutil-5.4.6-py36h14c3975_0
+        - channel-4/${{ arch }}::pycosat-0.6.3-py36h14c3975_0
+        - channel-4/${{ arch }}::pycparser-2.18-py36_1
+        - channel-4/${{ arch }}::pysocks-1.6.8-py36_0
+        - channel-4/${{ arch }}::pyyaml-3.13-py36h14c3975_0
+        - channel-4/${{ arch }}::ruamel_yaml-0.15.46-py36h14c3975_0
+        - channel-4/${{ arch }}::six-1.11.0-py36_1
+        - channel-4/${{ arch }}::cffi-1.11.5-py36h9745a5d_0
+        - channel-4/${{ arch }}::setuptools-40.0.0-py36_0
+        - channel-4/${{ arch }}::cryptography-2.3-py36hb7f436b_0
+        - channel-4/${{ arch }}::jinja2-2.10-py36_0
+        - channel-4/${{ arch }}::pyopenssl-18.0.0-py36_0
+        - channel-4/${{ arch }}::urllib3-1.23-py36_0
+        - channel-4/${{ arch }}::requests-2.19.1-py36_0
+        - channel-4/${{ arch }}::conda-4.4.9-py36_0
+        - channel-4/${{ arch }}::conda-build-3.12.1-py36_0
+
   - name: test_channel_priority_churn_minimized_1
     id: B023
     provenance:
@@ -1122,7 +1507,7 @@ tests:
         - itsdangerous
     output: {}
 
-  - name: test_channel_priority_churn_minimized_2_classic
+  - name: test_channel_priority_churn_minimized_2a
     id: B024a
     provenance:
       node_id: tests/core/test_solve.py::test_channel_priority_churn_minimized::2
@@ -1197,20 +1582,25 @@ tests:
       link_precs:
         - channel-2/noarch::itsdangerous-0.24-py_0
 
-  - name: test_channel_priority_churn_minimized_2_libmamba
+  - name: test_channel_priority_churn_minimized_2b
     id: B024b
     provenance:
       node_id: tests/core/test_solve.py::test_channel_priority_churn_minimized::2
       commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
       url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2765-L2803
     kind: solve_for_diff
-    solvers: libmamba
+    solvers: [libmamba, rattler]
     description: |
       libmamba requires force_reinstall=True to act on the itsdangerous spec when
       freeze_installed is active, mirroring upstream's libmamba-only solver
       kwargs. Without it the solver considers the current state satisfying and
       makes no change, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2783-L2788.
+      At conda 26.7.0 the same guard covers rattler too, passing
+      force_reinstall=True for both solvers, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L2826-L2831
+      and rattler was observed to reinstall the same channel-4 build as
+      libmamba, so this variant now covers both.
       Upstream asserts only that exactly one record is unlinked and one is
       linked, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2802-L2803.
@@ -1931,7 +2321,9 @@ tests:
       base_tests/solve.py. Upstream skips the whole test under libmamba, which
       does not use Solver.ssc (see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L128-L131),
-      so this entry is classic-only.
+      so this entry is classic-only. At conda 26.7.0 the same skip covers
+      rattler as well, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L133-L136
     solvers: classic
     input:
       channels:
@@ -2450,7 +2842,9 @@ tests:
       checks only that python 2.7.14 is unlinked and python 3.6.4 is linked, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2286-L2297
       so this entry is classic-only and the libmamba side lives in
-      test_fast_update_2_libmamba.
+      test_fast_update_2b. At conda 26.7.0 the same weakened check covers
+      rattler as well, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L2322-L2333
     solvers: classic
     input:
       channels: channel-4
@@ -2503,8 +2897,10 @@ tests:
       that mamba has picked sqlite 3.23 rather than 3.24 here, which is why
       it asserts only an inequality on the sqlite version, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2330-L2332.
-      In this repository's own suite runs, both solvers produce this exact
-      diff.
+      At conda 26.7.0 the same relaxed check covers rattler as well, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L2360-L2372.
+      In this repository's own suite runs, all three solvers produce this
+      exact diff.
     input:
       channels: channel-4
       specs_to_add: sqlite
@@ -2769,6 +3165,9 @@ tests:
       function-level strict xfail (see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L600-L606)
       fails on stage 1 first, so there is no libmamba expectation to port.
+      At conda 26.7.0 that xfail covers rattler as well, so the stage stays
+      unreachable there too and this entry remains classic-only, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L619-L625
     solvers: classic
     input:
       channels: channel-1
@@ -2870,6 +3269,9 @@ tests:
       function-level strict xfail (see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L678-L684)
       fails on stage 1 first, so there is no libmamba expectation to port.
+      At conda 26.7.0 that xfail covers rattler as well, so the stage stays
+      unreachable there too and this entry remains classic-only, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L697-L703
     solvers: classic
     input:
       channels: channel-1
@@ -2937,7 +3339,7 @@ tests:
         - "numexpr==2.0.1=np17py27_p3"
     output: {}
 
-  - name: test_update_prune_5_2_prune_classic
+  - name: test_update_prune_5_2a_prune
     id: B146a
     provenance:
       node_id: tests/core/test_solve.py::test_update_prune_5::2
@@ -2989,7 +3391,7 @@ tests:
         - channel-1/${{ arch }}::numpy-1.7.1-py27_p0
         - channel-1/${{ arch }}::numexpr-2.0.1-np17py27_p2
 
-  - name: test_update_prune_5_2_prune_libmamba
+  - name: test_update_prune_5_2b_prune
     id: B146b
     provenance:
       node_id: tests/core/test_solve.py::test_update_prune_5::2
@@ -3002,8 +3404,12 @@ tests:
       (see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L851-L853),
       which classic alone prints and is not representable here, and never the
-      solution, so the final state is pinned from solver behaviour.
-    solvers: libmamba
+      solution, so the final state is pinned from solver behaviour. rattler
+      shares this stage-1 state and this pruned outcome. The 26.7.0 xfail
+      guard covers libmamba and rattler only without prune, so this pruned
+      stage runs and passes under both, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L839-L845
+    solvers: [libmamba, rattler]
     input:
       channels: channel-1
       specs_to_add:
@@ -3095,7 +3501,7 @@ tests:
         - channel-1/${{ arch }}::scikit-learn-0.13.1-np17py27_p0
         - channel-1/${{ arch }}::mkl-11.0-np17py27_p1
 
-  - name: test_update_prune_5_2_no_prune_libmamba
+  - name: test_update_prune_5_2b_no_prune
     id: B147b
     provenance:
       node_id: tests/core/test_solve.py::test_update_prune_5::2
@@ -3147,7 +3553,59 @@ tests:
         - channel-1/${{ arch }}::numpy-1.7.1-py27_0
         - channel-1/${{ arch }}::numexpr-2.0.1-np17py27_p2
 
-  - name: test_fast_update_2_libmamba
+  - name: test_update_prune_5_2c_no_prune
+    id: B147c
+    provenance:
+      node_id: tests/core/test_solve.py::test_update_prune_5::2
+      commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L836-L872
+    kind: solve
+    description: |
+      Same solve without prune under rattler, starting from its own stage-1
+      state, which matches libmamba's (the classic no-prune case is B147 and
+      libmamba's is B147b). Upstream asserts only the constriction diagnostic
+      on stdout and never the solution, and strict-xfails rattler alongside
+      libmamba on that stdout assertion alone, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L839-L845
+      so the final state is pinned from solver behaviour, a strengthening
+      over upstream. Unlike libmamba (B147b), rattler keeps the orphaned
+      mkl-rt from the prefix when prune is off, so the outcome is B146b's
+      pruned state plus mkl-rt.
+    solvers: rattler
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "python=2.7"
+        - "numexpr==2.0.1=np17py27_p2"
+      prefix:
+        - channel-1/${{ arch }}::mkl-rt-11.0-p0
+        - channel-1/${{ arch }}::numexpr-2.0.1-np17py27_p3
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+      history_specs:
+        - "python=2.7"
+        - "numexpr==2.0.1=np17py27_p3"
+      prune: false
+    output:
+      final_state:
+        - channel-1/${{ arch }}::mkl-rt-11.0-p0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::numpy-1.7.1-py27_0
+        - channel-1/${{ arch }}::numexpr-2.0.1-np17py27_p2
+
+  - name: test_fast_update_2b
     id: B178
     provenance:
       node_id: tests/core/test_solve.py::test_fast_update_with_update_modifier_not_set::2
@@ -3160,8 +3618,10 @@ tests:
       classic's. Upstream asserts only the python unlink and link records for
       libmamba, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2286-L2294
-      and the full diff here is pinned from solver behaviour.
-    solvers: libmamba
+      and the full diff here is pinned from solver behaviour. At conda 26.7.0
+      the same guard covers rattler, which produces this exact diff too, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L2322-L2330.
+    solvers: [libmamba, rattler]
     input:
       channels: channel-4
       specs_to_add: python
@@ -3212,7 +3672,7 @@ tests:
         - channel-1/${{ arch }}::zlib-1.2.7-0
         - channel-1/${{ arch }}::python-2.6.8-6
 
-  - name: test_downgrade_python_prevented_2_classic
+  - name: test_downgrade_python_prevented_2a
     id: B067a
     provenance:
       node_id: tests/core/test_solve.py::test_downgrade_python_prevented_with_sane_message::2
@@ -3246,7 +3706,7 @@ tests:
         - "- scikit-learn==0.13 -> python=2.7"
         - "Your python: python=2.6"
 
-  - name: test_downgrade_python_prevented_2_libmamba
+  - name: test_downgrade_python_prevented_2b
     id: B067b
     provenance:
       node_id: tests/core/test_solve.py::test_downgrade_python_prevented_with_sane_message::2
@@ -3282,7 +3742,45 @@ tests:
         - "python=2.6"
         - "scikit-learn ==0.13"
 
-  - name: test_downgrade_python_prevented_3_classic
+  - name: test_downgrade_python_prevented_2c
+    id: B067c
+    provenance:
+      node_id: tests/core/test_solve.py::test_downgrade_python_prevented_with_sane_message::2
+      commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L3418-L3507
+    kind: unsatisfiable
+    description: |
+      Rattler variant of the scikit-learn==0.13 downgrade-prevention stage.
+      At conda 26.7.0 upstream asserts rattler-specific snippets, carried
+      here as message_includes, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L3463-L3469.
+      Its regex snippets (the constraint .* cannot be fulfilled, python.*2.6,
+      and scikit-learn.*0.13) are realised as the literal fragments the
+      constraint python 2.6.* cannot be fulfilled, python 2.6.*, and
+      scikit-learn ==0.13 from the actual message.
+    solvers: rattler
+    input:
+      channels: channel-1
+      specs_to_add: "scikit-learn==0.13"
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+      history_specs: "python=2.6"
+    error:
+      exception: UnsatisfiableError
+      entries: []
+      message_includes:
+        - "Cannot solve the request because of"
+        - "the constraint python 2.6.* cannot be fulfilled"
+        - "python 2.6.*"
+        - "scikit-learn ==0.13"
+
+  - name: test_downgrade_python_prevented_3a
     id: B068a
     provenance:
       node_id: tests/core/test_solve.py::test_downgrade_python_prevented_with_sane_message::3
@@ -3316,7 +3814,7 @@ tests:
         - "- unsatisfiable-with-py26 -> python=2.7"
         - "Your python: python=2.6"
 
-  - name: test_downgrade_python_prevented_3_libmamba
+  - name: test_downgrade_python_prevented_3b
     id: B068b
     provenance:
       node_id: tests/core/test_solve.py::test_downgrade_python_prevented_with_sane_message::3
@@ -3349,6 +3847,44 @@ tests:
         - "Encountered problems while solving"
         - "Pins seem to be involved in the conflict. Currently pinned specs"
         - "python=2.6"
+        - "unsatisfiable-with-py26"
+
+  - name: test_downgrade_python_prevented_3c
+    id: B068c
+    provenance:
+      node_id: tests/core/test_solve.py::test_downgrade_python_prevented_with_sane_message::3
+      commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L3418-L3507
+    kind: unsatisfiable
+    description: |
+      Rattler variant of the unsatisfiable-with-py26 downgrade-prevention
+      stage. At conda 26.7.0 upstream asserts rattler-specific snippets,
+      carried here as message_includes, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L3498-L3504.
+      Its regex snippets (the constraint .* cannot be fulfilled and
+      python.*2.6) are realised as the literal fragments the constraint
+      python 2.6.* cannot be fulfilled and python 2.6.* from the actual
+      message.
+    solvers: rattler
+    input:
+      channels: channel-1
+      specs_to_add: unsatisfiable-with-py26
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.6.8-6
+      history_specs: "python=2.6"
+    error:
+      exception: UnsatisfiableError
+      entries: []
+      message_includes:
+        - "Cannot solve the request because of"
+        - "the constraint python 2.6.* cannot be fulfilled"
+        - "python 2.6.*"
         - "unsatisfiable-with-py26"
 
   - name: test_explicit_conda_downgrade_1
@@ -3507,7 +4043,10 @@ tests:
       Upstream marks the whole function as a strict xfail with run=False under
       libmamba (see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2888-L2897),
-      so it never runs there and this entry is classic-only.
+      so it never runs there and this entry is classic-only. At conda 26.7.0
+      the same strict run=False xfail covers rattler as well, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L2966-L2975
+      so the classic-only restriction mirrors both solvers.
     solvers: classic
     input:
       channels:
@@ -3549,8 +4088,6 @@ tests:
       The state is pinned from an empirical solve with pip injection enabled,
       matching upstream's add_pip_as_python_dependency default, so it carries
       the distribute and pip records.
-    xfail_solvers: rattler
-    xfail_reason: "conda-rattler-solver does not honour add_pip_as_python_dependency, see https://github.com/conda-incubator/conda-rattler-solver/issues/67"
     input:
       channels: [channel-13, channel-1]
       specs_to_add:
@@ -3592,8 +4129,6 @@ tests:
       The state is pinned from an empirical solve with pip injection enabled,
       matching upstream's add_pip_as_python_dependency default, so it carries
       the distribute and pip records.
-    xfail_solvers: rattler
-    xfail_reason: "conda-rattler-solver does not honour add_pip_as_python_dependency, see https://github.com/conda-incubator/conda-rattler-solver/issues/67"
     input:
       channels: [channel-13, channel-1]
       specs_to_add:
@@ -3635,8 +4170,6 @@ tests:
       The state is pinned from an empirical solve with pip injection enabled,
       matching upstream's add_pip_as_python_dependency default, so it carries
       the distribute and pip records.
-    xfail_solvers: rattler
-    xfail_reason: "conda-rattler-solver does not honour add_pip_as_python_dependency, see https://github.com/conda-incubator/conda-rattler-solver/issues/67"
     input:
       channels: [channel-1, channel-13]
       specs_to_add:
@@ -3675,6 +4208,13 @@ tests:
       (version 1.0) and only b's dependency c >=2,<3 falls back to channel-12.
       Upstream is xfail because the env var it sets has no effect, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L991
+      The env var having no effect means the solve runs at the default
+      flexible priority, which is what this entry encodes directly. The
+      non-strict xfail persists unchanged at conda 26.7.0, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/conda/testing/solver_helpers.py#L1005
+      so the stage is never enforced upstream under any solver, and
+      conda-rattler-solver's green run of it reflects that xfail rather than
+      agreement with this classic outcome.
     xfail_solvers: rattler
     xfail_reason: "conda's flexible channel priority maps to rattler's Disabled (rattler has no flexible mode), so higher builds from lower-priority channels win, see https://github.com/conda-incubator/conda-rattler-solver/blob/5237b2359ed3df0b2f1c0fa34f80cf448a235a7e/conda_rattler_solver/solver.py#L350-L354"
     input:
@@ -3755,7 +4295,10 @@ tests:
       and the full state here is pinned from solver behaviour. Upstream marks
       the whole function as a strict xfail with run=False under libmamba (see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2888-L2897),
-      so it never runs there and this entry is classic-only.
+      so it never runs there and this entry is classic-only. At conda 26.7.0
+      the same strict run=False xfail covers rattler as well, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L2966-L2975
+      so the classic-only restriction mirrors both solvers.
     solvers: classic
     input:
       channels:
@@ -3824,7 +4367,10 @@ tests:
       and the full state here is pinned from solver behaviour. Upstream marks
       the whole function as a strict xfail with run=False under libmamba (see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2888-L2897),
-      so it never runs there and this entry is classic-only.
+      so it never runs there and this entry is classic-only. At conda 26.7.0
+      the same strict run=False xfail covers rattler as well, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L2966-L2975
+      so the classic-only restriction mirrors both solvers.
     solvers: classic
     input:
       channels:
@@ -4052,7 +4598,7 @@ tests:
       libmamba xfail (see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L857-L864),
       but the failure it tracks only surfaces from stage 3 onwards, see
-      test_force_remove_1_3_libmamba and test_force_remove_1_4. This stage passes
+      test_force_remove_1_3b and test_force_remove_1_4. This stage passes
       under both solvers here, so it runs unrestricted.
     input:
       channels: channel-1
@@ -4081,7 +4627,7 @@ tests:
       aggressive-update set. Upstream's function-level strict libmamba xfail
       (see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L857-L864)
-      is only satisfied from stage 3 onwards, see test_force_remove_1_3_libmamba and
+      is only satisfied from stage 3 onwards, see test_force_remove_1_3b and
       test_force_remove_1_4. This stage passes under both solvers here, so it
       runs unrestricted.
     input:
@@ -4114,7 +4660,7 @@ tests:
       Classic variant, matching upstream's asserted order with numpy first (see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L914-L925).
       libmamba returns the same records with numpy last, see
-      test_force_remove_1_3_libmamba.
+      test_force_remove_1_3b.
     solvers: classic
     input:
       channels: channel-1
@@ -4140,7 +4686,7 @@ tests:
         - channel-1/${{ arch }}::tk-8.5.13-0
         - channel-1/${{ arch }}::zlib-1.2.7-0
 
-  - name: test_force_remove_1_3_libmamba
+  - name: test_force_remove_1_3b
     id: B128b
     provenance:
       node_id: tests/core/test_solve.py::test_force_remove_1::3
@@ -4155,8 +4701,14 @@ tests:
       would fail under libmamba. Upstream never observes this, since the whole
       function carries a strict libmamba xfail (see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L857-L864).
-      The order here is pinned from libmamba behaviour.
-    solvers: libmamba
+      The order here is pinned from libmamba behaviour. At conda 26.7.0 this
+      stage compares as an unordered set under rattler, noting that rattler
+      puts numpy last, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L944-L949
+      and rattler was observed to produce exactly this order, so this variant
+      now covers both solvers and the ordered assert strengthens upstream's
+      set comparison.
+    solvers: [libmamba, rattler]
     input:
       channels: channel-1
       specs_to_remove: python
@@ -4196,10 +4748,13 @@ tests:
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L857-L864).
       Under libmamba this stage fails on content, since python is not restored,
       which is the known limitation the upstream xfail tracks. Stage 3 also
-      orders its records differently under libmamba, see test_force_remove_1_3_libmamba.
+      orders its records differently under libmamba, see test_force_remove_1_3b.
       The prefix here is written in stage 3's classic order, and B128 and
       B128b agree on the record content, so the same handoff set serves both
-      the classic run and the strict libmamba xfail.
+      the classic run and the strict libmamba xfail. At conda 26.7.0 the
+      function-level xfail still names libmamba only, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L876-L883
+      so rattler runs this stage with the classic expectations and passes.
     xfail_solvers: libmamba
     xfail_reason: "Known limitation. VERIFY task needed to make this pass, but breaks other tests. See https://github.com/conda/conda-libmamba-solver/pull/302"
     input:
@@ -4386,6 +4941,9 @@ tests:
       libmamba xfail on the whole function, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L462-L468
       which fails at stage 1, so this stage is never reached under libmamba.
+      At conda 26.7.0 that xfail covers rattler as well, so the stage stays
+      unreachable there too and this entry remains classic-only, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L481-L487
     solvers: classic
     input:
       channels: channel-1
@@ -4575,7 +5133,10 @@ tests:
       stage 3's output in its solved order. Upstream marks the whole function
       as a strict xfail with run=False under libmamba (see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2888-L2897),
-      so it never runs there and this entry is classic-only.
+      so it never runs there and this entry is classic-only. At conda 26.7.0
+      the same strict run=False xfail covers rattler as well, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L2966-L2975
+      so the classic-only restriction mirrors both solvers.
     solvers: classic
     input:
       channels:
@@ -5120,7 +5681,7 @@ tests:
       exception: ResolvePackageNotFound
       entries: []
 
-  - name: test_globstr_matchspec_non_compatible_2_libmamba
+  - name: test_globstr_matchspec_non_compatible_2b
     id: B083b
     provenance:
       node_id: tests/core/test_solve.py::test_globstr_matchspec_non_compatible::2
@@ -5150,6 +5711,31 @@ tests:
       exception: PackagesNotFoundError
       entries: []
 
+  - name: test_globstr_matchspec_non_compatible_2c
+    id: B083c
+    provenance:
+      node_id: tests/core/test_solve.py::test_globstr_matchspec_non_compatible::2
+      commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L3945-L3950
+    kind: unsatisfiable
+    description: |
+      Two glob build string specs for accelerate that cannot be satisfied together:
+      np17* and *np16* cannot match the same package.
+      rattler variant: raises UnsatisfiableError. conda 26.7.0 widened the
+      accepted tuple for this stage to include UnsatisfiableError, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L3945-L3950
+      The per-solver split narrows that tuple to the class each solver was
+      observed to raise, UnsatisfiableError for rattler here.
+    solvers: rattler
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "accelerate=*=np17*"
+        - "accelerate=*=*np16*"
+    error:
+      exception: UnsatisfiableError
+      entries: []
+
   - name: test_globstr_matchspec_non_compatible_3
     id: B084
     provenance:
@@ -5175,7 +5761,7 @@ tests:
       exception: ResolvePackageNotFound
       entries: []
 
-  - name: test_globstr_matchspec_non_compatible_3_libmamba
+  - name: test_globstr_matchspec_non_compatible_3b
     id: B084b
     provenance:
       node_id: tests/core/test_solve.py::test_globstr_matchspec_non_compatible::3
@@ -5198,6 +5784,31 @@ tests:
         - "accelerate=*=*py33*"
     error:
       exception: PackagesNotFoundError
+      entries: []
+
+  - name: test_globstr_matchspec_non_compatible_3c
+    id: B084c
+    provenance:
+      node_id: tests/core/test_solve.py::test_globstr_matchspec_non_compatible::3
+      commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L3952-L3958
+    kind: unsatisfiable
+    description: |
+      Two glob build string specs for accelerate that cannot be satisfied together:
+      *np15* and *py33* cannot match the same package (no such build exists).
+      rattler variant: raises UnsatisfiableError. conda 26.7.0 widened the
+      accepted tuple for this stage to include UnsatisfiableError, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L3952-L3958
+      The per-solver split narrows that tuple to the class each solver was
+      observed to raise, UnsatisfiableError for rattler here.
+    solvers: rattler
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "accelerate=*=*np15*"
+        - "accelerate=*=*py33*"
+    error:
+      exception: UnsatisfiableError
       entries: []
 
   - name: test_no_features_1
@@ -5498,7 +6109,7 @@ tests:
       entries:
         - numpy[version='1.5.*,1.6.*']
 
-  - name: test_unsat_from_r1_3_libmamba
+  - name: test_unsat_from_r1_3b
     id: B054b
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_from_r1::3
@@ -5526,6 +6137,32 @@ tests:
       entries:
         - numpy[version='1.5.*,1.6.*']
 
+  - name: test_unsat_from_r1_3c
+    id: B054c
+    provenance:
+      node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_from_r1::3
+      commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/conda/testing/solver_helpers.py#L375-L382
+    kind: unsatisfiable
+    description: |
+      Install numpy 1.5* + numpy 1.6* simultaneously from channel-1. The combined
+      version constraint (1.5.*,1.6.*) has no solution.
+      rattler variant: raises UnsatisfiableError. conda 26.7.0 widened the
+      accepted exception tuple to include UnsatisfiableError and checks
+      bad_deps only on the ResolvePackageNotFound branch, so the exception
+      type is the whole expectation here, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/conda/testing/solver_helpers.py#L375-L382
+    solvers: rattler
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "numpy 1.5*"
+        - "numpy 1.6*"
+      add_pip: true
+    error:
+      exception: UnsatisfiableError
+      entries: []
+
   - name: test_irrational_version
     id: B055
     provenance:
@@ -5536,8 +6173,6 @@ tests:
     description: |
       Install pytz 2012d + python 3* from channel-1. The version "2012d" is a
       non-standard (irrational) version string that conda must handle correctly.
-    xfail_solvers: rattler
-    xfail_reason: "conda-rattler-solver does not honour add_pip_as_python_dependency, see https://github.com/conda-incubator/conda-rattler-solver/issues/67"
     input:
       channels: channel-1
       add_pip: true
@@ -5577,7 +6212,7 @@ tests:
       exception: ResolvePackageNotFound
       entries: []
 
-  - name: test_nonexistent_1_libmamba
+  - name: test_nonexistent_1b
     id: B056b
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests.test_nonexistent::1
@@ -5590,7 +6225,10 @@ tests:
       libmamba variant: raises PackagesNotFoundError, matching upstream's
       accepted exception pair, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L599-L603
-    solvers: libmamba
+      rattler raises the same exception, and at conda 26.7.0 the accepted
+      pair is unchanged with no rattler-specific guard, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/conda/testing/solver_helpers.py#L601-L605
+    solvers: [libmamba, rattler]
     input:
       add_pip: true
       channels: channel-empty
@@ -5619,7 +6257,7 @@ tests:
       exception: ResolvePackageNotFound
       entries: []
 
-  - name: test_nonexistent_2_libmamba
+  - name: test_nonexistent_2b
     id: B057b
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests.test_nonexistent::2
@@ -5633,7 +6271,10 @@ tests:
       libmamba variant: raises PackagesNotFoundError, matching upstream's
       accepted exception pair, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L599-L603
-    solvers: libmamba
+      rattler raises the same exception, and at conda 26.7.0 the accepted
+      pair is unchanged with no rattler-specific guard, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/conda/testing/solver_helpers.py#L601-L605
+    solvers: [libmamba, rattler]
     input:
       add_pip: true
       channels: channel-empty
@@ -5761,7 +6402,7 @@ tests:
         - [sc1_b, sc1_c]
         - sc1_c=1.3.6
 
-  - name: test_unsat_shortest_chain_1_libmamba
+  - name: test_unsat_shortest_chain_1b
     id: B062b
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_shortest_chain_1
@@ -5776,7 +6417,12 @@ tests:
       whose endpoint packages libmamba names in its message, which omits the
       sc1_b chain, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L227-L238
-    solvers: libmamba
+      rattler also raises an UnsatisfiableError subclass, and upstream's
+      helper stays type-gated at conda 26.7.0 with no rattler awareness, so
+      only the exception type applies there and the harness checks the chain
+      endpoints for libmamba only, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/conda/testing/solver_helpers.py#L227-L238
+    solvers: [libmamba, rattler]
     input:
       add_pip: true
       channels: channel-7
@@ -5820,7 +6466,7 @@ tests:
         - [sc2_b, sc2_c]
         - sc2_c=1.3.6
 
-  - name: test_unsat_shortest_chain_2_libmamba
+  - name: test_unsat_shortest_chain_2b
     id: B063b
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_shortest_chain_2
@@ -5835,7 +6481,12 @@ tests:
       whose endpoint packages libmamba names in its message, which omits the
       sc2_b chain, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L227-L238
-    solvers: libmamba
+      rattler also raises an UnsatisfiableError subclass, and upstream's
+      helper stays type-gated at conda 26.7.0 with no rattler awareness, so
+      only the exception type applies there and the harness checks the chain
+      endpoints for libmamba only, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/conda/testing/solver_helpers.py#L227-L238
+    solvers: [libmamba, rattler]
     input:
       add_pip: true
       channels: channel-7
@@ -5878,7 +6529,7 @@ tests:
         - [sc3_b, sc3_c]
         - sc3_c=1.3.6
 
-  - name: test_unsat_shortest_chain_3_libmamba
+  - name: test_unsat_shortest_chain_3b
     id: B064b
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_shortest_chain_3
@@ -5893,7 +6544,12 @@ tests:
       whose endpoint packages libmamba names in its message, which omits the
       sc3_b chain, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L227-L238
-    solvers: libmamba
+      rattler also raises an UnsatisfiableError subclass, and upstream's
+      helper stays type-gated at conda 26.7.0 with no rattler awareness, so
+      only the exception type applies there and the harness checks the chain
+      endpoints for libmamba only, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/conda/testing/solver_helpers.py#L227-L238
+    solvers: [libmamba, rattler]
     input:
       add_pip: true
       channels: channel-7
@@ -6268,8 +6924,6 @@ tests:
     description: |
       nd_mypackage-1.0 depends on notarealpackage 2.0* (doesn't exist).
       nd_mypackage-1.1 has no such dep. Solver should pick 1.1.
-    xfail_solvers: rattler
-    xfail_reason: "conda-rattler-solver does not honour add_pip_as_python_dependency, see https://github.com/conda-incubator/conda-rattler-solver/issues/67"
     input:
       add_pip: true
       channels:
@@ -6301,8 +6955,6 @@ tests:
     description: |
       Install nd_anotherpackage 1.0, which requires nd_mypackage 1.1.
       nd_mypackage 1.1 has satisfiable deps (vs 1.0 which needs notarealpackage).
-    xfail_solvers: rattler
-    xfail_reason: "conda-rattler-solver does not honour add_pip_as_python_dependency, see https://github.com/conda-incubator/conda-rattler-solver/issues/67"
     input:
       add_pip: true
       channels:
@@ -6336,8 +6988,6 @@ tests:
       Install nd_anotherpackage (any version). Both 1.0 and 2.0 depend on
       nd_mypackage. Solver picks 2.0 and nd_mypackage-1.1 (since 1.0 is
       unsatisfiable).
-    xfail_solvers: rattler
-    xfail_reason: "conda-rattler-solver does not honour add_pip_as_python_dependency, see https://github.com/conda-incubator/conda-rattler-solver/issues/67"
     input:
       add_pip: true
       channels:
@@ -6370,8 +7020,6 @@ tests:
     description: |
       nd2_mypackage-1.1 has an unsatisfiable dep. nd2_mypackage-1.0 is clean.
       Solver should prefer 1.0.
-    xfail_solvers: rattler
-    xfail_reason: "conda-rattler-solver does not honour add_pip_as_python_dependency, see https://github.com/conda-incubator/conda-rattler-solver/issues/67"
     input:
       add_pip: true
       channels:
@@ -6419,7 +7067,7 @@ tests:
       exception: ResolvePackageNotFound
       entries: []
 
-  - name: test_nonexistent_deps_5_libmamba
+  - name: test_nonexistent_deps_5b
     id: B105b
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests::test_nonexistent_deps::5
@@ -6432,7 +7080,10 @@ tests:
       libmamba variant: raises UnsatisfiableError because mamba has no more
       granular exception here, as upstream's TODO notes, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L751-L754
-    solvers: libmamba
+      rattler raises UnsatisfiableError as well, and at conda 26.7.0 the
+      accepted pair is unchanged with no rattler-specific guard, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/conda/testing/solver_helpers.py#L765-L768
+    solvers: [libmamba, rattler]
     input:
       add_pip: true
       channels:
@@ -6453,8 +7104,6 @@ tests:
     kind: solve
     description: |
       nd2_anotherpackage 1.0 requires nd2_mypackage 1.0 (satisfiable version).
-    xfail_solvers: rattler
-    xfail_reason: "conda-rattler-solver does not honour add_pip_as_python_dependency, see https://github.com/conda-incubator/conda-rattler-solver/issues/67"
     input:
       add_pip: true
       channels:
@@ -6487,8 +7136,6 @@ tests:
     description: |
       nd2_anotherpackage (any version) with nd2_mypackage-1.1 unsatisfiable.
       anotherpackage-2.0 depends on nd2_mypackage (any version), so picks 1.0.
-    xfail_solvers: rattler
-    xfail_reason: "conda-rattler-solver does not honour add_pip_as_python_dependency, see https://github.com/conda-incubator/conda-rattler-solver/issues/67"
     input:
       add_pip: true
       channels:

@@ -90,6 +90,29 @@ tests:
           Encountered problems while solving:
             - nothing provides __cuda >=9.0 needed by cudatoolkit-9.0-0
 
+  - name: test_cuda_fail_1c
+    id: C003c
+    provenance:
+      node_id: tests/core/test_solve.py::test_cuda_fail_1
+      commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L278-L317
+    kind: unsatisfiable
+    description: |
+      rattler variant of test_cuda_fail_1. Upstream asserts that both of
+      rattler's message fragments appear in the error, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L303-L308
+    solvers: rattler
+    input:
+      channels: channel-1
+      specs_to_add: cudatoolkit
+      override_cuda: '8.0'
+    error:
+      exception: UnsatisfiableError
+      entries: []
+      message_includes:
+        - "__cuda >=9.0, for which no candidates were found."
+        - "cudatoolkit * cannot be installed because there are no viable options:"
+
   - name: test_cuda_fail_2
     id: C004
     provenance:
@@ -140,6 +163,29 @@ tests:
         - |-
           Encountered problems while solving:
             - nothing provides __cuda >=9.0 needed by cudatoolkit-9.0-0
+
+  - name: test_cuda_fail_2c
+    id: C004c
+    provenance:
+      node_id: tests/core/test_solve.py::test_cuda_fail_2
+      commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L320-L359
+    kind: unsatisfiable
+    description: |
+      rattler variant of test_cuda_fail_2. Upstream asserts that both of
+      rattler's message fragments appear in the error, see
+      https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L346-L351
+    solvers: rattler
+    input:
+      channels: channel-1
+      specs_to_add: cudatoolkit
+      override_cuda: ''
+    error:
+      exception: UnsatisfiableError
+      entries: []
+      message_includes:
+        - "cudatoolkit * cannot be installed because there are no viable options:"
+        - "__cuda >=9.0, for which no candidates were found."
 
   - name: test_cuda_constrain_absent
     id: C005
