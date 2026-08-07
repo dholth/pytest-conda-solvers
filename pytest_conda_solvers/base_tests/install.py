@@ -52,8 +52,14 @@ def get_solver(
     history_specs=(),
     add_pip=False,
 ):
+    # When add_pip is requested, solve against the pip-injected channel URLs,
+    # whose served repodata already carries the pip dependency on every python
+    # 2.x/3.x record, exactly like upstream's test fixtures. The env var is
+    # kept false so conda's SubdirData does not inject the dependency a second
+    # time, and solvers that read repodata directly, such as rattler, see the
+    # same index as classic and libmamba.
     channels = [
-        Channel(channel_server.get_channel_url(channel_name))
+        Channel(channel_server.get_channel_url(channel_name, add_pip))
         for channel_name in channels
     ]
     tmpdir = tmpdir.strpath
@@ -65,7 +71,7 @@ def get_solver(
     with (
         patch.object(History, "get_requested_specs_map", return_value=spec_map),
         env_vars(
-            {"CONDA_ADD_PIP_AS_PYTHON_DEPENDENCY": str(add_pip).lower()},
+            {"CONDA_ADD_PIP_AS_PYTHON_DEPENDENCY": "false"},
             stack_callback=conda_tests_ctxt_mgmt_def_pol,
         ),
     ):
@@ -181,7 +187,7 @@ def prepare_solver_input(raw_solver_input: TestInput, channel_server, arch):
             getattr(raw_solver_input, simple_key)
         )
     solver_input["prefix_records"] = diststrs_to_records(
-        raw_solver_input.prefix, channel_server, arch
+        raw_solver_input.prefix, channel_server, arch, raw_solver_input.add_pip
     )
     for spec_key in ("specs_to_add", "specs_to_remove", "history_specs"):
         solver_input[spec_key] = tuple(
@@ -214,11 +220,11 @@ def prepare_solver_input(raw_solver_input: TestInput, channel_server, arch):
     return solver_input, env_vars, flags
 
 
-def diststrs_to_records(diststrs, channel_server, arch):
+def diststrs_to_records(diststrs, channel_server, arch, add_pip=False):
     return tuple(
         package_record_from_dist_str(dist_str)
         for dist_str in add_base_url(
-            channel_server.get_base_url(),
+            channel_server.get_base_url(add_pip),
             arch,
             ensure_str_tuple(diststrs),
         )
@@ -295,7 +301,9 @@ class TestBasic:
             # must-solve mode: upstream only requires that the solve succeeds
             return
         ref = add_base_url(
-            channel_server.get_base_url(), "linux-64", test.output.final_state
+            channel_server.get_base_url(test.input.add_pip),
+            "linux-64",
+            test.output.final_state,
         )
         assert sorted(list(convert_to_dist_str(final_state))) == sorted(list(ref))
         # list() on both sides: IndexedSet == list would degrade to set equality
@@ -317,10 +325,14 @@ class TestBasic:
             unlink_precs, link_precs = solver.solve_for_diff(**flags)
 
         unlink_ref = add_base_url(
-            channel_server.get_base_url(), "linux-64", test.output.unlink_precs
+            channel_server.get_base_url(test.input.add_pip),
+            "linux-64",
+            test.output.unlink_precs,
         )
         link_ref = add_base_url(
-            channel_server.get_base_url(), "linux-64", test.output.link_precs
+            channel_server.get_base_url(test.input.add_pip),
+            "linux-64",
+            test.output.link_precs,
         )
         assert sorted(list(convert_to_dist_str(unlink_precs))) == sorted(
             list(unlink_ref)

@@ -46,12 +46,25 @@ SUBDIR_MAP = {
 
 
 @lru_cache(maxsize=None)
-def get_channel_repodata(channel_name, subdir, filename):
-    # This currently offers neither the add_pip nor the merge_noarch options
+def get_channel_repodata(channel_name, subdir, filename, add_pip=False):
+    # This currently does not offer the merge_noarch option
     assert filename in ("repodata.json", "current_repodata.json")
     info = {"subdir": subdir} | SUBDIR_MAP[subdir]
     source = "noarch" if subdir == "noarch" else "non-noarch"
     packages = load_data_file(Path(f"{channel_name}_{source}.json"))
+    if add_pip:
+        # Mirror conda's SubdirData injection under add_pip_as_python_dependency,
+        # which appends 'pip' to the depends of every python 2.x/3.x record, see
+        # https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/conda/core/subdir_data.py#L694-L699
+        packages = {
+            fn: (
+                {**meta, "depends": [*meta.get("depends", []), "pip"]}
+                if meta["name"] == "python"
+                and meta["version"].startswith(("2.", "3."))
+                else meta
+            )
+            for fn, meta in packages.items()
+        }
     repodata = {
         "info": info,
         "packages": packages,

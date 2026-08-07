@@ -26,11 +26,12 @@ class ChannelServer:
         self.host = host
         self.port = port
 
-    def get_base_url(self):
-        return f"http://{self.host}:{self.port}"
+    def get_base_url(self, add_pip=False):
+        base_url = f"http://{self.host}:{self.port}"
+        return f"{base_url}/pip" if add_pip else base_url
 
-    def get_channel_url(self, channel):
-        return f"{self.get_base_url()}/{channel}"
+    def get_channel_url(self, channel, add_pip=False):
+        return f"{self.get_base_url(add_pip)}/{channel}"
 
 
 @asynccontextmanager
@@ -60,6 +61,25 @@ def channel_server(host="localhost", port=8080):
         data = load_raw_data_file(path)
         mimetype = mimetypes.guess_type(path)[0]
         return Response(data, media_type=mimetype)
+
+    @app.get("/pip/{channel_name}/{subdir}/{filename}")
+    @cache()
+    async def pip_injected_repodata(
+        channel_name: str,
+        subdir: str,
+        filename: str,
+    ):
+        # Serve the same repodata with 'pip' appended to the depends of every
+        # python 2.x/3.x record, mirroring conda's SubdirData injection under
+        # add_pip_as_python_dependency. Upstream's test fixtures bake pip into
+        # the served index data this way, and serving it here makes the
+        # injection visible to solvers that read repodata directly, such as
+        # rattler, instead of relying on conda's SubdirData at solve time.
+        try:
+            validated = RepodataFilename(filename)
+        except ValueError:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+        return get_channel_repodata(channel_name, subdir, validated.value, add_pip=True)
 
     @app.get("/{channel_name}/{subdir}/{filename}")
     @cache()
