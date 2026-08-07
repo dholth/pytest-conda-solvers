@@ -4605,8 +4605,10 @@ tests:
     kind: solve
     description: |
       Requesting the mkl track_feature pulls in the mkl builds of numpy and
-      iopro along with the mkl runtime. Features are classic-only. Upstream
-      compares against an unordered set only, see
+      iopro along with the mkl runtime. Features are classic-only: upstream
+      skips test_iopro_nomkl under conda-libmamba-solver (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/test_solvers.py#L23-L39).
+      Upstream compares against an unordered set only, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L261-L279
       so the exact record order pinned here is a deliberate strengthening
       taken from solver behaviour.
@@ -4638,7 +4640,7 @@ tests:
   - name: test_mkl
     id: B158
     provenance:
-      node_id: conda/testing/solver_helpers.py::SolverTests.test_mkl::1
+      node_id: conda/testing/solver_helpers.py::SolverTests::test_mkl::1
       commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
       url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L281-L285
     kind: solve
@@ -4648,7 +4650,9 @@ tests:
       the test_mkl_2 solve (see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L281-L285),
       and the concrete record list here is pinned from classic solver
-      behaviour. Features are classic-only.
+      behaviour. Features are classic-only: upstream skips test_mkl under
+      conda-libmamba-solver (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/test_solvers.py#L23-L39).
     solvers: classic
     input:
       channels: channel-1
@@ -4680,7 +4684,9 @@ tests:
     kind: solve
     description: |
       Installing accelerate selects the mkl-featured builds, matching an explicit
-      track_features=mkl request. Features are classic-only.
+      track_features=mkl request. Features are classic-only: upstream skips
+      test_accelerate under conda-libmamba-solver (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/test_solvers.py#L23-L39).
       Upstream only asserts this solve equals the track_features=mkl solve (see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L287-L291),
       so pinning the full state here is a deliberate strengthening.
@@ -4716,11 +4722,15 @@ tests:
     kind: solve
     description: |
       Requesting the mkl track_feature pulls the mkl builds of numpy and scipy.
-      Features are classic-only.
-      Upstream also asserts the numpy and scipy records carry the mkl
-      feature (see
-      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L293-L308),
-      and here that is pinned through the featured _p build strings.
+      Features are classic-only: upstream skips test_scipy_mkl under
+      conda-libmamba-solver (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/test_solvers.py#L23-L39).
+      Upstream asserts only that the numpy and scipy records are present and
+      carry the mkl feature (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L303-L308),
+      here pinned through the featured _p build strings. Pinning the ten
+      remaining records and the exact record order is a deliberate
+      strengthening taken from classic solver behaviour.
     solvers: classic
     input:
       channels: channel-1
@@ -4951,7 +4961,12 @@ tests:
       higher package2 version wins (2.0 over 1.0, both build 0), so its
       package1 dependency stays out. package1 merely carries the feature,
       while the feature package provides it through track_features. Features
-      are classic-only.
+      are classic-only: upstream skips test_surplus_features_1 under
+      conda-libmamba-solver (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/test_solvers.py#L23-L39).
+      Upstream compares this state as an unordered set (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L1132-L1135),
+      and the order here is pinned from classic solver behaviour.
     solvers: classic
     input:
       channels: channel-8
@@ -4978,7 +4993,12 @@ tests:
       dependency survives (see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L1137-L1164).
       channel-9 mirrors that surviving record, so no build-number competition
-      is exercised and package1 stays out. Features are classic-only.
+      is exercised and package1 stays out. Features are classic-only: upstream
+      skips test_surplus_features_2 under conda-libmamba-solver (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/test_solvers.py#L23-L39).
+      Upstream compares this state as an unordered set (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L1161-L1164),
+      and the order here is pinned from classic solver behaviour.
     solvers: classic
     input:
       channels: channel-9
@@ -5029,7 +5049,12 @@ tests:
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L827-L828),
       and the full record list here is pinned from classic solver behaviour.
       Upstream serves the bad scipy record only within this test, while here
-      it is baked into the shared channel-1 data. Features are classic-only.
+      it is baked into the shared channel-1 data. Upstream skips this test
+      under conda-libmamba-solver. It files the skip under its features key
+      but notes it really only fails reliably on Windows (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/test_solvers.py#L23-L39),
+      and the test itself involves no featured records, so this entry is
+      classic-only to mirror that upstream skip.
     solvers: classic
     input:
       channels: channel-1
@@ -5064,6 +5089,11 @@ tests:
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3833-L3842),
       is not expressible in this YAML harness and is ported as the white-box
       test test_globstr_matchspec_non_compatible_construction instead.
+      Upstream accepts either PackagesNotFoundError or ResolvePackageNotFound
+      for this stage, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3849-L3852.
+      The per-solver split narrows that tuple to the class each solver was
+      observed to raise, ResolvePackageNotFound for classic here.
     solvers: classic
     input:
       channels: channel-1
@@ -5089,6 +5119,11 @@ tests:
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3833-L3842),
       is not expressible in this YAML harness and is ported as the white-box
       test test_globstr_matchspec_non_compatible_construction instead.
+      Upstream accepts either PackagesNotFoundError or ResolvePackageNotFound
+      for this stage, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3849-L3852.
+      The per-solver split narrows that tuple to the class each solver was
+      observed to raise, PackagesNotFoundError for libmamba here.
     solvers: libmamba
     input:
       channels: channel-1
@@ -5109,6 +5144,11 @@ tests:
     description: |
       Two glob build string specs for accelerate that cannot be satisfied together:
       *np15* and *py33* cannot match the same package (no such build exists).
+      Upstream accepts either PackagesNotFoundError or ResolvePackageNotFound
+      for this stage, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3855-L3858.
+      The per-solver split narrows that tuple to the class each solver was
+      observed to raise, ResolvePackageNotFound for classic here.
     solvers: classic
     input:
       channels: channel-1
@@ -5129,6 +5169,11 @@ tests:
     description: |
       Two glob build string specs for accelerate that cannot be satisfied together:
       *np15* and *py33* cannot match the same package (no such build exists).
+      Upstream accepts either PackagesNotFoundError or ResolvePackageNotFound
+      for this stage, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3855-L3858.
+      The per-solver split narrows that tuple to the class each solver was
+      observed to raise, PackagesNotFoundError for libmamba here.
     solvers: libmamba
     input:
       channels: channel-1
@@ -5183,7 +5228,10 @@ tests:
     kind: solve
     description: |
       Same specs plus a track_features=mkl spec, so the mkl-featured builds of
-      numpy and scipy are selected along with mkl-rt.
+      numpy and scipy are selected along with mkl-rt. Upstream skips
+      test_no_features entirely under conda-libmamba-solver (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/test_solvers.py#L23-L39),
+      so this entry is classic-only.
     solvers: classic
     input:
       channels: channel-1
@@ -5221,6 +5269,9 @@ tests:
       build. channel-14 is channel-1 plus the two records upstream appends to
       its index for these stages, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L895-L918
+      Upstream skips test_no_features entirely under conda-libmamba-solver (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/test_solvers.py#L23-L39),
+      so this entry is classic-only.
     solvers: classic
     input:
       channels: channel-14
@@ -5255,7 +5306,10 @@ tests:
     description: |
       Same install with a track_features=mkl spec. The featured py27_p4 numpy
       wins (not the added py27_p5 build, which has build_number 0), and mkl-rt
-      joins the environment.
+      joins the environment. Upstream skips test_no_features entirely under
+      conda-libmamba-solver (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/test_solvers.py#L23-L39),
+      so this entry is classic-only.
     solvers: classic
     input:
       channels: channel-14
@@ -5294,7 +5348,9 @@ tests:
       asserts this solve equals the plain "mkl" install (see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L281-L285),
       so the state here is pinned from classic solver behaviour and is
-      identical to test_mkl's.
+      identical to test_mkl's. Features are classic-only: upstream skips
+      test_mkl under conda-libmamba-solver (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/test_solvers.py#L23-L39).
     solvers: classic
     input:
       channels: channel-1
@@ -5331,7 +5387,9 @@ tests:
       asserts this solve equals the plain "accelerate" install (see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L287-L291),
       so the state here is pinned from classic solver behaviour and is
-      identical to test_accelerate's.
+      identical to test_accelerate's. Features are classic-only: upstream
+      skips test_accelerate under conda-libmamba-solver (see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/test_solvers.py#L23-L39).
     solvers: classic
     input:
       channels: channel-1
