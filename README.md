@@ -22,6 +22,21 @@ endpoint package names of each expected conflict chain appear in the libmamba
 error message, and `message_includes`/`message_excludes` fields in the YAML add
 further content checks. This strengthening is intentional: cross-solver
 consistency of error reporting is part of what this plugin exists to verify.
+The endpoint-name check applies to libmamba only. Other solvers word their
+messages differently (rattler may omit the requested package entirely), so
+for them only the explicit `message_includes`/`message_excludes` fields
+apply, matching upstream's type-only check.
+
+## Solver applicability under rattler
+
+conda-rattler-solver skips the feature-dependent tests of conda's shared
+SolverTests suite ("conda-rattler-solver does not support features", see
+https://github.com/conda-incubator/conda-rattler-solver/blob/main/tests/test_solver.py).
+Those tests are already restricted to the classic solver in this suite, so
+they are skipped under `--conda-solver=rattler` automatically. Known rattler
+limitations beyond that (add_pip_as_python_dependency, flexible channel
+priority) are carried as strict per-entry `xfail_solvers: rattler` marks, so
+CI notices when an upstream fix lands.
 
 ## Requirements
 

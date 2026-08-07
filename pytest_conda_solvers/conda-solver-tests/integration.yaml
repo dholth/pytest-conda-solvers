@@ -552,6 +552,8 @@ tests:
       older than 2.0a0. That branch is obsolete for the versions tested here, so xz is expected
       unconditionally for both solvers, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3164-L3176
+    xfail_solvers: rattler
+    xfail_reason: "conda-rattler-solver does not unlink xz in this freeze-installed diff, divergence pending upstream investigation"
     input:
       channels: channel-2
       specs_to_add:
