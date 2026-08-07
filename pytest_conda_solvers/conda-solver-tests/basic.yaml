@@ -5714,7 +5714,7 @@ tests:
       Pinning sc1_c=1.3.6 makes sc1_a's direct sc1_c constraint unsatisfiable.
       Upstream's chain assertion is gated on the exact UnsatisfiableError type,
       so it only runs for the classic solver, see
-      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L227-L239
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L227-L238
     solvers: classic
     input:
       channels: channel-7
@@ -5744,7 +5744,7 @@ tests:
       gated on the exact UnsatisfiableError type. This entry keeps the chains
       whose endpoint packages libmamba names in its message, which omits the
       sc1_b chain, see
-      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L227-L239
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L227-L238
     solvers: libmamba
     input:
       channels: channel-7
@@ -5771,7 +5771,7 @@ tests:
       Pinning sc2_c=1.3.6 makes sc2_d's sc2_c constraint unsatisfiable.
       Upstream's chain assertion is gated on the exact UnsatisfiableError type,
       so it only runs for the classic solver, see
-      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L227-L239
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L227-L238
     solvers: classic
     input:
       channels: channel-7
@@ -5801,7 +5801,7 @@ tests:
       gated on the exact UnsatisfiableError type. This entry keeps the chains
       whose endpoint packages libmamba names in its message, which omits the
       sc2_b chain, see
-      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L227-L239
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L227-L238
     solvers: libmamba
     input:
       channels: channel-7
@@ -5828,7 +5828,7 @@ tests:
       Pinning sc3_c=1.3.6 makes sc3_e's constraint unsatisfiable.
       Upstream's chain assertion is gated on the exact UnsatisfiableError type,
       so it only runs for the classic solver, see
-      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L227-L239
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L227-L238
     solvers: classic
     input:
       channels: channel-7
@@ -5857,7 +5857,7 @@ tests:
       gated on the exact UnsatisfiableError type. This entry keeps the chains
       whose endpoint packages libmamba names in its message, which omits the
       sc3_b chain, see
-      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L227-L239
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L227-L238
     solvers: libmamba
     input:
       channels: channel-7
@@ -6188,7 +6188,11 @@ tests:
       only depends on ri2_middle. The solver should pick ri2_top-2.0 and the
       highest ri2_bottom-2.5, not the artificially constrained 1.5. Verifies
       that spec broadening during index reduction does not incorrectly limit
-      the preferred solution.
+      the preferred solution. Upstream asserts only the top and bottom
+      versions, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L1230-L1237
+      so pinning the full state including ri2_middle is a deliberate
+      strengthening taken from solver behaviour.
     input:
       channels: channel-7
       specs_to_add:
@@ -6533,7 +6537,10 @@ tests:
     kind: solve
     description: |
       Same iopro install with a track_features=mkl spec, selecting the
-      mkl-featured numpy build and mkl-rt.
+      mkl-featured numpy build and mkl-rt. Restricted to classic because
+      upstream skips test_pseudo_boolean for libmamba (features are
+      unsupported there), see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/test_solvers.py#L23-L39
     solvers: classic
     input:
       channels: channel-1
@@ -6681,7 +6688,7 @@ tests:
     description: |
       Reinstalling ts_mypackage alongside the exact libpng 1.5 record
       reproduces the hash15 solution despite hash12's newer timestamp, see
-      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L629-L643
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/conda/testing/solver_helpers.py#L637-L640
     input:
       channels:
         - channel-7
