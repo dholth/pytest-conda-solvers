@@ -154,6 +154,10 @@ def package_record_from_dist_str(dist_str):
     # "channel-1/osx-arm64/linux-64::pkg" instead of "channel-1/linux-64::pkg".
     spec["channel"] = f"{spec['channel']}/{spec['subdir']}"
 
+    # Set the package URL so solvers that require it (rattler) can use
+    # prefix records without hitting a None-URL error.
+    spec["url"] = f"{spec['channel']}/{filename}"
+
     # Inject depends from channel repodata so solvers can correctly determine
     # which packages need updating when update modifiers are applied.
     index = _load_channel_package_index(channel_name, subdir)
@@ -385,10 +389,14 @@ class TestBasic:
                     if unsatisfiable is not None:
                         # classic solver branch
                         assert set(unsatisfiable) == set(error_info["entries"])
-                    else:
+                    elif type(exc).__name__ == "LibMambaUnsatisfiableError":
                         # LibMambaUnsatisfiableError: here we verify that the endpoint
                         # packages of each conflict chain appear in the message (and
-                        # intermediaries _may_ be omitted in some scenarios, like B006)
+                        # intermediaries _may_ be omitted in some scenarios, like B006).
+                        # Other subclasses (RattlerUnsatisfiableError) word their
+                        # messages differently and may omit the requested package,
+                        # so only the YAML message_includes/excludes apply there,
+                        # matching upstream's type-only check for those solvers.
                         message = str(exc)
                         expected_names = set()
                         for entry_tuple in error_info["entries"]:
