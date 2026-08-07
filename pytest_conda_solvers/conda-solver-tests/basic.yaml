@@ -4161,6 +4161,9 @@ tests:
       Under libmamba this stage fails on content, since python is not restored,
       which is the known limitation the upstream xfail tracks. Stage 3 also
       orders its records differently under libmamba, see test_force_remove_1_3b.
+      The prefix here is written in stage 3's classic order, and B128 and
+      B128b agree on the record content, so the same handoff set serves both
+      the classic run and the strict libmamba xfail.
     xfail_solvers: libmamba
     xfail_reason: "Known limitation. VERIFY task needed to make this pass, but breaks other tests. See https://github.com/conda/conda-libmamba-solver/pull/302"
     input:
@@ -4339,7 +4342,10 @@ tests:
     description: |
       Remove numbapro from the accelerate environment. The whole MKL-featured
       stack is unlinked and the non-featured numpy build is linked in its
-      place.
+      place. Restricted to classic because upstream carries an active strict
+      libmamba xfail on the whole function, see
+      https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L462-L468
+      which fails at stage 1, so this stage is never reached under libmamba.
     solvers: classic
     input:
       channels: channel-1
