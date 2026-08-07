@@ -105,6 +105,7 @@ platforms = ["linux-64", "osx-64", "osx-arm64", "win-64"]
 [tool.pixi.dependencies]
 conda = ">=26.3.0"
 conda-libmamba-solver = ">=26.4.0"
+conda-rattler-solver = ">=0.1.1,<0.2"
 fastapi = "*"
 fastapi-cache2 = "*"
 httpx = "*"
@@ -120,6 +121,7 @@ pytest-conda-solvers = {path = ".", editable = true}
 generate-schema = "python -m pytest_conda_solvers.cli"
 test-classic-solver = "pytest --conda-solver=classic tests/test_provenance.py"
 test-libmamba-solver = "pytest --conda-solver=libmamba tests/test_provenance.py"
+test-rattler-solver = "pytest --conda-solver=rattler tests/test_provenance.py"
 update-provenance = "python tools/update_provenance.py"
 collect-ported-node-ids = "python tools/collect_ported_node_ids.py"
 
@@ -130,6 +132,7 @@ platforms = ["linux-64"]
 boltons = "*"
 conda = ">=26.3.0"
 conda-libmamba-solver = ">=26.4.0"
+conda-rattler-solver = ">=0.1.1,<0.2"
 fastapi = "*"
 fastapi-cache2 = "*"
 hatch-vcs = "*"
@@ -144,6 +147,7 @@ typer = "*"
 _install-package = "python -m pip install --no-deps --no-build-isolation ."
 test-classic-solver = {cmd = "python -m pytest --conda-solver=classic tests/test_provenance.py", depends-on = ["_install-package"]}
 test-libmamba-solver = {cmd = "python -m pytest --conda-solver=libmamba tests/test_provenance.py", depends-on = ["_install-package"]}
+test-rattler-solver = {cmd = "python -m pytest --conda-solver=rattler tests/test_provenance.py", depends-on = ["_install-package"]}
 
 # The environment used by the "upstream" CI job (see .github/workflows/tests.yml).
 # We use it to run the original conda/conda solver tests side by side with our YAML
