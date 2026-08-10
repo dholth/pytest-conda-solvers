@@ -157,7 +157,7 @@ tests:
     provenance:
       node_id: tests/core/test_solve.py::test_pinned_1::5
       commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
-      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L2489-L2495
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L2392-L2646
     kind: unsatisfiable
     description: |
       rattler variant: raises UnsatisfiableError like libmamba, but the error
@@ -634,7 +634,7 @@ tests:
     provenance:
       node_id: tests/core/test_solve.py::test_freeze_deps_1::5
       commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
-      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L3230-L3284
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L3138-L3295
     kind: solve_for_diff
     description: |
       rattler variant of test_freeze_deps_1_5. Upstream encodes that rattler

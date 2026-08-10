@@ -323,7 +323,7 @@ tests:
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_from_r1::3
       commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
-      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/conda/testing/solver_helpers.py#L375-L382
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/conda/testing/solver_helpers.py#L351-L382
     kind: unsatisfiable
     description: |
       rattler variant: raises UnsatisfiableError for the same conflicting
@@ -5716,7 +5716,7 @@ tests:
     provenance:
       node_id: tests/core/test_solve.py::test_globstr_matchspec_non_compatible::2
       commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
-      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L3945-L3950
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L3929-L3958
     kind: unsatisfiable
     description: |
       Two glob build string specs for accelerate that cannot be satisfied together:
@@ -5791,7 +5791,7 @@ tests:
     provenance:
       node_id: tests/core/test_solve.py::test_globstr_matchspec_non_compatible::3
       commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
-      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L3952-L3958
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L3929-L3958
     kind: unsatisfiable
     description: |
       Two glob build string specs for accelerate that cannot be satisfied together:
@@ -6142,7 +6142,7 @@ tests:
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_from_r1::3
       commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
-      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/conda/testing/solver_helpers.py#L375-L382
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/conda/testing/solver_helpers.py#L351-L382
     kind: unsatisfiable
     description: |
       Install numpy 1.5* + numpy 1.6* simultaneously from channel-1. The combined
