@@ -3204,7 +3204,7 @@ tests:
         - channel-1/${{ arch }}::zlib-1.2.7-0
         - channel-1/${{ arch }}::python-2.6.8-6
 
-  - name: test_downgrade_python_prevented_2a
+  - name: test_downgrade_python_prevented_2_classic
     id: B067a
     provenance:
       node_id: tests/core/test_solve.py::test_downgrade_python_prevented_with_sane_message::2
@@ -3238,7 +3238,7 @@ tests:
         - "- scikit-learn==0.13 -> python=2.7"
         - "Your python: python=2.6"
 
-  - name: test_downgrade_python_prevented_2b
+  - name: test_downgrade_python_prevented_2_libmamba
     id: B067b
     provenance:
       node_id: tests/core/test_solve.py::test_downgrade_python_prevented_with_sane_message::2
@@ -3274,7 +3274,7 @@ tests:
         - "python=2.6"
         - "scikit-learn ==0.13"
 
-  - name: test_downgrade_python_prevented_3a
+  - name: test_downgrade_python_prevented_3_classic
     id: B068a
     provenance:
       node_id: tests/core/test_solve.py::test_downgrade_python_prevented_with_sane_message::3
@@ -3308,7 +3308,7 @@ tests:
         - "- unsatisfiable-with-py26 -> python=2.7"
         - "Your python: python=2.6"
 
-  - name: test_downgrade_python_prevented_3b
+  - name: test_downgrade_python_prevented_3_libmamba
     id: B068b
     provenance:
       node_id: tests/core/test_solve.py::test_downgrade_python_prevented_with_sane_message::3
