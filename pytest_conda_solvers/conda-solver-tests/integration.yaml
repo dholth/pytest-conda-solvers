@@ -764,7 +764,7 @@ tests:
         - channel-4/${{ arch }}::requests-2.19.1-py37_0
         - channel-4/${{ arch }}::conda-4.5.10-py37_0
 
-  - name: test_python2_update_2b
+  - name: test_python2_update_2_libmamba
     id: I017b
     provenance:
       node_id: tests/core/test_solve.py::test_python2_update::2
