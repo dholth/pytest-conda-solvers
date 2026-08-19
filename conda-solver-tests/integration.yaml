@@ -123,7 +123,7 @@ tests:
       pinned_specs:
         - python=2.6
 
-  - name: pinned_1_4b
+  - name: pinned_1_4_libmamba
     id: I004b
     provenance:
       node_id: tests/core/test_solve.py::test_pinned_1::5
@@ -283,7 +283,7 @@ tests:
         - channel-1/${{ arch }}::numpy-1.7.1-py26_0
         - channel-1/${{ arch }}::numba-0.8.1-np17py26_0
 
-  - name: pinned_1_8a
+  - name: pinned_1_8_classic
     id: I008a
     provenance:
       node_id: tests/core/test_solve.py::test_pinned_1::9
@@ -332,7 +332,7 @@ tests:
         - channel-1/${{ arch }}::numpy-1.7.1-py33_0
         - channel-1/${{ arch }}::numba-0.8.1-np17py33_0
 
-  - name: pinned_1_8b
+  - name: pinned_1_8_libmamba
     id: I008b
     provenance:
       node_id: tests/core/test_solve.py::test_pinned_1::9

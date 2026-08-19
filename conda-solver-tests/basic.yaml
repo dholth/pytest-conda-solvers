@@ -292,7 +292,7 @@ tests:
       entries:
         - numpy[version='1.5.*,1.6.*']
 
-  - name: test_unsatisfiable_from_channel_1_3b
+  - name: test_unsatisfiable_from_channel_1_3_libmamba
     id: B007b
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_from_r1::3
@@ -816,7 +816,7 @@ tests:
       This entry carries the classic branch of test_conda_downgrade stage 4,
       with upstream's exact unlink and link order. Upstream runs the same solve
       on libmamba but asserts only a few version properties, and that branch is
-      ported as test_conda_downgrade_4b (B179), see
+      ported as test_conda_downgrade_4_libmamba (B179), see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L1511-L1525.
     input:
       channels:
@@ -944,7 +944,7 @@ tests:
         - channel-2/${{ arch }}::conda-4.3.30-py36h5d9f9f4_0
         - channel-4/${{ arch }}::conda-build-3.12.1-py36_0
 
-  - name: test_conda_downgrade_4b
+  - name: test_conda_downgrade_4_libmamba
     id: B179
     provenance:
       node_id: tests/core/test_solve.py::test_conda_downgrade::4
@@ -1116,7 +1116,7 @@ tests:
         - itsdangerous
     output: {}
 
-  - name: test_channel_priority_churn_minimized_2a
+  - name: test_channel_priority_churn_minimized_2_classic
     id: B024a
     provenance:
       node_id: tests/core/test_solve.py::test_channel_priority_churn_minimized::2
@@ -1191,7 +1191,7 @@ tests:
       link_precs:
         - channel-2/noarch::itsdangerous-0.24-py_0
 
-  - name: test_channel_priority_churn_minimized_2b
+  - name: test_channel_priority_churn_minimized_2_libmamba
     id: B024b
     provenance:
       node_id: tests/core/test_solve.py::test_channel_priority_churn_minimized::2
