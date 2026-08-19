@@ -90,7 +90,7 @@ tests:
           Encountered problems while solving:
             - nothing provides __cuda >=9.0 needed by cudatoolkit-9.0-0
 
-  - name: test_cuda_fail_1c
+  - name: test_cuda_fail_1_rattler
     id: C003c
     provenance:
       node_id: tests/core/test_solve.py::test_cuda_fail_1
@@ -164,7 +164,7 @@ tests:
           Encountered problems while solving:
             - nothing provides __cuda >=9.0 needed by cudatoolkit-9.0-0
 
-  - name: test_cuda_fail_2c
+  - name: test_cuda_fail_2_rattler
     id: C004c
     provenance:
       node_id: tests/core/test_solve.py::test_cuda_fail_2
