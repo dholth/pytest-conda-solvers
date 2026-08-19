@@ -5104,7 +5104,7 @@ tests:
       exception: ResolvePackageNotFound
       entries: []
 
-  - name: test_globstr_matchspec_non_compatible_2b
+  - name: test_globstr_matchspec_non_compatible_2_libmamba
     id: B083b
     provenance:
       node_id: tests/core/test_solve.py::test_globstr_matchspec_non_compatible::2
@@ -5159,7 +5159,7 @@ tests:
       exception: ResolvePackageNotFound
       entries: []
 
-  - name: test_globstr_matchspec_non_compatible_3b
+  - name: test_globstr_matchspec_non_compatible_3_libmamba
     id: B084b
     provenance:
       node_id: tests/core/test_solve.py::test_globstr_matchspec_non_compatible::3
