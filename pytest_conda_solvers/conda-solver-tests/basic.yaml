@@ -5482,7 +5482,7 @@ tests:
       entries:
         - numpy[version='1.5.*,1.6.*']
 
-  - name: test_unsat_from_r1_3b
+  - name: test_unsat_from_r1_3_libmamba
     id: B054b
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_from_r1::3
@@ -5559,7 +5559,7 @@ tests:
       exception: ResolvePackageNotFound
       entries: []
 
-  - name: test_nonexistent_1b
+  - name: test_nonexistent_1_libmamba
     id: B056b
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests.test_nonexistent::1
@@ -5601,7 +5601,7 @@ tests:
       exception: ResolvePackageNotFound
       entries: []
 
-  - name: test_nonexistent_2b
+  - name: test_nonexistent_2_libmamba
     id: B057b
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests.test_nonexistent::2
@@ -5743,7 +5743,7 @@ tests:
         - [sc1_b, sc1_c]
         - sc1_c=1.3.6
 
-  - name: test_unsat_shortest_chain_1b
+  - name: test_unsat_shortest_chain_1_libmamba
     id: B062b
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_shortest_chain_1
@@ -5802,7 +5802,7 @@ tests:
         - [sc2_b, sc2_c]
         - sc2_c=1.3.6
 
-  - name: test_unsat_shortest_chain_2b
+  - name: test_unsat_shortest_chain_2_libmamba
     id: B063b
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_shortest_chain_2
@@ -5860,7 +5860,7 @@ tests:
         - [sc3_b, sc3_c]
         - sc3_c=1.3.6
 
-  - name: test_unsat_shortest_chain_3b
+  - name: test_unsat_shortest_chain_3_libmamba
     id: B064b
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests.test_unsat_shortest_chain_3
@@ -6393,7 +6393,7 @@ tests:
       exception: ResolvePackageNotFound
       entries: []
 
-  - name: test_nonexistent_deps_5b
+  - name: test_nonexistent_deps_5_libmamba
     id: B105b
     provenance:
       node_id: conda/testing/solver_helpers.py::SolverTests::test_nonexistent_deps::5
