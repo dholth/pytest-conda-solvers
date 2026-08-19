@@ -2442,7 +2442,7 @@ tests:
       checks only that python 2.7.14 is unlinked and python 3.6.4 is linked, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L2286-L2297
       so this entry is classic-only and the libmamba side lives in
-      test_fast_update_2b.
+      test_fast_update_2_libmamba.
     solvers: classic
     input:
       channels: channel-4
@@ -2929,7 +2929,7 @@ tests:
         - "numexpr==2.0.1=np17py27_p3"
     output: {}
 
-  - name: test_update_prune_5_2a_prune
+  - name: test_update_prune_5_2_prune_classic
     id: B146a
     provenance:
       node_id: tests/core/test_solve.py::test_update_prune_5::2
@@ -2981,7 +2981,7 @@ tests:
         - channel-1/${{ arch }}::numpy-1.7.1-py27_p0
         - channel-1/${{ arch }}::numexpr-2.0.1-np17py27_p2
 
-  - name: test_update_prune_5_2b_prune
+  - name: test_update_prune_5_2_prune_libmamba
     id: B146b
     provenance:
       node_id: tests/core/test_solve.py::test_update_prune_5::2
@@ -3087,7 +3087,7 @@ tests:
         - channel-1/${{ arch }}::scikit-learn-0.13.1-np17py27_p0
         - channel-1/${{ arch }}::mkl-11.0-np17py27_p1
 
-  - name: test_update_prune_5_2b_no_prune
+  - name: test_update_prune_5_2_no_prune_libmamba
     id: B147b
     provenance:
       node_id: tests/core/test_solve.py::test_update_prune_5::2
@@ -3139,7 +3139,7 @@ tests:
         - channel-1/${{ arch }}::numpy-1.7.1-py27_0
         - channel-1/${{ arch }}::numexpr-2.0.1-np17py27_p2
 
-  - name: test_fast_update_2b
+  - name: test_fast_update_2_libmamba
     id: B178
     provenance:
       node_id: tests/core/test_solve.py::test_fast_update_with_update_modifier_not_set::2
