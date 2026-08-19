@@ -8,7 +8,10 @@ tests:
     kind: solve
     description: |
       With the __cuda virtual package set to 9.2, cudatoolkit resolves to the
-      newest build the driver allows, 9.0.
+      newest build the driver allows. The channel ships only cudatoolkit 9.0
+      (needing __cuda >=9.0) and 10.0 (needing __cuda >=10.0), and there is no
+      9.2 build, so the 10.0 build is excluded and 9.0 is selected, matching
+      upstream's assertion.
     input:
       channels: channel-1
       specs_to_add: cudatoolkit
@@ -61,7 +64,7 @@ tests:
         - "cudatoolkit -> __cuda[version='>=10.0|>=9.0']"
         - "Your installed version is: 8.0"
 
-  - name: test_cuda_fail_1b
+  - name: test_cuda_fail_1_libmamba
     id: C003b
     provenance:
       node_id: tests/core/test_solve.py::test_cuda_fail_1
@@ -112,7 +115,7 @@ tests:
         - "cudatoolkit -> __cuda[version='>=10.0|>=9.0']"
         - "Your installed version is: not available"
 
-  - name: test_cuda_fail_2b
+  - name: test_cuda_fail_2_libmamba
     id: C004b
     provenance:
       node_id: tests/core/test_solve.py::test_cuda_fail_2
