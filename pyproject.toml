@@ -119,3 +119,57 @@ generate-schema = "python -m pytest_conda_solvers.cli"
 test-classic-solver = "pytest --conda-solver=classic conda-solver-tests tests/test_provenance.py"
 test-libmamba-solver = "pytest --conda-solver=libmamba conda-solver-tests tests/test_provenance.py"
 update-provenance = "python tools/update_provenance.py"
+collect-ported-node-ids = "python tools/collect_ported_node_ids.py"
+
+# The environment used by the "upstream" CI job (see .github/workflows/tests.yml).
+# We use it to run the original conda/conda solver tests side by side with our YAML
+# ports to verify the faithfulness of our translations.
+#
+# Keep in sync with conda's tests/requirements*.txt at the pinned commit
+# (03329e0f4a627c9b9aa92ef34f7f93b9aa83e438).
+[tool.pixi.feature.conda-upstream.dependencies]
+python = "~=3.13.0"
+pip = "*"
+# runtime deps (tests/requirements.txt)
+archspec = ">=0.2.3"
+boltons = ">=23.0.0"
+charset-normalizer = "*"
+conda-content-trust = ">=0.2.0"
+conda-libmamba-solver = ">=25.4.0"
+conda-package-handling = ">=2.2.0"
+distro = ">=1.5.0"
+frozendict = ">=2.4.2"
+menuinst = ">=2"
+packaging = ">=23.0"
+platformdirs = ">=3.10.0"
+pluggy = ">=1.0.0"
+pycosat = ">=0.6.3"
+requests = ">=2.28.0,<3"
+"ruamel.yaml" = ">=0.11.14,<0.19"
+setuptools = ">=60.0.0"
+setuptools_scm = "*"
+tqdm = ">=4"
+zstandard = ">=0.15"
+# test dependencies (tests/requirements-ci.txt)
+coverage = "*"
+flask = ">=2.2"
+git = "*"
+pexpect = "*"
+pytest = "<9.0"
+pytest-cov = "*"
+pytest-mock = "*"
+pytest-rerunfailures = "*"
+pytest-split = "*"
+pytest-timeout = "*"
+pytest-xprocess = "*"
+responses = "*"
+truststore = ">=0.8.0"
+werkzeug = ">=2.2"
+xonsh = "*"
+
+[tool.pixi.feature.conda-upstream.target.linux-64.dependencies]
+patchelf = "*"
+
+[tool.pixi.environments]
+default = ["default"]
+conda-upstream = ["conda-upstream"]

@@ -1,0 +1,8 @@
+# A list of ported tests we deliberately do not run in the upstream side-by-side job
+# yet (see .github/workflows/tests.yml and tools/collect_ported_node_ids.py).
+#
+# conda still ships a built-in signature-verification post_solves plugin, while
+# a current conda-content-trust also registers one under the same name. That
+# collides and raises a PluginError
+
+tests/cli/test_main_install.py::test_install_freezes_env_by_default
