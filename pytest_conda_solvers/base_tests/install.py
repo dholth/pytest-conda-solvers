@@ -11,6 +11,7 @@ from conda.common.io import env_vars
 from conda.core.prefix_data import PrefixData
 from conda.core.subdir_data import SubdirData
 from conda.exceptions import (
+    NoChannelsConfiguredError,
     PackagesNotFoundError,
     ResolvePackageNotFound,
     SpecsConfigurationConflictError,
@@ -24,6 +25,7 @@ from conda.models.match_spec import MatchSpec
 
 from ..data import get_channel_repodata
 from ..models import (
+    NoChannelsConfiguredTestError,
     PackagesNotFoundTestError,
     ResolvePackageNotFoundTestError,
     SpecsConfigurationConflictTestError,
@@ -32,6 +34,7 @@ from ..models import (
 )
 
 EXCEPTION_MAPPING = {
+    NoChannelsConfiguredTestError: NoChannelsConfiguredError,
     PackagesNotFoundTestError: PackagesNotFoundError,
     ResolvePackageNotFoundTestError: ResolvePackageNotFound,
     SpecsConfigurationConflictTestError: SpecsConfigurationConflictError,
@@ -409,6 +412,7 @@ class TestBasic:
                     PackagesNotFoundError,
                     ResolvePackageNotFound,
                     SpecsConfigurationConflictError,
+                    NoChannelsConfiguredError,
                 )
             ) as exc_info,
         ):

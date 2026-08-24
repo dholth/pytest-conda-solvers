@@ -165,6 +165,16 @@ class ResolvePackageNotFoundTestError(
     entries: str | list[str | list[str]]
 
 
+class NoChannelsConfiguredTestError(
+    Struct,
+    tag_field="exception",
+    tag="NoChannelsConfiguredError",
+    frozen=True,
+    forbid_unknown_fields=True,
+):
+    message_includes: str | list[str] = []
+
+
 class SpecsConfigurationConflictTestError(
     Struct,
     tag_field="exception",
@@ -181,6 +191,7 @@ TestError: TypeAlias = (
     | ResolvePackageNotFoundTestError
     | PackagesNotFoundTestError
     | SpecsConfigurationConflictTestError
+    | NoChannelsConfiguredTestError
 )
 
 
