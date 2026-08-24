@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import TypeAlias
+from typing import Literal, TypeAlias
 
 from conda.core.solve import UpdateModifier, DepsModifier
 from conda.models.enums import PackageType
@@ -261,7 +261,7 @@ class UnsatisfiableTestSpec(
     input: TestInput
     error: TestError
     description: str | None = None
-    operation: str = "solve_final_state"
+    operation: Literal["solve_final_state", "solve_for_diff"] = "solve_final_state"
     test_function: str = "test_unsatisfiable"
     solvers: str | list[str] | None = None
     xfail_solvers: str | list[str] | None = None
