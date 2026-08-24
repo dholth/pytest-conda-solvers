@@ -12,8 +12,9 @@ tests:
       named mypkgnot, so the exact single-element list checked here is a
       strengthening, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3534-L3535
-      The fn of the mypkg record mirrors upstream's copy-paste quirk, which
-      puts mypkg-0.1.1 on the 0.1.0 record.
+      Upstream's fixtures carried copy-paste quirks (fn mypkg-0.1.1 on the
+      0.1.0 record, build_number 1 on pypi_0 builds), fixed in
+      https://github.com/conda/conda/pull/16573 and mirrored here.
     input:
       channels: conda_format_repo
       subdirs: linux-64
@@ -25,9 +26,9 @@ tests:
           version: 0.1.0
           channel: test
           subdir: conda-test
-          fn: mypkg-0.1.1
+          fn: mypkg-0.1.0
           build: pypi_0
-          build_number: 1
+          build_number: 0
           paths_data:
           files:
           depends: []
@@ -40,7 +41,7 @@ tests:
           subdir: conda-test
           fn: mypkgnot-1.1.1
           build: pypi_0
-          build_number: 1
+          build_number: 0
           paths_data:
           files:
           depends:
@@ -77,7 +78,7 @@ tests:
           subdir: conda-test
           fn: mypkg-0.1.1
           build: pypi_0
-          build_number: 1
+          build_number: 0
           paths_data:
           files:
           depends: []
@@ -90,7 +91,7 @@ tests:
           subdir: conda-test
           fn: mypkgnot-1.1.1
           build: pypi_0
-          build_number: 1
+          build_number: 0
           paths_data:
           files:
           depends:
@@ -127,7 +128,7 @@ tests:
           subdir: conda-test
           fn: mypkg-0.1.1
           build: pypi_0
-          build_number: 1
+          build_number: 0
           paths_data:
           files:
           depends: []
@@ -140,7 +141,7 @@ tests:
           subdir: conda-test
           fn: mypkgnot-1.1.1
           build: pypi_0
-          build_number: 1
+          build_number: 0
           paths_data:
           files:
           depends:
@@ -154,7 +155,7 @@ tests:
           subdir: conda-test
           fn: mypkgnot-1.1.1
           build: pypi_0
-          build_number: 1
+          build_number: 0
           paths_data:
           files:
           depends:
@@ -190,7 +191,7 @@ tests:
           subdir: conda-test
           fn: mypkg-0.1.1
           build: pypi_0
-          build_number: 1
+          build_number: 0
           paths_data:
           files:
           depends: []
@@ -203,7 +204,7 @@ tests:
           subdir: conda-test
           fn: mypkgnot-1.1.1
           build: pypi_0
-          build_number: 1
+          build_number: 0
           paths_data:
           files:
           depends:
@@ -235,7 +236,7 @@ tests:
           subdir: conda-test
           fn: mypkg-0.1.1
           build: pypi_0
-          build_number: 1
+          build_number: 0
           paths_data:
           files:
           depends: []
@@ -248,7 +249,7 @@ tests:
           subdir: conda-test
           fn: mypkgnot-1.1.1
           build: pypi_0
-          build_number: 1
+          build_number: 0
           paths_data:
           files:
           depends:
@@ -280,7 +281,7 @@ tests:
           subdir: conda-test
           fn: mypkg-0.1.1
           build: pypi_0
-          build_number: 1
+          build_number: 0
           paths_data:
           files:
           depends: []
@@ -311,7 +312,7 @@ tests:
           subdir: conda-test
           fn: mypkg-0.1.1
           build: pypi_0
-          build_number: 1
+          build_number: 0
           paths_data:
           files:
           depends: []
@@ -324,7 +325,7 @@ tests:
           subdir: conda-test
           fn: mypkgnot-1.1.1
           build: pypi_0
-          build_number: 1
+          build_number: 0
           paths_data:
           files:
           depends:
