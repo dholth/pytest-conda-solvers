@@ -1,29 +1,15 @@
 # pytest-conda-solvers
 
-```{image} https://img.shields.io/pypi/v/pytest-conda-solvers.svg
-:alt: PyPI version
-:target: https://pypi.org/project/pytest-conda-solvers
-```
+[![PyPI version](https://img.shields.io/pypi/v/pytest-conda-solvers.svg)](https://pypi.org/project/pytest-conda-solvers)
+[![Python versions](https://img.shields.io/pypi/pyversions/pytest-conda-solvers.svg)](https://pypi.org/project/pytest-conda-solvers)
 
-```{image} https://img.shields.io/pypi/pyversions/pytest-conda-solvers.svg
-:alt: Python versions
-:target: https://pypi.org/project/pytest-conda-solvers
-```
+A [pytest](https://github.com/pytest-dev/pytest) plugin that runs shared conda solver YAML tests against classic, libmamba, or other conda solver backends.
 
-```{image} https://github.com/zklaus/pytest-conda-solvers/actions/workflows/main.yml/badge.svg
-:alt: See Build Status on GitHub Actions
-:target: https://github.com/zklaus/pytest-conda-solvers/actions/workflows/main.yml
-```
+The PyPI package ships the plugin, fixtures, mock channel data, and shared YAML
+suite under `pytest_conda_solvers/`. When the plugin loads, it automatically adds
+the bundled suite to pytest's collection.
 
-A pytest plugin to run conda solver tests
-
----
-
-This [pytest] plugin was generated with [Cookiecutter] along with [@hackebrot]'s [cookiecutter-pytest-plugin] template.
-
-## Features
-
-- TODO
+`conda-solver-tests` pytest plugin was orginally generated with [Cookiecutter] along with [@hackebrot]'s [cookiecutter-pytest-plugin] template.
 
 ## Error assertion semantics
 
@@ -39,42 +25,57 @@ consistency of error reporting is part of what this plugin exists to verify.
 
 ## Requirements
 
-- TODO
+- Python ≥ 3.10
+- A working [conda](https://docs.conda.io/) (>=26.3.0) installation in the environment (install via conda, mamba, or pixi — not from PyPI)
+- The solver backend under test (for example `conda-libmamba-solver`)
 
 ## Installation
 
-You can install "pytest-conda-solvers" via [pip] from [PyPI]:
-
+```bash
+conda create -n solver-test-env conda pip
+conda activate solver-test-env
+pip install pytest-conda-solvers
 ```
-$ pip install pytest-conda-solvers
+
+For local development from a checkout:
+
+```bash
+pixi install
+# or: pip install -e .
 ```
 
 ## Usage
 
-- TODO
+Select a solver with `--conda-solver`; the bundled suite is collected automatically:
+
+```bash
+pytest --conda-solver=libmamba
+pytest --conda-solver=classic
+```
+
+Paths passed to pytest are collected alongside the bundled suite, so solver
+authors can add their own Python or YAML tests normally.
+
+Use `--no-bundled-solver-tests` to collect custom tests without the suite
+shipped by this package.
+
+From this repository with pixi:
+
+```bash
+pixi run test-libmamba-solver
+pixi run test-classic-solver
+```
+
+The plugin collects solver-suite `.yaml` files, starts a session-scoped mock channel server, and runs each case through the selected solver backend.
 
 ## Contributing
 
-Contributions are very welcome. Tests can be run with [tox], please ensure
-the coverage at least stays the same before you submit a pull request.
+Contributions are welcome. It is recommended to use [pixi](https://pixi.sh/) for the development environment and run the solver test tasks above before opening a pull request.
 
 ## License
 
-Distributed under the terms of the [BSD-3] license, "pytest-conda-solvers" is free and open source software
+Distributed under the [BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause) license.
 
 ## Issues
 
-If you encounter any problems, please [file an issue] along with a detailed description.
-
-[@hackebrot]: https://github.com/hackebrot
-[apache software license 2.0]: https://www.apache.org/licenses/LICENSE-2.0
-[bsd-3]: https://opensource.org/licenses/BSD-3-Clause
-[cookiecutter]: https://github.com/audreyr/cookiecutter
-[cookiecutter-pytest-plugin]: https://github.com/pytest-dev/cookiecutter-pytest-plugin
-[file an issue]: https://github.com/zklaus/pytest-conda-solvers/issues
-[gnu gpl v3.0]: https://www.gnu.org/licenses/gpl-3.0.txt
-[mit]: https://opensource.org/licenses/MIT
-[pip]: https://pypi.org/project/pip/
-[pypi]: https://pypi.org/project
-[pytest]: https://github.com/pytest-dev/pytest
-[tox]: https://tox.readthedocs.io/en/latest/
+If you encounter problems, please [file an issue](https://github.com/conda-incubator/pytest-conda-solvers/issues).

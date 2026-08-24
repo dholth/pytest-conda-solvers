@@ -75,7 +75,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git checkout -B "$BRANCH"
-          git add conda-solver-tests/
+          git add pytest_conda_solvers/conda-solver-tests/
 
           git diff --staged --quiet && { echo "No changes to commit, skipping PR."; exit 0; }
 

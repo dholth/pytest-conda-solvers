@@ -1,5 +1,6 @@
 """
-Update provenance metadata in conda-solver-tests/*.yaml to a new conda/conda commit.
+Update provenance metadata in pytest_conda_solvers/conda-solver-tests/*.yaml
+to a new conda/conda commit.
 
 For each test, this tool:
   1. Fetches the test function source at both the old (stored) commit and the
@@ -36,7 +37,7 @@ from pathlib import Path
 import httpx
 
 REPO_ROOT = Path(__file__).parent.parent
-YAML_DIR = REPO_ROOT / "conda-solver-tests"
+YAML_DIR = REPO_ROOT / "pytest_conda_solvers" / "conda-solver-tests"
 
 URL_PATTERN = re.compile(
     r"^https://github\.com/(?P<org>[^/]+)/(?P<repo>[^/]+)/blob/"

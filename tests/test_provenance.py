@@ -14,15 +14,14 @@ import ast
 import functools
 import re
 import urllib.request
-from pathlib import Path
 
 import msgspec
 import pytest
 
 from pytest_conda_solvers.models import TestModule as _TestModule
+from pytest_conda_solvers.paths import solver_tests_path
 
-REPO_ROOT = Path(__file__).parent.parent
-YAML_DIR = REPO_ROOT / "conda-solver-tests"
+YAML_DIR = solver_tests_path()
 
 URL_PATTERN = re.compile(
     r"^https://github\.com/(?P<org>[^/]+)/(?P<repo>[^/]+)/blob/"

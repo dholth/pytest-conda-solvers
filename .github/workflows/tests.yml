@@ -38,7 +38,7 @@ jobs:
           activate-environment: true
 
       - name: Run tests for ${{ matrix.solver }}
-        run: pixi run test-$MATRIX_SOLVER-solver -vv
+        run: pixi run -e default test-$MATRIX_SOLVER-solver -vv
         shell: bash
         env:
           MATRIX_SOLVER: ${{ matrix.solver }}
@@ -96,12 +96,39 @@ jobs:
 
           pixi run -e conda-upstream \
           --manifest-path "$GITHUB_WORKSPACE/pyproject.toml" \
-          pytest $(cat ../ported_node_ids.txt) -vv
+          pytest $(cat ../ported_node_ids.txt) -vv \
+            --no-bundled-solver-tests
+
+  test-python-minimum:
+    name: Test on minimum supported Python (currently 3.10) / ${{ matrix.solver }} solver
+    strategy:
+      fail-fast: false
+      matrix:
+        solver: [classic, libmamba]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: prefix-dev/setup-pixi@1b2de7f3351f171c8b4dfeb558c639cb58ed4ec0 # v0.9.5
+        with:
+          pixi-version: v0.72.2
+          cache: true
+          environments: test-python-minimum
+
+      - name: Run tests on minimum supported Python
+        shell: bash
+        env:
+          MATRIX_SOLVER: ${{ matrix.solver }}
+        run: pixi run -e test-python-minimum test-$MATRIX_SOLVER-solver -vv
 
   analyze:
     name: Aggregate
-    needs: [test, upstream-test]
-    if: "!cancelled()"
+    needs: [test, upstream-test, test-python-minimum]
+    if: '!cancelled()'
     runs-on: ubuntu-slim
     steps:
       - name: Determine Success

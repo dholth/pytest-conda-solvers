@@ -11,13 +11,13 @@ from importlib.resources import files
 
 
 def load_raw_data_file(filename: Path):
-    with open(files().joinpath(filename), "rb") as ifh:
+    with open(files(__package__).joinpath(filename), "rb") as ifh:
         data = ifh.read()
     return data
 
 
 def load_data_file(filename: Path):
-    with open(files().joinpath(filename)) as ifh:
+    with open(files(__package__).joinpath(filename)) as ifh:
         data = json.load(ifh)
     return data
 
