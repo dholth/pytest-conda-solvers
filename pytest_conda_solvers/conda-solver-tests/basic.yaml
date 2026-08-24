@@ -7443,3 +7443,49 @@ tests:
       final_state:
         - channel-1/${{ arch }}::libpng-1.5.13-1
         - channel-7/${{ arch }}::ts_mypackage-1.0-hash15_0
+
+  - name: test_current_repodata_usage
+    id: B180
+    provenance:
+      node_id: tests/core/test_solve.py::test_current_repodata_usage
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3287-L3313
+    kind: solve
+    description: |
+      Solve zlib on win-64 with repodata_fn=current_repodata.json against the
+      .conda-format channel. current_repodata.json only carries the newest
+      zlib (1.2.11) in .conda format, so the solved record must be the .conda
+      one. Upstream asserts only the zlib record (version and filename
+      extension) rather than the full state, since classic's final state also
+      contains a synthesised virtual record for the vc track_feature.
+    input:
+      channels: conda_format_repo
+      subdirs: win-64
+      specs_to_add: zlib
+      repodata_fn: current_repodata.json
+    output:
+      records:
+        - name: zlib
+          version: 1.2.11
+          fn_endswith: .conda
+
+  - name: test_current_repodata_fallback
+    id: B181
+    provenance:
+      node_id: tests/core/test_solve.py::test_current_repodata_fallback
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3316-L3333
+    kind: solve
+    description: |
+      Solve zlib=1.2.8 on win-64 with the default repodata.json. That version
+      only exists as a .tar.bz2 package in the .conda-format channel, so the
+      solved record must be the .tar.bz2 one.
+    input:
+      channels: conda_format_repo
+      subdirs: win-64
+      specs_to_add: "zlib=1.2.8"
+    output:
+      records:
+        - name: zlib
+          version: 1.2.8
+          fn_endswith: .tar.bz2

@@ -32,6 +32,7 @@ class TestChannel(Enum):
 class TestSubdir(Enum):
     NOARCH = "noarch"
     LINUX_64 = "linux-64"
+    WIN_64 = "win-64"
     CONDA_TEST = "conda-test"
 
     def __str__(self):
@@ -97,6 +98,18 @@ class TestInput(
     set_sys_prefix: bool | None = None
     override_cuda: str | None = None
     override_glibc: str | None = None
+    repodata_fn: str | None = None
+
+
+class RecordCheck(
+    Struct,
+    frozen=True,
+    forbid_unknown_fields=True,
+    kw_only=True,
+):
+    name: str
+    version: str | None = None
+    fn_endswith: str | None = None
 
 
 class TestOutput(
@@ -105,6 +118,10 @@ class TestOutput(
     forbid_unknown_fields=True,
 ):
     final_state: str | list[str] | None = None
+    # Per-record assertions for tests whose upstream checks individual records
+    # instead of the full state, such as fn extensions that dist strings
+    # cannot express (.conda vs .tar.bz2 in the current_repodata tests).
+    records: RecordCheck | list[RecordCheck] | None = None
 
 
 class DiffTestOutput(

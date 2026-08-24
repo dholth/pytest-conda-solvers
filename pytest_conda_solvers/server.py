@@ -58,7 +58,13 @@ def channel_server(host="localhost", port=8080):
     @cache(coder=NullCoder)
     async def conda_format_repo_contents(full_path: str):
         path = Path(f"conda_format_repo/{full_path}")
-        data = load_raw_data_file(path)
+        try:
+            data = load_raw_data_file(path)
+        except FileNotFoundError:
+            # Missing variants such as current_repodata.json.zst raise a 404,
+            # to make conda fall back to the uncompressed filename instead of
+            # treating the fetch as a server failure
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
         mimetype = mimetypes.guess_type(path)[0]
         return Response(data, media_type=mimetype)
 
