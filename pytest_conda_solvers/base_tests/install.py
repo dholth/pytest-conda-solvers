@@ -3,10 +3,11 @@ import sys
 from contextlib import contextmanager, nullcontext
 from functools import lru_cache
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import PropertyMock, patch
+
 import pytest
 from boltons.setutils import IndexedSet
-from conda.base.context import conda_tests_ctxt_mgmt_def_pol
+from conda.base.context import Context, conda_tests_ctxt_mgmt_def_pol, context
 from conda.common.io import env_vars
 from conda.core.prefix_data import PrefixData
 from conda.core.subdir_data import SubdirData
@@ -19,9 +20,9 @@ from conda.exceptions import (
 )
 from conda.history import History
 from conda.models.channel import Channel
+from conda.models.match_spec import MatchSpec
 from conda.models.records import PackageRecord, PrefixRecord
 from conda.plugins.virtual_packages import cuda
-from conda.models.match_spec import MatchSpec
 
 from ..data import get_channel_repodata
 from ..models import (
@@ -42,6 +43,15 @@ EXCEPTION_MAPPING = {
 }
 
 
+def _invalidate_channel_caches():
+    Channel._reset_state()
+    context_memos = getattr(context, "_cache_", None)
+    if context_memos is not None:
+        context_memos.pop("__custom_multichannels", None)
+        context_memos.pop("__custom_channels", None)
+    SubdirData._cache_.clear()
+
+
 @contextmanager
 def get_solver(
     solver_backend,
@@ -55,6 +65,7 @@ def get_solver(
     history_specs=(),
     add_pip=False,
     repodata_fn=None,
+    custom_multichannels=None,
 ):
     # When add_pip is requested, solve against the pip-injected channel URLs,
     # whose served repodata already carries the pip dependency on every python
@@ -62,10 +73,33 @@ def get_solver(
     # kept false so conda's SubdirData does not inject the dependency a second
     # time, and solvers that read repodata directly, such as rattler, see the
     # same index as classic and libmamba.
-    channels = [
-        Channel(channel_server.get_channel_url(channel_name, add_pip))
-        for channel_name in channels
-    ]
+    channel_names = channels
+    # Multichannel names are passed through unresolved here. Channel objects
+    # are constructed inside the context managers below, since a multichannel
+    # name only resolves through custom_multichannels once the override is
+    # active, and resolving it early falls back to the channel alias.
+    if custom_multichannels:
+        multichannel_override = context._override(
+            "_custom_multichannels",
+            {
+                name: tuple(
+                    channel_server.get_channel_url(member) for member in members
+                )
+                for name, members in custom_multichannels.items()
+            },
+        )
+    else:
+        multichannel_override = nullcontext()
+    # In test_no_channels_error, context.channels is blanked alongside the
+    # empty channels argument, since the error is only raised when neither the
+    # solver nor the context has any channel configured
+    # https://github.com/conda/conda/blob/f7c865db5c1b3435d6b817a6836f3f4e9888cb27/tests/core/test_solve.py#L4040-L4063
+    if channels:
+        context_channels_patch = nullcontext()
+    else:
+        context_channels_patch = patch.object(
+            Context, "channels", new_callable=PropertyMock, return_value=()
+        )
     tmpdir = tmpdir.strpath
     pd = PrefixData(tmpdir)
     pd._PrefixData__prefix_records = {
@@ -78,9 +112,26 @@ def get_solver(
             {"CONDA_ADD_PIP_AS_PYTHON_DEPENDENCY": "false"},
             stack_callback=conda_tests_ctxt_mgmt_def_pol,
         ),
+        multichannel_override,
+        context_channels_patch,
     ):
+        channels = [
+            Channel(channel_name)
+            if custom_multichannels and channel_name in custom_multichannels
+            else Channel(channel_server.get_channel_url(channel_name, add_pip))
+            for channel_name in channel_names
+        ]
         if add_pip:
             SubdirData._cache_.clear()
+        if custom_multichannels:
+            # Channel.from_value memoizes constructed channels from whichever
+            # context is active on first call, and context.custom_multichannels
+            # (with custom_channels) is a memoized property whose cached value
+            # outlives context._override. We need to clear all of them on both
+            # sides such that channels built under the override neither reuse
+            # stale entries nor leak "custom"-canonicalised entries into later
+            # tests.
+            _invalidate_channel_caches()
         solver_kwargs = {} if repodata_fn is None else {"repodata_fn": repodata_fn}
         try:
             yield solver_backend(
@@ -94,6 +145,8 @@ def get_solver(
         finally:
             if add_pip:
                 SubdirData._cache_.clear()
+            if custom_multichannels:
+                _invalidate_channel_caches()
 
 
 def convert_to_dist_str(state: IndexedSet[PackageRecord]) -> IndexedSet[str]:
@@ -118,9 +171,13 @@ def ensure_tuple(entry):
     return (entry,)
 
 
-def add_base_url(base_url, arch, dist_strs):
+def add_base_url(base_url, arch, dist_strs, passthrough_prefixes=()):
+    # Entries whose channel part is a multichannel name are kept "un-prefixed"
     return type(dist_strs)(
-        f"{base_url}/{dist_str.replace('${{ arch }}', arch)}" for dist_str in dist_strs
+        dist_str.replace("${{ arch }}", arch)
+        if dist_str.split("/", 1)[0] in passthrough_prefixes
+        else f"{base_url}/{dist_str.replace('${{ arch }}', arch)}"
+        for dist_str in dist_strs
     )
 
 
@@ -213,6 +270,11 @@ def prepare_solver_input(raw_solver_input: TestInput, channel_server, arch):
         )
         if val is not None
     }
+    if raw_solver_input.custom_multichannels is not None:
+        solver_input["custom_multichannels"] = {
+            name: [str(member) for member in members]
+            for name, members in raw_solver_input.custom_multichannels.items()
+        }
     if raw_solver_input.repodata_fn is not None:
         solver_input["repodata_fn"] = raw_solver_input.repodata_fn
         # In test_current_repodata_usage, USE_ONLY_TAR_BZ2 is forced set to
@@ -266,6 +328,8 @@ def prepare_error_information(error):
     elif exception_class == SpecsConfigurationConflictError:
         error_info["requested_specs"] = ensure_str_tuple(error.requested_specs)
         error_info["pinned_specs"] = ensure_str_tuple(error.pinned_specs)
+    elif exception_class == NoChannelsConfiguredError:
+        error_info["message_includes"] = ensure_str_tuple(error.message_includes)
     return error_info
 
 
@@ -335,6 +399,7 @@ class TestBasic:
             channel_server.get_base_url(test.input.add_pip),
             "linux-64",
             test.output.final_state,
+            passthrough_prefixes=tuple(test.input.custom_multichannels or ()),
         )
         assert sorted(list(convert_to_dist_str(final_state))) == sorted(list(ref))
         # list() on both sides: IndexedSet == list would degrade to set equality
