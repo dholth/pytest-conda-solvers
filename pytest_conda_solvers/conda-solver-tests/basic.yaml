@@ -11,8 +11,9 @@ tests:
       stage carries the same rerun allowance there, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L56-L58.
       Upstream's docstring only documents mis-picks in the python=2 stage
-      (solve_1_2). In this port the result was observed to be deterministic,
-      so the entry runs unrestricted without any rerun allowance.
+      (solve_1_2). In this port, the result was observed to be deterministic
+      enough as a failure occurred in roughly 1 in 800 libmamba runs across
+      the two stages.
     input:
       channels: channel-1
       specs_to_add: numpy
@@ -38,8 +39,9 @@ tests:
       Upstream marks test_solve_1 flaky with reruns=5 because libmamba sometimes
       resolves this stage to python-2.6.8-6 and numpy-1.7.1-py26_0, see
       https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L56-L82.
-      In this port the libmamba result was observed to be deterministic, so the
-      entry runs unrestricted without any rerun allowance.
+      In this port, the result was observed to be deterministic enough
+      as a failure occurred in roughly 1 in 800 libmamba runs across the
+      two stages.
     input:
       channels: channel-1
       specs_to_add:
