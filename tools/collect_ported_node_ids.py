@@ -1,9 +1,9 @@
 """
 Collect the upstream conda pytest node IDs for every test we have ported to YAML.
 
-Each YAML entry in conda-solver-tests/*.yaml records where it came from in its
-provenance.node_id field. This script turns those provenance IDs into runnable
-conda/conda pytest node IDs.
+Each YAML entry in pytest_conda_solvers/conda-solver-tests/*.yaml records where
+it came from in its provenance.node_id field. This script turns those provenance
+IDs into runnable conda/conda pytest node IDs.
 
 Some mapping rules:
   1. tests/core/test_solve.py::<func> (and any other tests/...::<func>) is
@@ -34,7 +34,7 @@ import msgspec
 from pytest_conda_solvers.models import TestModule
 
 REPO_ROOT = Path(__file__).parent.parent
-YAML_DIR = REPO_ROOT / "conda-solver-tests"
+YAML_DIR = REPO_ROOT / "pytest_conda_solvers" / "conda-solver-tests"
 
 # Node IDs to exclude from the upstream run
 SKIPS_FILE = Path(__file__).parent / "conda-upstream-skips.txt"

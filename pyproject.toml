@@ -16,18 +16,20 @@ classifiers = [
   "Topic :: Software Development :: Testing",
   "Operating System :: OS Independent",
   "Programming Language :: Python",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = [
-  "conda",
   "fastapi[standard]",
   "fastapi_cache2",
   "msgspec",
-  "pytest>=6.2.0",
+  "pytest>=8.1",
   "typer",
 ]
 description = "A pytest plugin to run conda solver tests"
@@ -39,7 +41,7 @@ maintainers = [
 ]
 name = "pytest-conda-solvers"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.10"
 
 [project.entry-points.pytest11]
 conda-solvers = "pytest_conda_solvers.plugin"
@@ -107,7 +109,7 @@ fastapi = "*"
 fastapi-cache2 = "*"
 httpx = "*"
 msgspec = "*"
-pytest = ">=6.2.0"
+pytest = ">=8.1"
 python = "~=3.13.0"
 typer = ">=0.15.1,<0.16"
 
@@ -116,10 +118,32 @@ pytest-conda-solvers = {path = ".", editable = true}
 
 [tool.pixi.tasks]
 generate-schema = "python -m pytest_conda_solvers.cli"
-test-classic-solver = "pytest --conda-solver=classic conda-solver-tests tests/test_provenance.py"
-test-libmamba-solver = "pytest --conda-solver=libmamba conda-solver-tests tests/test_provenance.py"
+test-classic-solver = "pytest --conda-solver=classic tests/test_provenance.py"
+test-libmamba-solver = "pytest --conda-solver=libmamba tests/test_provenance.py"
 update-provenance = "python tools/update_provenance.py"
 collect-ported-node-ids = "python tools/collect_ported_node_ids.py"
+
+[tool.pixi.feature.test-python-minimum]
+platforms = ["linux-64"]
+
+[tool.pixi.feature.test-python-minimum.dependencies]
+boltons = "*"
+conda = ">=26.3.0"
+conda-libmamba-solver = ">=26.4.0"
+fastapi = "*"
+fastapi-cache2 = "*"
+hatch-vcs = "*"
+hatchling = "*"
+msgspec = "*"
+pip = "*"
+pytest = "~=8.1.0"
+python = "~=3.10.0"
+typer = "*"
+
+[tool.pixi.feature.test-python-minimum.tasks]
+_install-package = "python -m pip install --no-deps --no-build-isolation ."
+test-classic-solver = {cmd = "python -m pytest --conda-solver=classic tests/test_provenance.py", depends-on = ["_install-package"]}
+test-libmamba-solver = {cmd = "python -m pytest --conda-solver=libmamba tests/test_provenance.py", depends-on = ["_install-package"]}
 
 # The environment used by the "upstream" CI job (see .github/workflows/tests.yml).
 # We use it to run the original conda/conda solver tests side by side with our YAML
@@ -173,3 +197,4 @@ patchelf = "*"
 [tool.pixi.environments]
 default = ["default"]
 conda-upstream = ["conda-upstream"]
+test-python-minimum = {features = ["test-python-minimum"], no-default-feature = true}
