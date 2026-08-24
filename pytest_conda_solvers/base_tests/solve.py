@@ -6,10 +6,13 @@ import copy
 from unittest.mock import Mock
 
 import pytest
+from conda.base.context import conda_tests_ctxt_mgmt_def_pol
+from conda.common.io import env_vars
 from conda.core.solve import UpdateModifier
 from conda.models.channel import Channel
 from conda.models.match_spec import MatchSpec
 from conda.models.records import PrefixRecord
+from conda.plugins.virtual_packages import cuda
 
 from .install import (
     add_base_url,
@@ -182,6 +185,213 @@ class TestSolveRegressions:
             unlink_dists, link_dists = solver.solve_for_diff()
             assert not unlink_dists
             assert not link_dists
+
+    def test_virtual_package_solver(
+        self, request, tmpdir, solver_backend, channel_server
+    ):
+        """
+        The __cuda virtual package enters the SolverStateContainer's specs
+        map, the solved cudatoolkit record depends on it, and the solution is
+        consistent per the Resolve object's bad_installed check.
+
+        See https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L206-L231
+        conda upstream skips libmamba and rattler for this test because neither uses
+        Solver.ssc.
+
+        Note that the cuda channel fixture maps to channel-1 here, as in the
+        C-series YAML tests.
+        """
+        solver_name = request.config.option.conda_solver
+        if solver_name != "classic":
+            pytest.skip(
+                f"conda-{solver_name}-solver does not use Solver.ssc "
+                "(SolverStateContainer)"
+            )
+
+        specs = (MatchSpec("cudatoolkit"),)
+        cuda.cached_cuda_version.cache_clear()
+        try:
+            with (
+                env_vars(
+                    {"CONDA_OVERRIDE_CUDA": "10.0"},
+                    stack_callback=conda_tests_ctxt_mgmt_def_pol,
+                ),
+                get_solver(
+                    solver_backend,
+                    tmpdir,
+                    channel_server,
+                    ("channel-1",),
+                    ("linux-64", "noarch"),
+                    specs_to_add=specs,
+                ) as solver,
+            ):
+                solver.solve_final_state()
+                ssc = solver.ssc
+                # Check the cuda virtual package is included in the solver
+                assert "__cuda" in ssc.specs_map.keys()
+
+                # Check that the environment is consistent after installing a
+                # package which depends on a virtual package
+                for pkgs in ssc.solution_precs:
+                    if pkgs.name == "cudatoolkit":
+                        assert "__cuda" in pkgs.depends[0]
+                assert ssc.r.bad_installed(ssc.solution_precs, ())[1] is None
+        finally:
+            cuda.cached_cuda_version.cache_clear()
+
+    def test_broken_install(self, request, tmpdir, solver_backend, channel_server):
+        """
+        An inconsistent environment (numpy swapped for an incompatible
+        build) is left untouched by an unrelated install, and goes back to a
+        consistent state when the numpy spec is supplied again, all verified
+        through the Resolve object's environment_is_consistent check.
+
+        See https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L1206-L1311
+
+        conda upstream skips libmamba and rattler because neither uses a Solver._r
+        (Resolve) object. The three full-state solves are also ported as
+        B182-B184 in conda-solver-tests/basic.yaml (classic-restricted), but
+        we run them here as well because the consistency checks need the live
+        solver instances.
+        """
+        solver_name = request.config.option.conda_solver
+        if solver_name != "classic":
+            pytest.skip(
+                f"conda-{solver_name}-solver does not use a Solver._r "
+                "(Resolve) object"
+            )
+
+        channels = ("channel-1",)
+        subdirs = ("linux-64", "noarch")
+        channel_1_url = channel_server.get_channel_url("channel-1")
+        specs = (
+            MatchSpec("pandas=0.11.0=np16py27_1"),
+            MatchSpec("python=2.7"),
+        )
+        with get_solver(
+            solver_backend,
+            tmpdir,
+            channel_server,
+            channels,
+            subdirs,
+            specs_to_add=specs,
+        ) as solver:
+            final_state_1 = solver.solve_final_state()
+            order_original = add_base_url(
+                channel_server.get_base_url(),
+                "linux-64",
+                (
+                    "channel-1/${{ arch }}::openssl-1.0.1c-0",
+                    "channel-1/${{ arch }}::readline-6.2-0",
+                    "channel-1/${{ arch }}::sqlite-3.7.13-0",
+                    "channel-1/${{ arch }}::system-5.8-1",
+                    "channel-1/${{ arch }}::tk-8.5.13-0",
+                    "channel-1/${{ arch }}::zlib-1.2.7-0",
+                    "channel-1/${{ arch }}::python-2.7.5-0",
+                    "channel-1/${{ arch }}::numpy-1.6.2-py27_4",
+                    "channel-1/${{ arch }}::pytz-2013b-py27_0",
+                    "channel-1/${{ arch }}::six-1.3.0-py27_0",
+                    "channel-1/${{ arch }}::dateutil-2.1-py27_1",
+                    "channel-1/${{ arch }}::scipy-0.12.0-np16py27_0",
+                    "channel-1/${{ arch }}::pandas-0.11.0-np16py27_1",
+                ),
+            )
+            assert [prec.dist_str() for prec in final_state_1] == list(order_original)
+            assert solver._r.environment_is_consistent(final_state_1)
+
+        # Add an incompatible numpy; installation should be untouched.
+        # The bare channel name would resolve against the default channel
+        # alias, so we point it at the served channel-1 URL instead.
+        final_state_1_modified = list(final_state_1)
+        numpy_matcher = MatchSpec("numpy==1.7.1=py33_p0", channel=channel_1_url)
+        numpy_prec = next(prec for prec in solver._index if numpy_matcher.match(prec))
+        final_state_1_modified[7] = numpy_prec
+        assert not solver._r.environment_is_consistent(final_state_1_modified)
+
+        specs_to_add = (MatchSpec("flask"),)
+        with get_solver(
+            solver_backend,
+            tmpdir,
+            channel_server,
+            channels,
+            subdirs,
+            specs_to_add=specs_to_add,
+            prefix_records=final_state_1_modified,
+            history_specs=specs,
+        ) as solver:
+            final_state_2 = solver.solve_final_state()
+            order = add_base_url(
+                channel_server.get_base_url(),
+                "linux-64",
+                (
+                    "channel-1/${{ arch }}::numpy-1.7.1-py33_p0",
+                    "channel-1/${{ arch }}::openssl-1.0.1c-0",
+                    "channel-1/${{ arch }}::readline-6.2-0",
+                    "channel-1/${{ arch }}::sqlite-3.7.13-0",
+                    "channel-1/${{ arch }}::system-5.8-1",
+                    "channel-1/${{ arch }}::tk-8.5.13-0",
+                    "channel-1/${{ arch }}::zlib-1.2.7-0",
+                    "channel-1/${{ arch }}::python-2.7.5-0",
+                    "channel-1/${{ arch }}::jinja2-2.6-py27_0",
+                    "channel-1/${{ arch }}::pytz-2013b-py27_0",
+                    "channel-1/${{ arch }}::scipy-0.12.0-np16py27_0",
+                    "channel-1/${{ arch }}::six-1.3.0-py27_0",
+                    "channel-1/${{ arch }}::werkzeug-0.8.3-py27_0",
+                    "channel-1/${{ arch }}::dateutil-2.1-py27_1",
+                    "channel-1/${{ arch }}::flask-0.9-py27_0",
+                    "channel-1/${{ arch }}::pandas-0.11.0-np16py27_1",
+                ),
+            )
+            assert [prec.dist_str() for prec in final_state_2] == list(order)
+            assert not solver._r.environment_is_consistent(final_state_2)
+
+        # adding numpy spec again snaps the packages back to a consistent state
+        specs_to_add = (
+            MatchSpec("flask"),
+            MatchSpec("numpy 1.6.*"),
+        )
+        with get_solver(
+            solver_backend,
+            tmpdir,
+            channel_server,
+            channels,
+            subdirs,
+            specs_to_add=specs_to_add,
+            prefix_records=final_state_1_modified,
+            history_specs=specs,
+        ) as solver:
+            final_state_2 = solver.solve_final_state()
+            order = add_base_url(
+                channel_server.get_base_url(),
+                "linux-64",
+                (
+                    "channel-1/${{ arch }}::openssl-1.0.1c-0",
+                    "channel-1/${{ arch }}::readline-6.2-0",
+                    "channel-1/${{ arch }}::sqlite-3.7.13-0",
+                    "channel-1/${{ arch }}::system-5.8-1",
+                    "channel-1/${{ arch }}::tk-8.5.13-0",
+                    "channel-1/${{ arch }}::zlib-1.2.7-0",
+                    "channel-1/${{ arch }}::python-2.7.5-0",
+                    "channel-1/${{ arch }}::jinja2-2.6-py27_0",
+                    "channel-1/${{ arch }}::numpy-1.6.2-py27_4",
+                    "channel-1/${{ arch }}::pytz-2013b-py27_0",
+                    "channel-1/${{ arch }}::six-1.3.0-py27_0",
+                    "channel-1/${{ arch }}::werkzeug-0.8.3-py27_0",
+                    "channel-1/${{ arch }}::dateutil-2.1-py27_1",
+                    "channel-1/${{ arch }}::flask-0.9-py27_0",
+                    "channel-1/${{ arch }}::scipy-0.12.0-np16py27_0",
+                    "channel-1/${{ arch }}::pandas-0.11.0-np16py27_1",
+                ),
+            )
+            assert [prec.dist_str() for prec in final_state_2] == list(order)
+            assert solver._r.environment_is_consistent(final_state_2)
+
+        # Add an incompatible pandas; installation should be untouched, then fixed
+        final_state_2_mod = list(final_state_1)
+        pandas_matcher = MatchSpec("pandas==0.11.0=np17py27_1", channel=channel_1_url)
+        pandas_prec = next(prec for prec in solver._index if pandas_matcher.match(prec))
+        final_state_2_mod[12] = pandas_prec
+        assert not solver._r.environment_is_consistent(final_state_2_mod)
 
     def test_globstr_matchspec_non_compatible_construction(
         self, tmpdir, solver_backend, channel_server
