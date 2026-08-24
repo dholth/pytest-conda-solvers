@@ -7489,3 +7489,245 @@ tests:
         - name: zlib
           version: 1.2.8
           fn_endswith: .tar.bz2
+
+  - name: test_broken_install_1
+    id: B182
+    provenance:
+      node_id: tests/core/test_solve.py::test_broken_install::1
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L1206-L1311
+    kind: solve
+    description: |
+      Fresh install of pandas=0.11.0=np16py27_1 with python=2.7. Restricted to
+      classic, because upstream skips libmamba and rattler, since neither uses
+      a Solver._r (Resolve) object. The environment_is_consistent checks
+      between the stages are white-box testsand are present in
+      test_broken_install in base_tests/solve.py.
+    solvers: classic
+    input:
+      channels: channel-1
+      specs_to_add:
+        - "pandas=0.11.0=np16py27_1"
+        - "python=2.7"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::numpy-1.6.2-py27_4
+        - channel-1/${{ arch }}::pytz-2013b-py27_0
+        - channel-1/${{ arch }}::six-1.3.0-py27_0
+        - channel-1/${{ arch }}::dateutil-2.1-py27_1
+        - channel-1/${{ arch }}::scipy-0.12.0-np16py27_0
+        - channel-1/${{ arch }}::pandas-0.11.0-np16py27_1
+
+  - name: test_broken_install_2
+    id: B183
+    provenance:
+      node_id: tests/core/test_solve.py::test_broken_install::2
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L1206-L1311
+    kind: solve
+    description: |
+      Install flask into the stage-1 environment, after numpy was swapped for
+      the incompatible py33_p0 build. The broken numpy is left untouched, so
+      the environment stays inconsistent. Restricted to classic only. See
+      test_broken_install_1.
+    solvers: classic
+    input:
+      channels: channel-1
+      specs_to_add: flask
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::numpy-1.7.1-py33_p0
+        - channel-1/${{ arch }}::pytz-2013b-py27_0
+        - channel-1/${{ arch }}::six-1.3.0-py27_0
+        - channel-1/${{ arch }}::dateutil-2.1-py27_1
+        - channel-1/${{ arch }}::scipy-0.12.0-np16py27_0
+        - channel-1/${{ arch }}::pandas-0.11.0-np16py27_1
+      history_specs:
+        - "pandas=0.11.0=np16py27_1"
+        - "python=2.7"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::numpy-1.7.1-py33_p0
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::jinja2-2.6-py27_0
+        - channel-1/${{ arch }}::pytz-2013b-py27_0
+        - channel-1/${{ arch }}::scipy-0.12.0-np16py27_0
+        - channel-1/${{ arch }}::six-1.3.0-py27_0
+        - channel-1/${{ arch }}::werkzeug-0.8.3-py27_0
+        - channel-1/${{ arch }}::dateutil-2.1-py27_1
+        - channel-1/${{ arch }}::flask-0.9-py27_0
+        - channel-1/${{ arch }}::pandas-0.11.0-np16py27_1
+
+  - name: test_broken_install_3
+    id: B184
+    provenance:
+      node_id: tests/core/test_solve.py::test_broken_install::3
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L1206-L1311
+    kind: solve
+    description: |
+      Adding the numpy 1.6.* spec alongside flask snaps the broken environment
+      back to a consistent state with the compatible numpy build. Restricted
+      to classic only. See test_broken_install_1 and test_broken_install_2.
+    solvers: classic
+    input:
+      channels: channel-1
+      specs_to_add:
+        - flask
+        - "numpy 1.6.*"
+      prefix:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::numpy-1.7.1-py33_p0
+        - channel-1/${{ arch }}::pytz-2013b-py27_0
+        - channel-1/${{ arch }}::six-1.3.0-py27_0
+        - channel-1/${{ arch }}::dateutil-2.1-py27_1
+        - channel-1/${{ arch }}::scipy-0.12.0-np16py27_0
+        - channel-1/${{ arch }}::pandas-0.11.0-np16py27_1
+      history_specs:
+        - "pandas=0.11.0=np16py27_1"
+        - "python=2.7"
+    output:
+      final_state:
+        - channel-1/${{ arch }}::openssl-1.0.1c-0
+        - channel-1/${{ arch }}::readline-6.2-0
+        - channel-1/${{ arch }}::sqlite-3.7.13-0
+        - channel-1/${{ arch }}::system-5.8-1
+        - channel-1/${{ arch }}::tk-8.5.13-0
+        - channel-1/${{ arch }}::zlib-1.2.7-0
+        - channel-1/${{ arch }}::python-2.7.5-0
+        - channel-1/${{ arch }}::jinja2-2.6-py27_0
+        - channel-1/${{ arch }}::numpy-1.6.2-py27_4
+        - channel-1/${{ arch }}::pytz-2013b-py27_0
+        - channel-1/${{ arch }}::six-1.3.0-py27_0
+        - channel-1/${{ arch }}::werkzeug-0.8.3-py27_0
+        - channel-1/${{ arch }}::dateutil-2.1-py27_1
+        - channel-1/${{ arch }}::flask-0.9-py27_0
+        - channel-1/${{ arch }}::scipy-0.12.0-np16py27_0
+        - channel-1/${{ arch }}::pandas-0.11.0-np16py27_1
+
+  - name: test_no_channels_error
+    id: B185
+    provenance:
+      node_id: tests/core/test_solve.py::test_no_channels_error
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3940-L3963
+    kind: unsatisfiable
+    description: |
+      Solving with no channels configured raises NoChannelsConfiguredError
+      with an actionable message. Restricted to classic, as upstream
+      instantiates the base conda.core.solve.Solver directly
+      regardless of the parametrized backend, so only the classic code path
+      carrying the NoChannelsConfiguredError guard is ever exercised.
+      Solving via libmamba raises PackagesNotFoundError instead.
+    solvers: classic
+    input:
+      channels: []
+      specs_to_add: numpy
+    error:
+      exception: NoChannelsConfiguredError
+      message_includes:
+        - No channels are configured
+        - numpy
+        - conda config --append channels
+
+  - name: test_no_channels_error_libmamba
+    id: B185b
+    provenance:
+      node_id: tests/core/test_solve.py::test_no_channels_error
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3940-L3963
+    kind: unsatisfiable
+    description: |
+      Solving with no channels configured through the libmamba solver
+      raises PackagesNotFoundError for the requested spec. This asserts
+      behaviour upstream never exercises, since the upstream test instantiates
+      conda.core.solve.Solver directly under every parametrized backend, and
+      is a disclosed strengthening for the solver behaviour.
+    solvers: libmamba
+    input:
+      channels: []
+      specs_to_add: numpy
+    error:
+      exception: PackagesNotFoundError
+      entries:
+        - numpy
+
+  - name: test_no_channels_error_rattler
+    id: B185c
+    provenance:
+      node_id: tests/core/test_solve.py::test_no_channels_error
+      commit: 03329e0f4a627c9b9aa92ef34f7f93b9aa83e438
+      url: https://github.com/conda/conda/blob/03329e0f4a627c9b9aa92ef34f7f93b9aa83e438/tests/core/test_solve.py#L3940-L3963
+    kind: unsatisfiable
+    description: |
+      Solving with no channels configured through the rattler solver raises
+      PackagesNotFoundError for the requested spec, matching libmamba,
+      see test_no_channels_error_libmamba. This is a disclosed strengthening
+      beyond what is done upstream.
+    solvers: rattler
+    input:
+      channels: []
+      specs_to_add: numpy
+    error:
+      exception: PackagesNotFoundError
+      entries:
+        - numpy
+
+  - name: test_strict_custom_multichannel_allows_fallback_to_later_subchannel
+    id: B186
+    provenance:
+      node_id: tests/core/test_solve.py::test_strict_custom_multichannel_allows_fallback_to_later_subchannel
+      commit: 8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453
+      url: https://github.com/conda/conda/blob/8e52b72b74c3b44bb9b4c8d7bb5cf4b9e76da453/tests/core/test_solve.py#L2849-L2881
+    kind: solve
+    description: |
+      Regression test for conda/conda#15750. Under strict priority, a custom
+      multichannel still picks a satisfiable package from a later subchannel
+      when an earlier subchannel does not carry it. This is adapted from upstream's
+      integration test, which creates a real environment and installs
+      "holidays" from pkgs/main behind a local channel. Here, the custom
+      multichannel maps to two served channels, and anaconda-docs exists only
+      in the later channel-4, so solving it at all proves the fallback that
+      upstream demonstrates by asserting the pkgs/main:: origin. The solved
+      record's channel canonicalises to the multichannel name here, since the
+      served subchannel URLs have no canonical alias. This is skipped on classic
+      as per upstream, since the classic solver does not support flexible priority
+      within custom_multichannels.
+      NOTE: (Agriya): This test postdates the test-suite-wise provenance pin and is pinned to conda 26.7.0, I have to bump the rest and check again
+    solvers: [libmamba, rattler]
+    input:
+      channels: custom
+      custom_multichannels:
+        custom:
+          - channel-1
+          - channel-4
+      channel_priority: strict
+      specs_to_add: anaconda-docs
+    output:
+      final_state:
+        - custom/noarch::anaconda-docs-2.0.27-0
